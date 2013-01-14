@@ -1,0 +1,58 @@
+%h2
+  ATP rankings chart for top 50 players
+  .generated-note (generated at <span class='generated-at'></span>)
+
+#rankings-chart
+
+= javascript_include_tag 'jquery.jqplot.min'
+= javascript_include_tag 'jqplot.canvasTextRenderer.min'
+= javascript_include_tag 'jqplot.canvasAxisTickRenderer.min'
+= javascript_include_tag 'jqplot.categoryAxisRenderer.min'
+= javascript_include_tag 'jqplot.barRenderer.min'
+= javascript_include_tag 'jqplot.highlighter.min'
+= javascript_include_tag 'jqplot.cursor.min'
+= javascript_include_tag 'jqplot.pointLabels.min'
+= javascript_include_tag '/data/rankings'
+:javascript
+  window.onload = function(){
+    $('.generated-at').text(rankings.generated_at);
+
+    window.d = $.map(rankings.data, function(v, i){return [[v.rank + ' ' + v.last, v.points]]});
+
+    $.jqplot('rankings-chart', [d], {
+      series: [{
+        renderer:$.jqplot.BarRenderer,
+        rendererOptions:{
+          barWidth: 14,
+          barMargin: 2,
+          barPadding: 2
+        },
+      }],
+      axesDefaults: {
+        tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+        tickOptions: {
+          showGridLine: false,
+          angle: -35,
+          fontSize: '10pt',
+          fontFamily: 'Georgia'
+        }
+      },
+      axes: {
+        xaxis: {
+          renderer: $.jqplot.CategoryAxisRenderer,
+        },
+        yaxis: {
+          min: 0,
+          max: 15000,
+          numberTicks: 7,
+          autoscale:true,
+        }
+      }
+    });
+    $('#rankings-chart').bind('jqplotDataClick',
+      function (ev, seriesIndex, pointIndex, data) {
+        if (window.console) console.log(seriesIndex, pointIndex, data);
+      }
+    );
+  }
+

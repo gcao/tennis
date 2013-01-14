@@ -1,0 +1,102 @@
+/**
+
+//HTML5 Boilerplate + Normalize
+*= require "_vendor/normalize.css"
+*= require "_vendor/html5bp.css"
+
+//Grid
+*= require "_layout/grid"
+
+*/
+body, ul, li, dl, dd, p, h1, h2, h3, h4, h5, h6, form, fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  margin-bottom: 8px;
+  width: 100%;
+  border-bottom: 1px solid #00B2E8;
+  background: #FFFFFF; width: 100%;
+
+  .logo {
+    width: 200px;
+    height: 40px;
+  }
+
+  .wrap {
+    position: relative;
+    padding: 8px 0 4px;
+    margin: 0 auto;
+  }
+
+  .wrap:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+  }
+
+  h2 {
+    float: left;
+
+    img {
+      display: inline-block;
+    }
+  }
+}
+
+#menu {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 26px;
+
+  li {
+    display: inline;
+    list-style: none;
+    float: left;
+    margin-left: 5px;
+    background: #EBF4FD url("/images/mtabbg.gif") repeat-x 0 100%;
+
+    a {
+      float: left;
+      padding: 0 14px;
+      height: 25px;
+      border: solid #B0E4EF;
+      border-width: 1px 1px 0;
+      background: transparent none;
+      line-height: 25px;
+      color: #666;
+      text-decoration: none;
+      overflow: hidden;
+    }
+  }
+
+  li.current a {
+    height: 26px;
+    border-color: #00B2E8;
+    background-color: #1E4B7E;
+    color: #C3D3E4;
+  }
+}
+
+.main {
+  padding: 10px;
+
+  h2 {
+    font-size: large;
+    font-weight: normal;
+  }
+
+  .generated-note {
+    font-size: small;
+  }
+}
+
+#rankings-chart {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
