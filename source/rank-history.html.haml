@@ -1,6 +1,9 @@
 .h2
   ATP rank history
-  .generated-note (generated at <span class='generated-at'></span>)
+  %span.generated-note (generated at <span class='generated-at'></span>)
+  %button.update Update Graph
+
+#players
 
 #rank-history
   %svg
@@ -14,14 +17,24 @@
 = javascript_include_tag '/data/novak_djokovic_rank_history'
 = javascript_include_tag '/data/andy_murray_rank_history'
 :javascript
-    window.onload = function(){
-      $('.generated-at').text(rankings.time);
-      var data = $.map([novak_djokovic_rank_history, 
-                        roger_federer_rank_history, 
-                        rafael_nadal_rank_history, 
-                        andy_murray_rank_history], function(e) {
+  window.onload = function(){
+    $('.generated-at').text(rankings.generated_at);
+
+    $.each(rankings.data, function(i, r){
+      var name = r.first + ' ' + r.last;
+      var value = (r.first + '_' + r.last).toLowerCase();
+      $('#players').append('<div class="player"><input type="checkbox" name="player" value="' + value + '"><span>' + name + '</span></div>');
+    });
+
+    $('button.update').click(function(){
+      var data = $.map($('[name=player]:checked').map(function(){
+        return eval('window.' + this.value + '_rank_history');
+      }), function(e) {
         return {key: e.first + ' ' + e.last, values: e.history}; 
       });
+
+      console.log(data);
+
       nv.addGraph(function() {
         var chart = nv.models.lineChart()
                       .x(function(d) { return Date.parse(d[0]) })
@@ -56,5 +69,12 @@
         window.chart = chart;
         return chart;
       });
-    }
+    });
+
+    $('[value=novak_djokovic]').click();
+    $('[value=roger_federer]').click();
+    $('[value=rafael_nadal]').click();
+    $('[value=andy_murray]').click();
+    $('button.update').click();
+  }
 
