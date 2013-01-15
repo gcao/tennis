@@ -1,3 +1,5 @@
+-# Get players list from url parameter like players=a_b,c_d, default to Roger Federer etc
+-# Get from-year and to-year from url
 .h2
   ATP rank history
   %span.generated-note (generated at <span class='generated-at'></span>)
@@ -27,54 +29,30 @@
     });
 
     $('button.update').click(function(){
-      var data = $.map($('[name=player]:checked').map(function(){
-        return eval('window.' + this.value + '_rank_history');
-      }), function(e) {
-        return {key: e.first + ' ' + e.last, values: e.history}; 
+      var players = $('[name=player]:checked').map(function(){
+        return this.value;
       });
-
-      console.log(data);
-
-      nv.addGraph(function() {
-        var chart = nv.models.lineChart()
-                      .x(function(d) { return Date.parse(d[0]) })
-                      .y(function(d) { return 50 - d[1] })
-                      .color(d3.scale.category10().range());
-
-        chart.xAxis
-             .rotateLabels(30)
-             .tickValues(function(){
-               return $.map([2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013], function(year) {
-                 return Date.parse('1/1/' + year);
-               });
-             }())
-             .tickFormat(function(d) {
-               return d3.time.format('%x')(new Date(d));
-             });
-
-        chart.yAxis
-             .tickValues([0, 10, 20, 30, 40, 45, 46, 47, 48, 49])
-             .showMaxMin(false)
-             .tickFormat(function(d) {
-               return 50-d;
-             });
-
-        d3.select('#rank-history svg')
-          .datum(data)
-          .transition().duration(500)
-          .call(chart);
-
-        nv.utils.windowResize(chart.update);
-
-        window.chart = chart;
-        return chart;
-      });
+      if (players.length === 0) {
+        alert('No player is selected.');
+      } else if (players.length === 1) {
+        window.location = location.pathname + '?players=' + players[0];
+      } else {
+        var s = players[0];
+        for (var i=1; i<players.length; i++) {
+          s += ',' + players[i];
+        }
+        window.location = location.pathname + '?players=' + s;
+      }
     });
 
-    $('[value=novak_djokovic]').click();
-    $('[value=roger_federer]').click();
-    $('[value=rafael_nadal]').click();
-    $('[value=andy_murray]').click();
-    $('button.update').click();
+    var playersParam = getQueryVar('players');
+    var players = null;
+    if (playersParam && playersParam !== '') {
+      players = playersParam.split(',');
+    } else {
+      players = ['novak_djokovic', 'roger_federer', 'rafael_nadal', 'andy_murray'];
+    }
+    $.each(players, function(i, p){ $('[value=' + p + ']').click(); });
+    showRankHistory(players);
   }
 
