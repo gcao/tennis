@@ -13,6 +13,10 @@ body, ul, li, dl, dd, p, h1, h2, h3, h4, h5, h6, form, fieldset {
   padding: 0;
 }
 
+.main {
+  max-width: none;
+}
+
 header {
   margin-bottom: 8px;
   width: 100%;
@@ -95,8 +99,23 @@ header {
   }
 }
 
-#rankings-chart {
+#rankings-chart, #rank-histoy {
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+#rank-history svg {
+  height: 600px;
+}
+
+#map {
+  width: 100%;
+  height: 600px;
+  margin: 0;
+  padding: 0;
+}
+.map-info p {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 

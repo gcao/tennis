@@ -19,9 +19,9 @@
     
     = javascript_include_tag "vendor/modernizr-2.6.1.min"
     = stylesheet_link_tag "site"
-    = javascript_include_tag "//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"
+    -#= javascript_include_tag "//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"
     :javascript
-      window.jQuery || document.write('<script src="javascripts/vendor/jquery-1.8.0.min.js"><\/script>')
+      window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
     = javascript_include_tag "site"
   %body
     /[if lt IE 7] <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p>
@@ -29,18 +29,18 @@
       .wrap
         %h2
           %a(href='/index.html')
-            %img(class='logo' src='/images/site-logo.gif')
+            %img.logo(src='/images/site-logo.gif')
         #menu
           %ul
-            %li.rankings.current
+            %li.rankings
               %span
                 %a(href='/rankings.html') Rankings
             %li.rank-history
               %span
-                %a(href='/rank-history2.html') Rank History
+                %a(href='/rank-history.html') Rank History
             %li.tournaments
               %span
                 %a(href='/tournaments.html') Tournaments
-    %div{:role => "main", :class => "main"}= yield
+    %div.main(role="main")= yield
     %footer
 
