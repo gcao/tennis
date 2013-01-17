@@ -18,13 +18,21 @@
 = javascript_include_tag '/data/rafael_nadal_rank_history'
 = javascript_include_tag '/data/novak_djokovic_rank_history'
 = javascript_include_tag '/data/andy_murray_rank_history'
+= javascript_include_tag '/data/david_ferrer_rank_history'
+= javascript_include_tag '/data/juan_martin_del_potro_rank_history'
+= javascript_include_tag '/data/jo_wilfried_tsonga_rank_history'
+= javascript_include_tag '/data/janko_tipsarevic_rank_history'
+= javascript_include_tag '/data/tomas_berdych_rank_history'
+= javascript_include_tag '/data/richard_gasquet_rank_history'
 :javascript
   window.onload = function(){
     $('.generated-at').text(rankings.generated_at);
 
     $.each(rankings.data, function(i, r){
+      if (i >= 10) return;
+
       var name = r.first + ' ' + r.last;
-      var value = (r.first + '_' + r.last).toLowerCase();
+      var value = (r.first + '_' + r.last).toLowerCase().replace(/[ -]/g, '_');
       $('#players').append('<div class="player"><input type="checkbox" name="player" value="' + value + '"><span>' + name + '</span></div>');
     });
 
