@@ -5,6 +5,8 @@ $(document).ready(function(){
     $('li.rank-history').addClass('current');
   } else if (location.pathname.match(/tournaments/)) {
     $('li.tournaments').addClass('current');
+  } else if (location.pathname.match(/support/)) {
+    $('li.support').addClass('current');
   }
 });
 
