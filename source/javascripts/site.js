@@ -45,7 +45,8 @@ function loadRankHistory(players) {
 
 function showRankHistory(data) {
   data = $.map(data, function(e) {
-    return {key: e.first + ' ' + e.last, values: e.history};
+    var hist = filterData(e.history, 2008, 2013);
+    return {key: e.first + ' ' + e.last, values: hist};
   });
 
   nv.addGraph(function() {
@@ -81,6 +82,15 @@ function showRankHistory(data) {
 
     window.chart = chart;
     return chart;
+  });
+}
+
+function filterData(data, fromYear, toYear) {
+  var fromTime = Date.parse(fromYear + '/1/1');
+  var toTime = Date.parse(parseInt(toYear) + 1 + '/1/1');
+  return $.map(data, function(item) {
+    var time = Date.parse(item[0]);
+    if (time >= fromTime && time < toTime) return [item];
   });
 }
 
