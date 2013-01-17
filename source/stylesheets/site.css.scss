@@ -92,11 +92,16 @@ header {
   h2 {
     font-size: large;
     font-weight: normal;
+    margin-bottom: 10px;
   }
 
   .generated-note {
     font-size: small;
   }
+}
+
+#timespan, #players {
+  margin-bottom: 10px;
 }
 
 #rankings-chart, #rank-histoy {

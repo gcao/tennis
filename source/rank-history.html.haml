@@ -1,8 +1,26 @@
 -# Get players list from url parameter like players=a_b,c_d, default to Roger Federer etc
 -# Get from-year and to-year from url
-.h2
+%h2
   ATP rank history
   %span.generated-note (generated at <span class='generated-at'></span>)
+
+#timespan
+  Time span:
+  %select(name='start-year')
+    %option(value='2003') 2003
+    %option(value='2004') 2004
+    %option(value='2005') 2005
+    %option(value='2006') 2006
+    %option(value='2007') 2007
+    %option(value='2008') 2008
+    %option(value='2009') 2009
+    %option(value='2010') 2010
+    %option(value='2011') 2011
+    %option(value='2012') 2012
+    %option(value='2013') 2013
+  \-
+  %select(name='end-year')
+    %option(value='2013') 2013
   %button.update Update Graph
 
 #players
@@ -14,16 +32,6 @@
 = javascript_include_tag 'vendor/d3.v2.min'
 = javascript_include_tag 'vendor/nv.d3.min'
 = javascript_include_tag '/data/rankings'
-= javascript_include_tag '/data/roger_federer_rank_history'
-= javascript_include_tag '/data/rafael_nadal_rank_history'
-= javascript_include_tag '/data/novak_djokovic_rank_history'
-= javascript_include_tag '/data/andy_murray_rank_history'
-= javascript_include_tag '/data/david_ferrer_rank_history'
-= javascript_include_tag '/data/juan_martin_del_potro_rank_history'
-= javascript_include_tag '/data/jo_wilfried_tsonga_rank_history'
-= javascript_include_tag '/data/janko_tipsarevic_rank_history'
-= javascript_include_tag '/data/tomas_berdych_rank_history'
-= javascript_include_tag '/data/richard_gasquet_rank_history'
 :javascript
   window.onload = function(){
     $('.generated-at').text(rankings.generated_at);
@@ -61,6 +69,6 @@
       players = ['novak_djokovic', 'roger_federer', 'rafael_nadal', 'andy_murray'];
     }
     $.each(players, function(i, p){ $('[value=' + p + ']').click(); });
-    showRankHistory(players);
+    loadAndShowRankHistory(players);
   }
 

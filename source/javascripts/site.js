@@ -23,17 +23,28 @@ function getQueryVar(varName){
   return val == queryStr ? false : val;
 }
 
-function showRankHistory(players) {
-  var data = $.map($.map(players, function(player){
-    return eval('window.' + player + '_rank_history');
-  }), function(e) {
-    return {key: e.first + ' ' + e.last, values: e.history};
-  });
-
-  if (data.length == 0) {
+function loadAndShowRankHistory(players) {
+  if (players.length == 0) {
     alert('No player is chosen!');
     return;
   }
+
+  loadRankHistory(players).then(function(){
+    var data = $.map(arguments, function(request){ return request[0] });
+    showRankHistory(data);
+  });
+}
+
+function loadRankHistory(players) {
+  return $.when.apply($, $.map(players, function(player) {
+    return $.getJSON('/data/' + player + '_rank_history.json');
+  }));
+}
+
+function showRankHistory(data) {
+  data = $.map(data, function(e) {
+    return {key: e.first + ' ' + e.last, values: e.history};
+  });
 
   nv.addGraph(function() {
     var chart = nv.models.lineChart()
