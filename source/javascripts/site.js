@@ -25,7 +25,7 @@ function getQueryVar(varName){
   return val == queryStr ? false : val;
 }
 
-function loadAndShowRankHistory(players) {
+function loadAndShowRankHistory(players, fromYear, toYear) {
   if (players.length == 0) {
     alert('No player is chosen!');
     return;
@@ -33,7 +33,7 @@ function loadAndShowRankHistory(players) {
 
   loadRankHistory(players).then(function(){
     var data = $.map(arguments, function(request){ return request[0] });
-    showRankHistory(data);
+    showRankHistory(data, fromYear, toYear);
   });
 }
 
@@ -43,9 +43,9 @@ function loadRankHistory(players) {
   }));
 }
 
-function showRankHistory(data) {
+function showRankHistory(data, fromYear, toYear) {
   data = $.map(data, function(e) {
-    var hist = filterData(e.history, 2008, 2013);
+    var hist = filterHistoryData(e.history, fromYear, toYear);
     return {key: e.first + ' ' + e.last, values: hist};
   });
 
@@ -53,12 +53,13 @@ function showRankHistory(data) {
     var chart = nv.models.lineChart()
                   .x(function(d) { return Date.parse(d[0]) })
                   .y(function(d) { return 50 - d[1] })
+                  .margin({left: 20, right: 40})
                   .color(d3.scale.category10().range());
 
     chart.xAxis
          .rotateLabels(30)
          .tickValues(function(){
-           return $.map([2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013], function(year) {
+           return $.map(getYears(), function(year) {
              return Date.parse('1/1/' + year);
            });
          }())
@@ -85,12 +86,47 @@ function showRankHistory(data) {
   });
 }
 
-function filterData(data, fromYear, toYear) {
+function getYear() {
+  return new Date().getYear() + 1900;
+}
+
+function getYears() {
+  var years = [];
+  for (year = 2003; year <= getYear(); year++) {
+    years[year - 2003] = year;
+  }
+  return years;
+}
+
+function filterHistoryData(data, fromYear, toYear) {
   var fromTime = Date.parse(fromYear + '/1/1');
   var toTime = Date.parse(parseInt(toYear) + 1 + '/1/1');
   return $.map(data, function(item) {
     var time = Date.parse(item[0]);
     if (time >= fromTime && time < toTime) return [item];
   });
+}
+
+function initFromYear() {
+  $('[name=fromYear]').html('');
+  for (var year=2003; year<=getYear(); year++) {
+    $('[name=fromYear]').append('<option>' + year + '</option>');
+  }
+}
+function initToYear(fromYear) {
+  $('[name=toYear]').html('');
+  for (var year=fromYear; year<=getYear(); year++) {
+    $('[name=toYear]').append('<option>' + year + '</option>');
+  }
+}
+
+function changeFromYear() {
+  var fromYear = $('[name=fromYear]').val();
+  var toYear = $('[name=toYear]').val();
+  $('[name=toYear]').html('');
+  for (var year = parseInt(fromYear); year <= getYear(); year++) {
+    $('[name=toYear]').append('<option>' + year + '</option>');
+  }
+  $('[name=toYear]').val(toYear ? toYear : getYear());
 }
 

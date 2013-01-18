@@ -1,32 +1,18 @@
--# Get players list from url parameter like players=a_b,c_d, default to Roger Federer etc
--# Get from-year and to-year from url
 %h2
   ATP rank history
   %span.generated-note (generated at <span class='generated-at'></span>)
 
+#rank-history
+  %svg
+
 #timespan
   Time span:
-  %select(name='start-year')
-    %option(value='2003') 2003
-    %option(value='2004') 2004
-    %option(value='2005') 2005
-    %option(value='2006') 2006
-    %option(value='2007') 2007
-    %option(value='2008') 2008
-    %option(value='2009') 2009
-    %option(value='2010') 2010
-    %option(value='2011') 2011
-    %option(value='2012') 2012
-    %option(value='2013') 2013
+  %select(name='fromYear')
   \-
-  %select(name='end-year')
-    %option(value='2013') 2013
+  %select(name='toYear')
   %button.update Update Graph
 
 #players
-
-#rank-history
-  %svg
 
 = stylesheet_link_tag 'nv.d3'
 = javascript_include_tag 'vendor/d3.v2.min'
@@ -35,6 +21,7 @@
 :javascript
   window.onload = function(){
     $('.generated-at').text(rankings.generated_at);
+    $('[name=fromYear]').change(changeFromYear);
 
     $.each(rankings.data, function(i, r){
       if (i >= 10) return;
@@ -57,18 +44,35 @@
         for (var i=1; i<players.length; i++) {
           s += ',' + players[i];
         }
-        window.location = location.pathname + '?players=' + s;
+        window.location = location.pathname + '?players=' + s + '&fromYear=' + $('[name=fromYear]').val() + '&toYear=' + $('[name=toYear]').val();
       }
     });
 
-    var playersParam = getQueryVar('players');
+    var fromYear = 2003;
+    var fromYearParam = getQueryVar('fromYear');
+    if (fromYearParam) {
+      fromYear = parseInt(fromYearParam);
+    }
+    initFromYear();
+    $('[name=fromYear]').val(fromYear);
+
+    var toYear = getYear();
+    var toYearParam = getQueryVar('toYear');
+    if (toYearParam) {
+      toYear = parseInt(toYearParam);
+    }
+    initToYear(fromYear);
+    $('[name=toYear]').val(toYear);
+
     var players = null;
+    var playersParam = getQueryVar('players');
     if (playersParam && playersParam !== '') {
       players = playersParam.split(',');
     } else {
       players = ['novak_djokovic', 'roger_federer', 'rafael_nadal', 'andy_murray'];
     }
     $.each(players, function(i, p){ $('[value=' + p + ']').click(); });
-    loadAndShowRankHistory(players);
+
+    loadAndShowRankHistory(players, fromYear, toYear);
   }
 
