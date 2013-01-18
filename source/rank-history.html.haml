@@ -20,7 +20,7 @@
 = javascript_include_tag '/data/rankings'
 :javascript
   window.onload = function(){
-    $('.generated-at').text(rankings.generated_at);
+    updateGenerationTime(rankings.generated_at);
     $('[name=fromYear]').change(changeFromYear);
 
     $.each(rankings.data, function(i, r){

@@ -25,6 +25,14 @@ function getQueryVar(varName){
   return val == queryStr ? false : val;
 }
 
+function updateGenerationTime(time) {
+  var date = new Date(time*1000);
+  var month = date.getMonth() + 1;
+  var day = date.getDate();
+  var year = date.getYear() + 1900;
+  $('.generated-at').text(month + '/' + day + '/' + year);
+}
+
 function loadAndShowRankHistory(players, fromYear, toYear) {
   if (players.length == 0) {
     alert('No player is chosen!');

@@ -1,6 +1,6 @@
 %h2
   ATP rankings chart for top 50 players
-  .generated-note (generated at <span class='generated-at'></span>)
+  %span.generated-note (generated at <span class='generated-at'></span>)
 
 #rankings-chart
 
@@ -15,7 +15,7 @@
 = javascript_include_tag '/data/rankings'
 :javascript
   window.onload = function(){
-    $('.generated-at').text(rankings.generated_at);
+    updateGenerationTime(rankings.generated_at);
 
     window.d = $.map(rankings.data, function(v, i){return [[v.rank + ' ' + v.last, v.points]]});
 
