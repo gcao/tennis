@@ -9,44 +9,45 @@
     <title>Set your site title in /helpers/site_helpers.rb</title>
     <meta content='Set your site description in /helpers/site_helpers.rb' name='description' />
     <meta content='width=device-width' name='viewport' />
-    <script src="/javascripts/vendor/modernizr-2.6.1.min.js" type="text/javascript"></script>
-    <link href="/stylesheets/site.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
+    <link href='stylesheets/site.css' rel='stylesheet' />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
     <script type='text/javascript'>
       //<![CDATA[
         window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
       //]]>
     </script>
-    <script src="/javascripts/site.js" type="text/javascript"></script>
+    <script src='javascripts/site.js'></script>
   </head>
   <body>
     <!--[if lt IE 7]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
     <header>
       <div class='wrap'>
         <h2>
-          <a href='/index.html'>
-            <img class='logo' src='/images/site-logo.gif' />
+          <a href='index.html'>
+            <img class='logo' src='images/site-logo.gif' />
           </a>
         </h2>
         <div id='menu'>
           <ul>
             <li class='rankings'>
               <span>
-                <a href='/rankings.html'>Rankings</a>
+                <a href='rankings.html'>Rankings</a>
               </span>
             </li>
             <li class='rank-history'>
               <span>
-                <a href='/rank-history.html'>Rank History</a>
+                <a href='rank-history.html'>Rank History</a>
               </span>
             </li>
             <li class='tournaments'>
               <span>
-                <a href='/tournaments.html'>Tournaments</a>
+                <a href='tournaments.html'>Tournaments</a>
               </span>
             </li>
             <li class='support'>
               <span>
-                <a href='/support.html'>Support</a>
+                <a href='support.html'>Support</a>
               </span>
             </li>
           </ul>
@@ -69,10 +70,10 @@
         <button class='update'>Update Graph</button>
       </div>
       <div id='players'></div>
-      <link href="/stylesheets/nv.d3.css" media="screen" rel="stylesheet" type="text/css" />
-      <script src="/javascripts/vendor/d3.v2.min.js" type="text/javascript"></script>
-      <script src="/javascripts/vendor/nv.d3.min.js" type="text/javascript"></script>
-      <script src="/data/rankings.js" type="text/javascript"></script>
+      <link href='stylesheets/nv.d3.css' rel='stylesheet' />
+      <script src='javascripts/vendor/d3.v2.min.js'></script>
+      <script src='javascripts/vendor/nv.d3.min.js'></script>
+      <script src='data/rankings.js'></script>
       <script type='text/javascript'>
         //<![CDATA[
           window.onload = function(){
