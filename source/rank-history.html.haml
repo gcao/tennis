@@ -14,10 +14,10 @@
 
 #players
 
-= stylesheet_link_tag 'nv.d3'
-= javascript_include_tag 'vendor/d3.v2.min'
-= javascript_include_tag 'vendor/nv.d3.min'
-= javascript_include_tag '/data/rankings'
+%link(href='stylesheets/nv.d3.css' rel='stylesheet')
+%script(src='javascripts/vendor/d3.v2.min.js')
+%script(src='javascripts/vendor/nv.d3.min.js')
+%script(src='data/rankings.js')
 :javascript
   window.onload = function(){
     updateGenerationTime(rankings.generated_at);

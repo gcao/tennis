@@ -4,15 +4,16 @@
 
 #rankings-chart
 
-= javascript_include_tag 'jquery.jqplot.min'
-= javascript_include_tag 'jqplot.canvasTextRenderer.min'
-= javascript_include_tag 'jqplot.canvasAxisTickRenderer.min'
-= javascript_include_tag 'jqplot.categoryAxisRenderer.min'
-= javascript_include_tag 'jqplot.barRenderer.min'
-= javascript_include_tag 'jqplot.highlighter.min'
-= javascript_include_tag 'jqplot.cursor.min'
-= javascript_include_tag 'jqplot.pointLabels.min'
-= javascript_include_tag '/data/rankings'
+%script(src='javascripts/vendor/d3.v2.min.js')
+%script(src='javascripts/jquery.jqplot.min.js')
+%script(src='javascripts/jqplot.canvasTextRenderer.min.js')
+%script(src='javascripts/jqplot.canvasAxisTickRenderer.min.js')
+%script(src='javascripts/jqplot.categoryAxisRenderer.min.js')
+%script(src='javascripts/jqplot.barRenderer.min.js')
+%script(src='javascripts/jqplot.highlighter.min.js')
+%script(src='javascripts/jqplot.cursor.min.js')
+%script(src='javascripts/jqplot.pointLabels.min.js')
+%script(src='data/rankings.js')
 :javascript
   window.onload = function(){
     updateGenerationTime(rankings.generated_at);

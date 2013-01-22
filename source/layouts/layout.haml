@@ -17,33 +17,33 @@
     -#Update favicon_base.png in /source and middleman-favicon-maker will generate all the versions you need on 'middleman build'
     -#OR, place favicon.ico and apple-touch-icon.png in /source and deactivate :favicon_maker in config.rb
     
-    = javascript_include_tag "vendor/modernizr-2.6.1.min"
-    = stylesheet_link_tag "site"
-    -#= javascript_include_tag "//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"
+    %script(src='javascripts/vendor/modernizr-2.6.1.min.js')
+    %link(href='stylesheets/site.css' rel='stylesheet')
+    = javascript_include_tag "//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"
     :javascript
       window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
-    = javascript_include_tag "site"
+    %script(src='javascripts/site.js')
   %body
     /[if lt IE 7] <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p>
     %header
       .wrap
         %h2
-          %a(href='/index.html')
-            %img.logo(src='/images/site-logo.gif')
+          %a(href='index.html')
+            %img.logo(src='images/site-logo.gif')
         #menu
           %ul
             %li.rankings
               %span
-                %a(href='/rankings.html') Rankings
+                %a(href='rankings.html') Rankings
             %li.rank-history
               %span
-                %a(href='/rank-history.html') Rank History
+                %a(href='rank-history.html') Rank History
             %li.tournaments
               %span
-                %a(href='/tournaments.html') Tournaments
+                %a(href='tournaments.html') Tournaments
             %li.support
               %span
-                %a(href='/support.html') Support
+                %a(href='support.html') Support
     %div.main(role="main")= yield
     %footer
 
