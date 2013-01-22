@@ -47,7 +47,7 @@ function loadAndShowRankHistory(players, fromYear, toYear) {
 
 function loadRankHistory(players) {
   return $.when.apply($, $.map(players, function(player) {
-    return $.getJSON('/data/' + player + '_rank_history.json');
+    return $.getJSON('data/' + player + '_rank_history.json');
   }));
 }
 
