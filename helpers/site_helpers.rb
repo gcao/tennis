@@ -1,4 +1,11 @@
 module SiteHelpers
+  def toggle_tab tab
+    if request.path =~ Regexp.new(tab)
+      {class: 'current'}
+    else
+      {}
+    end
+  end
 
   def page_title
     title = "Set your site title in /helpers/site_helpers.rb"

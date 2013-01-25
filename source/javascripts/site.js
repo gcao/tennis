@@ -1,15 +1,3 @@
-$(document).ready(function(){
-  if (location.pathname.match(/rankings/)) {
-    $('li.rankings').addClass('current');
-  } else if (location.pathname.match(/rank-history/)) {
-    $('li.rank-history').addClass('current');
-  } else if (location.pathname.match(/tournaments/)) {
-    $('li.tournaments').addClass('current');
-  } else if (location.pathname.match(/support/)) {
-    $('li.support').addClass('current');
-  }
-});
-
 function getQueryVar(varName){
   // Grab and unescape the query string - appending an '&' keeps the RegExp simple
   // for the sake of this example.
@@ -23,6 +11,14 @@ function getQueryVar(varName){
 
   // If the string is the same, we didn't find a match - return false
   return val == queryStr ? false : val;
+}
+
+function loadData(id, successHandler) {
+  if (useLocalData) {
+    return $.getJSON('data/' + id + '.json', successHandler);
+  } else {
+    return $.getJSON('http://gcao.cloudant.com/tennis/' + id + '?callback=?', successHandler);
+  }
 }
 
 function updateGenerationTime(time) {
@@ -47,7 +43,8 @@ function loadAndShowRankHistory(players, fromYear, toYear) {
 
 function loadRankHistory(players) {
   return $.when.apply($, $.map(players, function(player) {
-    return $.getJSON('data/' + player + '_rank_history.json');
+    //return $.getJSON('data/' + player + '_rank_history.json');
+    return loadData(player + '_rank_history');
   }));
 }
 

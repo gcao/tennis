@@ -4,18 +4,9 @@
 
 #rankings-chart
 
-%script(src='javascripts/vendor/d3.v2.min.js')
-%script(src='javascripts/jquery.jqplot.min.js')
-%script(src='javascripts/jqplot.canvasTextRenderer.min.js')
-%script(src='javascripts/jqplot.canvasAxisTickRenderer.min.js')
-%script(src='javascripts/jqplot.categoryAxisRenderer.min.js')
-%script(src='javascripts/jqplot.barRenderer.min.js')
-%script(src='javascripts/jqplot.highlighter.min.js')
-%script(src='javascripts/jqplot.cursor.min.js')
-%script(src='javascripts/jqplot.pointLabels.min.js')
-%script(src='data/rankings.js')
+%script(src='javascripts/rankings-dep.js')
 :javascript
-  window.onload = function(){
+  loadData('rankings', function(rankings) {
     updateGenerationTime(rankings.generated_at);
 
     window.d = $.map(rankings.data, function(v, i){return [[v.rank + ' ' + v.last, v.points]]});
@@ -55,5 +46,5 @@
         if (window.console) console.log(seriesIndex, pointIndex, data);
       }
     );
-  }
+  })
 

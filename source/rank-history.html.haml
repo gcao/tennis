@@ -17,9 +17,8 @@
 %link(href='stylesheets/nv.d3.css' rel='stylesheet')
 %script(src='javascripts/vendor/d3.v2.min.js')
 %script(src='javascripts/vendor/nv.d3.min.js')
-%script(src='data/rankings.js')
 :javascript
-  window.onload = function(){
+  loadData('rankings', function(rankings) {
     updateGenerationTime(rankings.generated_at);
     $('[name=fromYear]').change(changeFromYear);
 
@@ -74,5 +73,5 @@
     $.each(players, function(i, p){ $('[value=' + p + ']').click(); });
 
     loadAndShowRankHistory(players, fromYear, toYear);
-  }
+  })
 
