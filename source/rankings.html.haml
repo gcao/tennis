@@ -2,20 +2,22 @@
   ATP rankings chart for top 50 players
   %span.generated-note (generated at <span class='generated-at'></span>)
 
-#rankings-chart
+#rankings-chart(style='height: 1000px')
 
 %script(src='javascripts/rankings-dep.js')
 :javascript
   loadData('rankings', function(rankings) {
     updateGenerationTime(rankings.generated_at);
 
-    window.d = $.map(rankings.data, function(v, i){return [[v.rank + ' ' + v.last, v.points]]});
+    window.d = $.map(rankings.data, function(v, i){return [[v.points, v.rank + ' ' + v.last]]}).reverse();
 
     $.jqplot('rankings-chart', [d], {
       series: [{
+        shadowAngle: 135,
         renderer:$.jqplot.BarRenderer,
         rendererOptions:{
-          barWidth: 14,
+          barDirection: 'horizontal',
+          barWidth: 10,
           barMargin: 2,
           barPadding: 2
         },
@@ -24,16 +26,15 @@
         tickRenderer: $.jqplot.CanvasAxisTickRenderer,
         tickOptions: {
           showGridLine: false,
-          angle: -35,
           fontSize: '10pt',
           fontFamily: 'Georgia'
         }
       },
       axes: {
-        xaxis: {
+        yaxis: {
           renderer: $.jqplot.CategoryAxisRenderer
         },
-        yaxis: {
+        xaxis: {
           min: 0,
           max: 15000,
           numberTicks: 7,
@@ -41,10 +42,10 @@
         }
       }
     });
-    $('#rankings-chart').bind('jqplotDataClick',
-      function (ev, seriesIndex, pointIndex, data) {
-        if (window.console) console.log(seriesIndex, pointIndex, data);
-      }
-    );
+    //$('#rankings-chart').bind('jqplotDataClick',
+    //  function (ev, seriesIndex, pointIndex, data) {
+    //    if (window.console) console.log(seriesIndex, pointIndex, data);
+    //  }
+    //);
   })
 
