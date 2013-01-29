@@ -1,0 +1,124 @@
+#map
+
+%script(type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true")
+%script(src='data/tournaments.js')
+%script(src='data/roger_federer_schedule.js')
+:javascript
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 3,
+    center: new google.maps.LatLng(20, 0),
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  });
+
+  var tournaments = $.map(roger_federer_schedule.data, function(tournament_name) {
+    var result = tournaments.data.filter(function(tournament){
+      return tournament.name === tournament_name;
+    });
+    if (result.length > 0) {
+      return result[0];
+    } else {
+      if (console.log) console.log('Tournament not found: ' + tournament_name);
+    }
+  });
+
+  function addPath(startMarker, endMarker) {
+    var bounds = new google.maps.LatLngBounds();
+    var p1 = startMarker.getPosition();
+    var p2 = endMarker.getPosition();
+    bounds.extend(p1);
+    bounds.extend(p2);
+    var fPoints = new Array();
+    with (Math) {
+      var lat1 = p1.lat() * (PI/180);
+      var lon1 = p1.lng() * (PI/180);
+      var lat2 = p2.lat() * (PI/180);
+      var lon2 = p2.lng() * (PI/180);
+
+      var d = 2*asin(sqrt( pow((sin((lat1-lat2)/2)),2) + cos(lat1)*cos(lat2)*pow((sin((lon1-lon2)/2)),2)));
+      var bearing = atan2(sin(lon1-lon2)*cos(lat2), cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon1-lon2)) / -(PI/180);
+      bearing = bearing < 0 ? 360 + bearing : bearing;
+
+      for (var n = 0 ; n < 51 ; n++ ) {
+        var f = (1/50) * n;
+        f = f.toFixed(6);
+        var A = sin((1-f)*d)/sin(d);
+        var B = sin(f*d)/sin(d);
+        var x = A*cos(lat1)*cos(lon1) +  B*cos(lat2)*cos(lon2);
+        var y = A*cos(lat1)*sin(lon1) +  B*cos(lat2)*sin(lon2);
+        var z = A*sin(lat1)           +  B*sin(lat2);
+
+        var latN = atan2(z,sqrt(pow(x,2)+pow(y,2)));
+        var lonN = atan2(y,x);
+        var p = new google.maps.LatLng(latN/(PI/180), lonN/(PI/180));
+        fPoints.push(p);
+      }
+    }
+
+    var pLine = new google.maps.Polyline({
+      map: map,
+      path: fPoints,
+      strokeColor: '#FF9601',
+      strokeWeight: 3,
+      strokeOpacity: 1});
+  }
+
+  var prevMarker;
+  $.each(tournaments, function(i, tournament){
+    var icon = '';
+    var zIndex = 1;
+    if (tournament.type === 'atp250') {
+      icon = 'http://www.atpworldtour.com/~/media/810218DC73784BEEA6EF0978B2842A69.ashx?w=31&h=36';
+      zIndex = 2;
+    } else if (tournament.type === 'atp500') {
+      icon = 'http://www.atpworldtour.com/~/media/1DB04CA8505648B7B511FA1E37F1E3BA.ashx?w=31&h=36';
+      zIndex = 3;
+    } else if (tournament.type === 'atp1000') {
+      icon = 'http://www.atpworldtour.com/~/media/F5219431817E4ED3B773BF9B006A9ACF.ashx?w=31&h=42';
+      zIndex = 4;
+    } else if (tournament.type === 'atptourfinal') {
+      icon = 'http://www.atpworldtour.com/~/media/47F12472FD254B08B57755E5B7565E5D.ashx?w=31&h=48';
+      zIndex = 5;
+    } else if (tournament.type === 'grandslam') {
+      zIndex = 6;
+      if (tournament.name.match(/australian open/i)) {
+        icon = new google.maps.MarkerImage('images/ao_logo.png');
+      } else if (tournament.name.match(/roland garros/i)) {
+        icon = new google.maps.MarkerImage('images/fo_logo.png');
+      } else if (tournament.name.match(/wimbledon/i)) {
+        icon = new google.maps.MarkerImage('images/wo_logo.png');
+      } else if (tournament.name.match(/us open/i)) {
+        icon = new google.maps.MarkerImage('images/uo_logo.png');
+      }
+    } else if (tournament.type === 'daviscup') {
+      return;
+    }
+
+    var label = '<div class="map-info">' +
+      '<p class="tournament-name"><a href="http://www.atpworldtour.com' +
+      tournament.url + '" target="_new">' + tournament.name + '</a>' +
+      '</p><p><span class="tournament-time">' + tournament.start +
+      '</span> @ <span class="tournament-place">' + tournament.place +
+      '</span></p><p class="tournament-title-holder">Title Holder: <a href="http://www.atpworldtour.com' + 
+      tournament.title_holder.url + '" target="_new">' + tournament.title_holder.name +  '</a>' +
+      '</p></div>';
+    var myLatLng = new google.maps.LatLng(tournament.latitude, tournament.longitude);
+    var marker = new google.maps.Marker({
+      position: myLatLng,
+      map: map,
+      icon: icon,
+      zIndex: zIndex
+    });
+    var infoWindow = new google.maps.InfoWindow({
+      content: label
+    });
+    google.maps.event.addListener(marker, 'click', function() {
+      infoWindow.open(map, marker);
+    });
+
+    if (prevMarker) {
+      addPath(prevMarker, marker);
+    }
+
+    prevMarker = marker;
+  });
+

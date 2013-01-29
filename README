@@ -4,5 +4,6 @@ Update files in source/ and test in browser
 $ git push origin `git branch | grep '*' | cut -b 3-`
 $ middleman build
 $ cd build
+$ git ci --interactive
 $ git push origin `git branch | grep '*' | cut -b 3-`
 
