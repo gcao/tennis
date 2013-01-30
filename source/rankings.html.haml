@@ -14,6 +14,11 @@
     $.jqplot('rankings-chart', [d], {
       series: [{
         shadowAngle: 135,
+        pointLabels:{
+          show:true,
+          color: '#333',
+          location:'e'
+        },
         renderer:$.jqplot.BarRenderer,
         rendererOptions:{
           barDirection: 'horizontal',

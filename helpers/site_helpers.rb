@@ -8,9 +8,9 @@ module SiteHelpers
   end
 
   def page_title
-    title = "Set your site title in /helpers/site_helpers.rb"
+    title = "Guoliang's Tennis Page"
     if data.page.title
-      title << " | " + data.page.title
+      title << " | " + current_page.data.page_title
     end
     title
   end
