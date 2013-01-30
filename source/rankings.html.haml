@@ -4,6 +4,10 @@
 
 #rankings-chart(style='height: 1000px')
 
+#contextMenu
+  <li><a href="#" target="_new">Homepage</a></li>
+  <li><a href="#">Rank History</a></li>
+
 %script(src='javascripts/rankings-dep.js')
 :javascript
   loadData('rankings', function(rankings) {
@@ -47,10 +51,34 @@
         }
       }
     });
-    //$('#rankings-chart').bind('jqplotDataClick',
-    //  function (ev, seriesIndex, pointIndex, data) {
-    //    if (window.console) console.log(seriesIndex, pointIndex, data);
-    //  }
-    //);
+
+    // http://www.ifadey.com/2011/07/context-menu-using-raw-javascript/
+    function ContextMenu( menu, contextHandler ) {
+      var hide = true;
+      var menu = document.getElementById( menu );
+
+      this.trigger = function( x, y ) {
+        hide = false;
+        menu.style.top = y + "px";
+        menu.style.left = x + "px";
+        menu.style.display = "block";
+      };
+
+      $('body').click(function(e) {
+        if (hide) {
+          menu.style.display = 'none';
+        }
+        hide = true;
+      });
+    }
+
+    contextMenu = new ContextMenu('contextMenu')
+
+    $('#rankings-chart').bind('jqplotDataClick',
+      function (event, seriesIndex, pointIndex, data) {
+        //if (window.console) console.log(seriesIndex, pointIndex, data);
+        //contextMenu.trigger(event.pageX || event.clientX, event.pageY || event.clientY);
+      }
+    );
   })
 

@@ -142,3 +142,40 @@ button.update {
   color: #bbb;
 }
 
+#contextMenu {
+  background: #F9F9F9;
+  box-shadow: 0 0 12px rgba( 0, 0, 0, .3 );
+  border: 1px solid #ccc;
+  display: none;
+  position: absolute;
+  top: 0; left: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 100px;
+
+  li {
+    position: relative;
+  }
+
+  li:hover {
+    background: #444;
+  }
+
+  a {
+    color: #444;
+    display: inline-block;
+    padding: 5px;
+    text-decoration: none;
+    width: 85%;
+  }
+
+  li:hover a {
+    color: #f9f9f9;
+  }
+
+  li:last-child a {
+    border-bottom: none;
+  }
+}
+
