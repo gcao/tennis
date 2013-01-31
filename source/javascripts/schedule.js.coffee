@@ -93,7 +93,7 @@ window.drawMapWithSchedule = (tournaments) ->
 window.generateScheduleHtml = (tournaments) ->
   html = ""
   $.each tournaments, (i, tournament) ->
-    tournamentUrl = atpUrlBase + tournament.url
+    tournamentUrl = getAtpUrl(tournament.url)
     tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
     html += """
       <p class="tournament">

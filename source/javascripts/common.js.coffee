@@ -1,4 +1,5 @@
-window.atpUrlBase = "http://www.atpworldtour.com"
+window.getAtpUrl = (url) ->
+  "http://www.atpworldtour.com#{url}"
 
 window.getQueryVar = (varName) ->
   # Grab and unescape the query string - appending an '&' keeps the RegExp simple
@@ -66,7 +67,7 @@ window.getTournamentPriority = (tournamentType) ->
 
 window.getInfoWindowContent = (tournament) ->
   """
-    <div class="map-info">"
+    <div class="map-info">
       <p class="tournament-name">
         <a href="http://www.atpworldtour.com#{tournament.url}" target="_new">#{tournament.name}</a>
       </p>
@@ -78,8 +79,10 @@ window.getInfoWindowContent = (tournament) ->
   """
 
 window.formatDate = (date, format = 'YYYY-MM-DD') ->
-  format = format.replace("DD", (date.getDate() < 10 ? '0' : '') + date.getDate()) # Pad with '0' if needed
-  format = format.replace("MM", (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1)) # Months are zero-based
+  format = format.replace("DD",
+    (if date.getDate() < 10 then '0' else '') + date.getDate()) # Pad with '0' if needed
+  format = format.replace("MM",
+    (if date.getMonth() < 9 then '0' else '') + (date.getMonth() + 1)) # Months are zero-based
   format.replace("YYYY", date.getFullYear())
 
 window.isFuture = (formattedDate) ->
