@@ -28,8 +28,8 @@ window.updateGenerationTime = (time) ->
 window.getMap = ->
   new google.maps.Map(document.getElementById("map"),
     zoom: 3
-    center: new google.maps.LatLng(20, 0)
-    mapTypeId: google.maps.MapTypeId.TERRAIN
+    center: new google.maps.LatLng(25, 0)
+    mapTypeId: google.maps.MapTypeId.ROADMAP
   )
 
 window.getTournamentLogo = (tournamentType, tournamentName) ->
