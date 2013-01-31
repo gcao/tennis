@@ -6,7 +6,7 @@
   <head>
     <meta charset='utf-8' />
     <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
-    <title>Set your site title in /helpers/site_helpers.rb</title>
+    <title>Guoliang's Tennis Page</title>
     <meta content='Set your site description in /helpers/site_helpers.rb' name='description' />
     <meta content='width=device-width' name='viewport' />
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
@@ -29,30 +29,34 @@
             <img class='logo' src='images/site-logo.gif' />
           </a>
         </h2>
-        <div id='menu'>
-          <ul>
-            <li class='current rankings'>
-              <span>
-                <a href='rankings.html'>Rankings</a>
-              </span>
-            </li>
-            <li class='rank-history'>
-              <span>
-                <a href='rank-history.html'>Rank History</a>
-              </span>
-            </li>
-            <li class='tournaments'>
-              <span>
-                <a href='tournaments.html'>Tournaments</a>
-              </span>
-            </li>
-            <li class='support'>
-              <span>
-                <a href='support.html'>Support</a>
-              </span>
-            </li>
-          </ul>
-        </div>
+        <ul id='nav'>
+          <li class='current rankings'>
+            <a href='rankings.html'>Rankings</a>
+          </li>
+          <li class='rank-history'>
+            <a href='rank-history.html'>Rank History</a>
+          </li>
+          <li class='tournaments'>
+            <a href='tournaments.html'>Tournaments</a>
+          </li>
+          <li class='tournaments'>
+            <a href='javascript:void(0)'>Schedules</a>
+            <ul>
+              <li>
+                <a href='schedule.html?player=novak_djokovic'>Novak Djokovic</a>
+              </li>
+              <li>
+                <a href='schedule.html?player=roger_federer'>Roger Federer</a>
+              </li>
+              <li>
+                <a href='schedule.html?player=andy_murray'>Andy Murray</a>
+              </li>
+            </ul>
+          </li>
+          <li class='support'>
+            <a href='support.html'>Support</a>
+          </li>
+        </ul>
       </div>
     </header>
     <div class='main' role='main'>
@@ -60,51 +64,83 @@
         ATP rankings chart for top 50 players
         <span class='generated-note'>(generated at <span class='generated-at'></span>)</span>
       </h2>
-      <div id='rankings-chart'></div>
-      <script src='javascripts/rankings-dep.js'></script>
+      <div id='rankings-chart' style='height: 1000px'></div>
+      <div id='contextMenu'>
+        <li><a href="#" target="_new">Homepage</a></li>
+        <li><a href="#">Rank History</a></li>
+      </div>
+      <script src='javascripts/rankings.js'></script>
       <script type='text/javascript'>
         //<![CDATA[
-          loadData('rankings', function(rankings) {
-            updateGenerationTime(rankings.generated_at);
-          
-            window.d = $.map(rankings.data, function(v, i){return [[v.rank + ' ' + v.last, v.points]]});
-          
-            $.jqplot('rankings-chart', [d], {
-              series: [{
-                renderer:$.jqplot.BarRenderer,
-                rendererOptions:{
-                  barWidth: 14,
+          (function() {
+      
+        loadData("rankings", function(rankings) {
+          var ContextMenu;
+          ContextMenu = function(menu, contextHandler) {
+            var hide;
+            hide = true;
+            menu = document.getElementById(menu);
+            this.trigger = function(x, y) {
+              hide = false;
+              menu.style.top = y + "px";
+              menu.style.left = x + "px";
+              return menu.style.display = "block";
+            };
+            return $("body").click(function() {
+              if (hide) {
+                menu.style.display = "none";
+              }
+              return hide = true;
+            });
+          };
+          window.contextMenu = new ContextMenu("contextMenu");
+          updateGenerationTime(rankings.generated_at);
+          window.d = $.map(rankings.data, function(v, i) {
+            return [[v.points, v.rank + " " + v.last]];
+          }).reverse();
+          $.jqplot("rankings-chart", [d], {
+            series: [
+              {
+                shadowAngle: 135,
+                pointLabels: {
+                  show: true,
+                  color: "#333",
+                  location: "e"
+                },
+                renderer: $.jqplot.BarRenderer,
+                rendererOptions: {
+                  barDirection: "horizontal",
+                  barWidth: 10,
                   barMargin: 2,
                   barPadding: 2
-                },
-              }],
-              axesDefaults: {
-                tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-                tickOptions: {
-                  showGridLine: false,
-                  angle: -35,
-                  fontSize: '10pt',
-                  fontFamily: 'Georgia'
                 }
+              }
+            ],
+            axesDefaults: {
+              tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+              tickOptions: {
+                showGridLine: false,
+                fontSize: "10pt",
+                fontFamily: "Georgia"
+              }
+            },
+            axes: {
+              yaxis: {
+                renderer: $.jqplot.CategoryAxisRenderer
               },
-              axes: {
-                xaxis: {
-                  renderer: $.jqplot.CategoryAxisRenderer
-                },
-                yaxis: {
-                  min: 0,
-                  max: 15000,
-                  numberTicks: 7,
-                  autoscale:true
-                }
+              xaxis: {
+                min: 0,
+                max: 15000,
+                numberTicks: 7,
+                autoscale: true
               }
-            });
-            $('#rankings-chart').bind('jqplotDataClick',
-              function (ev, seriesIndex, pointIndex, data) {
-                if (window.console) console.log(seriesIndex, pointIndex, data);
-              }
-            );
-          })
+            }
+          });
+          return $("#rankings-chart").bind("jqplotDataClick", function(event, seriesIndex, pointIndex, data) {});
+        });
+      
+      }).call(this);
+      
         //]]>
       </script>
     </div>

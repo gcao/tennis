@@ -6,7 +6,7 @@
   <head>
     <meta charset='utf-8' />
     <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
-    <title>Set your site title in /helpers/site_helpers.rb</title>
+    <title>Guoliang's Tennis Page</title>
     <meta content='Set your site description in /helpers/site_helpers.rb' name='description' />
     <meta content='width=device-width' name='viewport' />
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
@@ -29,30 +29,34 @@
             <img class='logo' src='images/site-logo.gif' />
           </a>
         </h2>
-        <div id='menu'>
-          <ul>
-            <li class='rankings'>
-              <span>
-                <a href='rankings.html'>Rankings</a>
-              </span>
-            </li>
-            <li class='rank-history'>
-              <span>
-                <a href='rank-history.html'>Rank History</a>
-              </span>
-            </li>
-            <li class='tournaments'>
-              <span>
-                <a href='tournaments.html'>Tournaments</a>
-              </span>
-            </li>
-            <li class='current support'>
-              <span>
-                <a href='support.html'>Support</a>
-              </span>
-            </li>
-          </ul>
-        </div>
+        <ul id='nav'>
+          <li class='rankings'>
+            <a href='rankings.html'>Rankings</a>
+          </li>
+          <li class='rank-history'>
+            <a href='rank-history.html'>Rank History</a>
+          </li>
+          <li class='tournaments'>
+            <a href='tournaments.html'>Tournaments</a>
+          </li>
+          <li class='tournaments'>
+            <a href='javascript:void(0)'>Schedules</a>
+            <ul>
+              <li>
+                <a href='schedule.html?player=novak_djokovic'>Novak Djokovic</a>
+              </li>
+              <li>
+                <a href='schedule.html?player=roger_federer'>Roger Federer</a>
+              </li>
+              <li>
+                <a href='schedule.html?player=andy_murray'>Andy Murray</a>
+              </li>
+            </ul>
+          </li>
+          <li class='current support'>
+            <a href='support.html'>Support</a>
+          </li>
+        </ul>
       </div>
     </header>
     <div class='main' role='main'>
