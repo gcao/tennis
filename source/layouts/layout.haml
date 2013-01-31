@@ -6,17 +6,17 @@
   %head
     %meta{:charset => "utf-8"}
     %meta{:content => "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible"}
-    
+
     -# To set titles and descriptions globally and for each individual page, see /DOCS.md
     %title= page_title
     %meta{:content => page_description, :name => "description"}
-    
+
     %meta{:content => "width=device-width", :name => "viewport"}
-    
+
     -#Favicon Options:
     -#Update favicon_base.png in /source and middleman-favicon-maker will generate all the versions you need on 'middleman build'
     -#OR, place favicon.ico and apple-touch-icon.png in /source and deactivate :favicon_maker in config.rb
-    
+
     %script(src='javascripts/vendor/modernizr-2.6.1.min.js')
     %link(href='stylesheets/site.css' rel='stylesheet')
     = javascript_include_tag "//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"
@@ -42,7 +42,11 @@
             %a(href='javascript:void(0)') Schedules
             %ul
               %li
+                %a(href='schedule.html?player=novak_djokovic') Novak Djokovic
+              %li
                 %a(href='schedule.html?player=roger_federer') Roger Federer
+              %li
+                %a(href='schedule.html?player=andy_murray') Andy Murray
           %li.support{toggle_tab('support')}
             %a(href='support.html') Support
     %div.main(role="main")= yield
