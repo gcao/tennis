@@ -43,12 +43,9 @@ addPath = (map, startMarker, endMarker) ->
     strokeOpacity: 1
   )
 
-$.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
-  tournaments = req1[0]
-  schedule = req2[0]
-
-  tournaments = $.map(schedule.data, (tournament_name) ->
-    result = tournaments.data.filter((tournament) ->
+window.filterTournaments = (tournaments, schedule) ->
+  $.map(schedule, (tournament_name) ->
+    result = tournaments.filter((tournament) ->
       tournament.name is tournament_name
     )
     if result.length > 0
@@ -57,6 +54,7 @@ $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2
       console?.log "Tournament not found: " + tournament_name
   )
 
+window.drawMapWithSchedule = (tournaments) ->
   map = getMap()
   prevMarker = undefined
   $.each tournaments, (i, tournament) ->
@@ -64,13 +62,14 @@ $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2
 
     icon     = getTournamentLogo(tournament.type, tournament.name)
     zIndex   = getTournamentPriority(tournament.type)
-    myLatLng = new google.maps.LatLng(tournament.latitude, tournament.longitude)
+    position = new google.maps.LatLng(tournament.latitude, tournament.longitude)
     marker   = new google.maps.Marker(
-      position: myLatLng
+      position: position
       map: map
       icon: icon
       zIndex: zIndex
     )
+
     infoWindow = new google.maps.InfoWindow(content: getInfoWindowContent(tournament))
     google.maps.event.addListener marker, "click", ->
       infoWindow.open map, marker

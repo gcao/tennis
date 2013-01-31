@@ -10,40 +10,22 @@
     $.each tournaments.data, (i, tournament) ->
       return  if tournament.type is "daviscup"
 
-      icon   = getTournamentLogo(tournament.type, tournament.name)
-      zIndex = getTournamentPriority(tournament.type)
-      show   = not(tournament.type in ["atp250", "atp500"])
-
-      myLatLng = new google.maps.LatLng(tournament.latitude, tournament.longitude)
-      marker = new google.maps.Marker(
-        position: myLatLng
+      icon     = getTournamentLogo(tournament.type, tournament.name)
+      zIndex   = getTournamentPriority(tournament.type)
+      show     = not(tournament.type in ["atp250", "atp500"])
+      position = new google.maps.LatLng(tournament.latitude, tournament.longitude)
+      marker   = new google.maps.Marker(
+        position: position
         map: (if show then map else null)
         icon: icon
         zIndex: zIndex
       )
 
-      if tournament.type is "atp250"
-        atp250Markers.push marker
-      else if tournament.type is "atp500"
-        atp500Markers.push marker
+      switch tournament.type 
+        when "atp250" then atp250Markers.push marker
+        when "atp500" then atp500Markers.push marker
 
-      label = """
-        <div class="map-info">"
-          <p class="tournament-name">
-            <a href="http://www.atpworldtour.com\#{tournament.url}" target="_new">\#{tournament.name}</a>
-          </p>
-          <p>
-            <span class="tournament-time">\#{tournament.start}</span>
-            @ <span class="tournament-place">\#{tournament.place}</span>
-          </p>
-          <p class="tournament-title-holder">
-            Title Holder:
-            <a href="http://www.atpworldtour.com\#{tournament.title_holder.url}"
-            target="_new">\#{tournament.title_holder.name}</a>
-          </p>
-        </div>
-      """
-      infoWindow = new google.maps.InfoWindow(content: label)
+      infoWindow = new google.maps.InfoWindow(content: getInfoWindowContent(tournament))
       google.maps.event.addListener marker, "click", ->
         infoWindow.open map, marker
 
