@@ -1,13 +1,24 @@
+%h2
+  <span id='player_name'>PLAYER</span>'s tournament schedule
+
 #map
+#schedule
 
 %script(type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true")
 %script(src='javascripts/schedule.js')
 :coffeescript
   player = getQueryVar('player')
-  $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
-    tournaments = req1[0]
-    schedule = req2[0]
+  if player
+    $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
+      tournaments = req1[0]
+      schedule = req2[0]
 
-    tournaments = filterTournaments(tournaments.data, schedule.data)
-    drawMapWithSchedule(tournaments)
+      $('#player_name').text(schedule.name)
+
+      tournaments = filterTournaments(tournaments.data, schedule.data)
+      $('#schedule').html(generateScheduleHtml(tournaments))
+      drawMapWithSchedule(tournaments)
+  else
+    $('#map, #schedule').hide()
+    $('.main h2').html('No player is selected. Please select players from "Schedules" menu')
 

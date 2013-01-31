@@ -1,3 +1,5 @@
+window.atpUrlBase = "http://www.atpworldtour.com"
+
 window.getQueryVar = (varName) ->
   # Grab and unescape the query string - appending an '&' keeps the RegExp simple
   # for the sake of this example.
@@ -44,13 +46,14 @@ window.getTournamentLogo = (tournamentType, tournamentName) ->
       "http://www.atpworldtour.com/~/media/47F12472FD254B08B57755E5B7565E5D.ashx?w=31&h=48"
     when "grandslam"
       if tournamentName.match(/australian open/i)
-        new google.maps.MarkerImage("images/ao_logo.png")
+        #new google.maps.MarkerImage("images/ao_logo.png")
+        "images/ao_logo.png"
       else if tournamentName.match(/roland garros/i)
-        new google.maps.MarkerImage("images/fo_logo.png")
+        "images/fo_logo.png"
       else if tournamentName.match(/wimbledon/i)
-        new google.maps.MarkerImage("images/wo_logo.png")
+        "images/wo_logo.png"
       else if tournamentName.match(/us open/i)
-        new google.maps.MarkerImage("images/uo_logo.png")
+        "images/uo_logo.png"
 
 window.getTournamentPriority = (tournamentType) ->
   switch tournamentType
@@ -71,10 +74,14 @@ window.getInfoWindowContent = (tournament) ->
         <span class="tournament-time">#{tournament.start}</span>
         @ <span class="tournament-place">#{tournament.place}</span>
       </p>
-      <p class="tournament-title-holder">
-        Title Holder:
-        <a href="http://www.atpworldtour.com#{tournament.title_holder.url}"
-        target="_new">#{tournament.title_holder.name}</a>
-      </p>
     </div>
   """
+
+window.formatDate = (date, format = 'YYYY-MM-DD') ->
+  format = format.replace("DD", (date.getDate() < 10 ? '0' : '') + date.getDate()) # Pad with '0' if needed
+  format = format.replace("MM", (date.getMonth() < 9 ? '0' : '') + (date.getMonth() + 1)) # Months are zero-based
+  format.replace("YYYY", date.getFullYear())
+
+window.isFuture = (formattedDate) ->
+  formattedDate > formatDate(new Date())
+

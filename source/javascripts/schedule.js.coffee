@@ -1,4 +1,4 @@
-addPath = (map, startMarker, endMarker) ->
+addPath = (map, startMarker, endMarker, pathState) ->
   bounds = new google.maps.LatLngBounds()
   p1 = startMarker.getPosition()
   p2 = endMarker.getPosition()
@@ -35,10 +35,14 @@ addPath = (map, startMarker, endMarker) ->
     fPoints.push p
     n++
 
+  strokeColor = switch pathState
+    when 'past'    then '#888'
+    when 'present' then '#f44'
+    else                '#FF9601'
   pLine = new google.maps.Polyline(
     map: map
     path: fPoints
-    strokeColor: "#FF9601"
+    strokeColor: strokeColor
     strokeWeight: 3
     strokeOpacity: 1
   )
@@ -56,6 +60,7 @@ window.filterTournaments = (tournaments, schedule) ->
 
 window.drawMapWithSchedule = (tournaments) ->
   map = getMap()
+  prevTournament = undefined
   prevMarker = undefined
   $.each tournaments, (i, tournament) ->
     return  if tournament.type is "daviscup"
@@ -74,5 +79,27 @@ window.drawMapWithSchedule = (tournaments) ->
     google.maps.event.addListener marker, "click", ->
       infoWindow.open map, marker
 
-    addPath map, prevMarker, marker  if prevMarker
+    if prevTournament
+      pathState =
+        if isFuture(prevTournament.start) then 'future'
+        else if not isFuture(tournament.start) then 'past'
+        else 'present'
+
+      addPath map, prevMarker, marker, pathState
+
+    prevTournament = tournament
     prevMarker = marker
+
+window.generateScheduleHtml = (tournaments) ->
+  html = ""
+  $.each tournaments, (i, tournament) ->
+    tournamentUrl = atpUrlBase + tournament.url
+    tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
+    html += """
+      <p class="tournament">
+        <div class="logo"><a href="#{tournamentUrl}" target="_new"><img src="#{tournamentLogo}"/></a></div>
+        <div class="name"><a href="#{tournamentUrl}" target="_new">#{tournament.name}</a></div>
+      </p>
+    """
+
+  html
