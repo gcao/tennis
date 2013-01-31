@@ -46,11 +46,6 @@ addPath = (map, startMarker, endMarker) ->
 $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
   tournaments = req1[0]
   schedule = req2[0]
-  map = new google.maps.Map(document.getElementById("map"),
-    zoom: 3
-    center: new google.maps.LatLng(20, 0)
-    mapTypeId: google.maps.MapTypeId.TERRAIN
-  )
 
   tournaments = $.map(schedule.data, (tournament_name) ->
     result = tournaments.data.filter((tournament) ->
@@ -59,44 +54,24 @@ $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2
     if result.length > 0
       result[0]
     else
-      console.log "Tournament not found: " + tournament_name  if console.log
+      console?.log "Tournament not found: " + tournament_name
   )
 
+  map = getMap()
   prevMarker = undefined
   $.each tournaments, (i, tournament) ->
-    icon = ""
-    zIndex = 1
-    if tournament.type is "atp250"
-      icon = "http://www.atpworldtour.com/~/media/810218DC73784BEEA6EF0978B2842A69.ashx?w=31&h=36"
-      zIndex = 2
-    else if tournament.type is "atp500"
-      icon = "http://www.atpworldtour.com/~/media/1DB04CA8505648B7B511FA1E37F1E3BA.ashx?w=31&h=36"
-      zIndex = 3
-    else if tournament.type is "atp1000"
-      icon = "http://www.atpworldtour.com/~/media/F5219431817E4ED3B773BF9B006A9ACF.ashx?w=31&h=42"
-      zIndex = 4
-    else if tournament.type is "atptourfinal"
-      icon = "http://www.atpworldtour.com/~/media/47F12472FD254B08B57755E5B7565E5D.ashx?w=31&h=48"
-      zIndex = 5
-    else if tournament.type is "grandslam"
-      zIndex = 6
-      if tournament.name.match(/australian open/i)
-        icon = new google.maps.MarkerImage("images/ao_logo.png")
-      else if tournament.name.match(/roland garros/i)
-        icon = new google.maps.MarkerImage("images/fo_logo.png")
-      else if tournament.name.match(/wimbledon/i)
-        icon = new google.maps.MarkerImage("images/wo_logo.png")
-      else icon = new google.maps.MarkerImage("images/uo_logo.png")  if tournament.name.match(/us open/i)
-    else return  if tournament.type is "daviscup"
-    label = "<div class=\"map-info\">" + "<p class=\"tournament-name\"><a href=\"http://www.atpworldtour.com" + tournament.url + "\" target=\"_new\">" + tournament.name + "</a>" + "</p><p><span class=\"tournament-time\">" + tournament.start + "</span> @ <span class=\"tournament-place\">" + tournament.place + "</span></p><p class=\"tournament-title-holder\">Title Holder: <a href=\"http://www.atpworldtour.com" + tournament.title_holder.url + "\" target=\"_new\">" + tournament.title_holder.name + "</a>" + "</p></div>"
+    return  if tournament.type is "daviscup"
+
+    icon     = getTournamentLogo(tournament.type, tournament.name)
+    zIndex   = getTournamentPriority(tournament.type)
     myLatLng = new google.maps.LatLng(tournament.latitude, tournament.longitude)
-    marker = new google.maps.Marker(
+    marker   = new google.maps.Marker(
       position: myLatLng
       map: map
       icon: icon
       zIndex: zIndex
     )
-    infoWindow = new google.maps.InfoWindow(content: label)
+    infoWindow = new google.maps.InfoWindow(content: getInfoWindowContent(tournament))
     google.maps.event.addListener marker, "click", ->
       infoWindow.open map, marker
 
