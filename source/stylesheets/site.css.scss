@@ -53,8 +53,7 @@ header {
 
 #nav {
   float: right;
-	margin: 0 1em 0;
-  margin-left: 80px;
+	margin: 0 5px 0;
 	padding: 7px 6px 0;
 	background: #7d7d7d url(../images/gradient.png) repeat-x 0 -110px;
 	line-height: 100%;
@@ -224,7 +223,6 @@ html[xmlns] #nav {
 }
 
 #rankings-chart, #rank-history {
-  margin-top: 20px;
   margin-bottom: 20px;
 }
 
