@@ -31,20 +31,20 @@
         %h2
           %a(href='index.html')
             %img.logo(src='images/site-logo.gif')
-        #menu
-          %ul
-            %li.rankings{toggle_tab('rankings')}
-              %span
-                %a(href='rankings.html') Rankings
-            %li.rank-history{toggle_tab('rank-history')}
-              %span
-                %a(href='rank-history.html') Rank History
-            %li.tournaments{toggle_tab('tournaments')}
-              %span
-                %a(href='tournaments.html') Tournaments
-            %li.support{toggle_tab('support')}
-              %span
-                %a(href='support.html') Support
+        %ul#nav
+          %li.rankings{toggle_tab('rankings')}
+            %a(href='rankings.html') Rankings
+          %li.rank-history{toggle_tab('rank-history')}
+            %a(href='rank-history.html') Rank History
+          %li.tournaments{toggle_tab('tournaments')}
+            %a(href='tournaments.html') Tournaments
+          %li.tournaments{toggle_tab('schedule')}
+            %a(href='javascript:void(0)') Schedules
+            %ul
+              %li
+                %a(href='roger_federer_schedule.html') Roger Federer
+          %li.support{toggle_tab('support')}
+            %a(href='support.html') Support
     %div.main(role="main")= yield
     %footer
 
