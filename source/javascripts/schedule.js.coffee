@@ -96,10 +96,11 @@ window.generateScheduleHtml = (tournaments) ->
     tournamentUrl = getAtpUrl(tournament.url)
     tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
     html += """
-      <p class="tournament">
+      <div class="tournament #{if isFuture(tournament.start) then 'future'}">
+        <div class="start">#{tournament.start}</div>
         <div class="logo"><a href="#{tournamentUrl}" target="_new"><img src="#{tournamentLogo}"/></a></div>
         <div class="name"><a href="#{tournamentUrl}" target="_new">#{tournament.name}</a></div>
-      </p>
+      </div>
     """
 
   html

@@ -19,6 +19,7 @@ body, ul, li, dl, dd, p, h1, h2, h3, h4, h5, h6, form, fieldset {
 
 header {
   margin-bottom: 8px;
+  padding-left: 5px;
   width: 100%;
   border-bottom: 1px dotted #7d7d7d;
   background: #FFFFFF; width: 100%;
@@ -297,16 +298,32 @@ button.update {
 }
 
 #schedule {
-  p {
-    margin-bottom: 5px;
-  }
+  margin-top: 20px;
 
   img {
     vertical-align: middle;
   }
 
-  div {
-    display: inline-block;
+  .tournament {
+    margin-bottom: 5px;
+    padding-right: 20px;
+    background: #bbb;
+
+    &.future {
+      background: #eee;
+    }
+
+    div {
+      display: inline-block;
+    }
+  }
+
+  .start {
+    width: 100px;
+  }
+
+  .logo {
+    width: 80px;
   }
 }
 
