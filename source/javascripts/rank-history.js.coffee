@@ -81,4 +81,3 @@ window.changeFromYear = ->
 
   $("[name=toYear]").val (if toYear then toYear else getYear())
 
-

@@ -43,15 +43,17 @@ addPath = (map, startMarker, endMarker) ->
     strokeOpacity: 1
   )
 
-$(document).ready ->
+$.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
+  tournaments = req1[0]
+  schedule = req2[0]
   map = new google.maps.Map(document.getElementById("map"),
     zoom: 3
     center: new google.maps.LatLng(20, 0)
     mapTypeId: google.maps.MapTypeId.TERRAIN
   )
 
-  tournaments = $.map(roger_federer_schedule.data, (tournament_name) ->
-    result = window.tournaments.data.filter((tournament) ->
+  tournaments = $.map(schedule.data, (tournament_name) ->
+    result = tournaments.data.filter((tournament) ->
       tournament.name is tournament_name
     )
     if result.length > 0

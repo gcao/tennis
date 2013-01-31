@@ -17,61 +17,54 @@
 %link(href='stylesheets/nv.d3.css' rel='stylesheet')
 %script(src='javascripts/vendor/d3.v2.min.js')
 %script(src='javascripts/vendor/nv.d3.min.js')
-:javascript
-  loadData('rankings', function(rankings) {
-    updateGenerationTime(rankings.generated_at);
-    $('[name=fromYear]').change(changeFromYear);
+:coffeescript
+  loadData "rankings", (rankings) ->
+    updateGenerationTime rankings.generated_at
 
-    $.each(rankings.data, function(i, r){
-      if (i >= 10) return;
+    $("[name=fromYear]").change changeFromYear
 
-      var name = r.first + ' ' + r.last;
-      var value = (r.first + '_' + r.last).toLowerCase().replace(/[ -]/g, '_');
-      $('#players').append('<div class="player"><input type="checkbox" name="player" value="' + value + '"><span>' + name + '</span></div>');
-    });
+    $.each rankings.data, (i, r) ->
+      return  if i >= 10
+      name = r.first + " " + r.last
+      value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_")
+      $("#players").append "<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>"
 
-    $('button.update').click(function(){
-      var players = $('[name=player]:checked').map(function(){
-        return this.value;
-      });
-      if (players.length === 0) {
-        alert('No player is selected.');
-      } else if (players.length === 1) {
-        window.location = location.pathname + '?players=' + players[0];
-      } else {
-        var s = players[0];
-        for (var i=1; i<players.length; i++) {
-          s += ',' + players[i];
-        }
-        window.location = location.pathname + '?players=' + s + '&fromYear=' + $('[name=fromYear]').val() + '&toYear=' + $('[name=toYear]').val();
-      }
-    });
+    $("button.update").click ->
+      players = $("[name=player]:checked").map(-> @value)
+      if players.length is 0
+        alert "No player is selected."
+      else if players.length is 1
+        window.location = location.pathname + "?players=" + players[0]
+      else
+        s = players[0]
+        i = 1
 
-    var fromYear = 2003;
-    var fromYearParam = getQueryVar('fromYear');
-    if (fromYearParam) {
-      fromYear = parseInt(fromYearParam);
-    }
-    initFromYear();
-    $('[name=fromYear]').val(fromYear);
+        while i < players.length
+          s += "," + players[i]
+          i++
 
-    var toYear = getYear();
-    var toYearParam = getQueryVar('toYear');
-    if (toYearParam) {
-      toYear = parseInt(toYearParam);
-    }
-    initToYear(fromYear);
-    $('[name=toYear]').val(toYear);
+        window.location = location.pathname + "?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val()
 
-    var players = null;
-    var playersParam = getQueryVar('players');
-    if (playersParam && playersParam !== '') {
-      players = playersParam.split(',');
-    } else {
-      players = ['novak_djokovic', 'roger_federer', 'rafael_nadal', 'andy_murray'];
-    }
-    $.each(players, function(i, p){ $('[value=' + p + ']').click(); });
+    fromYear = 2003
+    fromYearParam = getQueryVar("fromYear")
+    fromYear = parseInt(fromYearParam)  if fromYearParam
+    initFromYear()
+    $("[name=fromYear]").val fromYear
 
-    loadAndShowRankHistory(players, fromYear, toYear);
-  })
+    toYear = getYear()
+    toYearParam = getQueryVar("toYear")
+    toYear = parseInt(toYearParam)  if toYearParam
+    initToYear fromYear
+    $("[name=toYear]").val toYear
 
+    players = null
+    playersParam = getQueryVar("players")
+    if playersParam and playersParam isnt ""
+      players = playersParam.split(",")
+    else
+      players = ["novak_djokovic", "roger_federer", "rafael_nadal", "andy_murray"]
+
+    $.each players, (i, p) ->
+      $("[value=" + p + "]").click()
+
+    loadAndShowRankHistory players, fromYear, toYear
