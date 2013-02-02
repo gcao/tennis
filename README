@@ -7,3 +7,9 @@ $ cd build
 $ git ci --interactive
 $ git push origin `git branch | grep '*' | cut -b 3-`
 
+TODO
+
+Create bar chart for overall win/lose (win on bottom, lose on top)
+Collect data from wikipedia
+Include two or more players in one diagram
+For top 4 players only
