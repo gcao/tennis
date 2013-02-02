@@ -4,7 +4,8 @@ window.loadAndShowRankHistory = (players, fromYear, toYear) ->
     return
 
   loadRankHistory(players).then ->
-    data = $.map(arguments, (request) -> request[0])
+    results = if arguments[0] instanceof Array then arguments else [arguments]
+    data = $.map(results, (request) -> request[0])
     showRankHistory data, fromYear, toYear
 
 window.loadRankHistory = (players) ->

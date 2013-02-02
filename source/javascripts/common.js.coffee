@@ -16,7 +16,7 @@ window.getQueryVar = (varName) ->
   (if val is queryStr then false else val)
 
 window.loadData = (id, successHandler) ->
-  if useLocalData
+  if useLocalData or getQueryVar('local_data') is 'true'
     $.getJSON "data/" + id + ".json", successHandler
   else
     $.getJSON "http://gcao.cloudant.com/tennis/" + id + "?callback=?", successHandler
