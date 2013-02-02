@@ -51,6 +51,9 @@
               <li>
                 <a href='schedule.html?player=andy_murray'>Andy Murray</a>
               </li>
+              <li>
+                <a href='schedule.html?player=rafael_nadal'>Rafael Nadal</a>
+              </li>
             </ul>
           </li>
           <li class='support'>
@@ -88,8 +91,11 @@
           $("[name=fromYear]").change(changeFromYear);
           $.each(rankings.data, function(i, r) {
             var name, value;
-            if (i >= 10) {
+            if (i >= 50) {
               return;
+            }
+            if (i % 5 === 0) {
+              $('#players').append('<br/>');
             }
             name = r.first + " " + r.last;
             value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_");
