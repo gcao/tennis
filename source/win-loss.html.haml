@@ -7,31 +7,31 @@
 :coffeescript
   loadData 'roger_federer_win_loss', (data) ->
     ticks = $.map(data.data, (v) -> '' + v[0])
-    winData = $.map(data.data, (v) ->
-      v[1]
-    )
-    lossData = $.map(data.data, (v) ->
-      v[2]
-    )
+    winData = $.map(data.data, (v) -> v[1])
+    lossData = $.map(data.data, (v) -> v[2])
     $.jqplot "win-loss-chart", [winData, lossData],
       stackSeries: true
-      pointLabels:
-        show: true
       seriesDefaults:
         shadowAngle: 135
+        pointLabels: show: true
         renderer: $.jqplot.BarRenderer
         rendererOptions:
-          barWidth: 10
+          barWidth: 18
           barMargin: 2
           barPadding: 2
+      series: [{
+        rendererOptions:
+          color: '#d44'
+      }, {
+        rendererOptions:
+          color: '#4c4'
+      }]
       legend:
         renderer: $.jqplot.EnhancedLegendRenderer
         location: 'ne'
         placement: 'inside'
-        show: true
+        show: false
       axes:
-        yaxis:
-          pad: 0
         xaxis:
           renderer: $.jqplot.CategoryAxisRenderer
           ticks: ticks
