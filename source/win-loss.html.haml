@@ -1,38 +1,96 @@
 %h2
   Top players' win/loss chart
 
-#win-loss-chart(style='height: 300px')
+:css
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+  .bar {
+    fill: steelblue;
+  }
+
+  .x.axis path {
+    display: none;
+  }
+
+  .legend line {
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+#win-loss-chart
 
 %script(src='javascripts/win-loss.js')
-:coffeescript
-  loadData 'roger_federer_win_loss', (data) ->
-    ticks = $.map(data.data, (v) -> '' + v[0])
-    winData = $.map(data.data, (v) -> v[1])
-    lossData = $.map(data.data, (v) -> v[2])
-    $.jqplot "win-loss-chart", [winData, lossData],
-      stackSeries: true
-      seriesDefaults:
-        shadowAngle: 135
-        pointLabels: show: true
-        renderer: $.jqplot.BarRenderer
-        rendererOptions:
-          barWidth: 18
-          barMargin: 2
-          barPadding: 2
-      series: [{
-        rendererOptions:
-          color: '#d44'
-      }, {
-        rendererOptions:
-          color: '#4c4'
-      }]
-      legend:
-        renderer: $.jqplot.EnhancedLegendRenderer
-        location: 'ne'
-        placement: 'inside'
-        show: false
-      axes:
-        xaxis:
-          renderer: $.jqplot.CategoryAxisRenderer
-          ticks: ticks
+:javascript
+  var margin = {top: 20, right: 100, bottom: 30, left: 40},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+
+  var x = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
+
+  var y = d3.scale.linear()
+      .rangeRound([height, 0]);
+
+  var color = d3.scale.ordinal()
+      .range(["#f54", "#483"]);
+
+  var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .tickFormat(d3.format("d%"));
+
+  var svg = d3.select("#win-loss-chart").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  d3.json('data/roger_federer_win_loss.json', function(resp) {
+    var data = resp.data
+    color.domain(0);
+
+    x.domain(data.map(function(d) { return d[0]; }));
+    y.domain([0, 100]);
+
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
+
+    var year = svg.selectAll(".year")
+        .data(data)
+      .enter().append("g")
+        .attr("class", "year")
+        .attr("transform", function(d) { return "translate(" + x(d[0]) + ",0)"; });
+
+    year.selectAll(".win")
+        .data(function(d) { return [d]; })
+      .enter().append("rect")
+        .attr("class", 'win')
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d[1]); })
+        .attr("height", function(d) { return y(0) - y(d[1]); })
+        .style("fill", function(d) { return '#f54'; });
+
+    year.selectAll(".loss")
+        .data(function(d) { return [d]; })
+      .enter().append("rect")
+        .attr("class", 'loss')
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d[1] + d[2]); })
+        .attr("height", function(d) { return y(d[1]) - y(d[1] + d[2]) - 1; })
+        .style("fill", function(d) { return '#495'; });
+  });
 
