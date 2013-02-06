@@ -19,7 +19,7 @@ module SiteHelpers
     if data.page.description
       description = data.page.description
     else
-      description = "Set your site description in /helpers/site_helpers.rb"
+      description = "ATP Top 50 players' current ranking, rank history, tennis tournaments, player schedules etc"
     end
     description
   end

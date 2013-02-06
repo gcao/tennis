@@ -331,5 +331,18 @@ button.update {
   .jqplot-point-label {
     color: #444
   }
+
+  .percentage-label {
+    text-align: center;
+  }
+
+  .line {
+    fill: none;
+    stroke: #999;
+  }
+
+  path {
+    //color: #777;
+  }
 }
 
