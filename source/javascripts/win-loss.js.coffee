@@ -17,10 +17,11 @@ loadWinLoss(players).then (results...) ->
 
   width  = 960 - margin.left - margin.right
   height = 500 - margin.top - margin.bottom
+  years  = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013]
 
   x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1)
-    .domain(results[0].data.map((d) -> d[0]))
+    .domain(years)
 
   y = d3.scale.linear()
     .rangeRound([height, 0])
@@ -61,44 +62,46 @@ loadWinLoss(players).then (results...) ->
     .attr('y', (d, i) -> y(i * 10))
     .attr('text-anchor', 'end')
 
-  # Win/loss bar
-  barWidth = Math.min(x.rangeBand(), 30)
-  barX     = 42 - (x.rangeBand() - barWidth)/2
+  $.each results, (playerIndex, result) ->
+    data  = result.data
+    years = $.map(data, (d) -> d[0])
 
-  $.each results, (i, result) ->
-    data = result.data
-
-    year = svg.selectAll(".year#{i}")
+    player = svg.selectAll(".player#{playerIndex}")
       .data(data)
       .enter()
       .append("g")
-      .attr("class"    , "year year#{i}")
+      .attr("class"    , "player player#{playerIndex}")
       .attr("transform", (d) -> "translate(" + x(d[0]) + ", 0)")
 
-    year.selectAll(".win")
+    x1 = d3.scale.ordinal()
+      .domain($.map(results, (result, i) -> i))
+      .rangeRoundBands([0, x.rangeBand()], .05)
+
+    # Win/loss bar
+    player.selectAll(".win")
       .data((d) -> [d])
       .enter()
       .append("rect")
       .attr("class" , "win")
-      .attr("x"     , barX)
+      .attr("x"     , (d) -> x1(playerIndex))
       .attr("y"     , (d) -> y d[1])
-      .attr("width" , barWidth)
+      .attr("width" , x1.rangeBand())
       .attr("height", (d) -> y(0) - y(d[1]))
-      .style("fill" , (d) -> "#f54")
 
-    year.selectAll(".loss")
+    player.selectAll(".loss")
       .data((d) -> [d])
       .enter()
       .append("rect")
       .attr("class" , "loss")
-      .attr("x"     , barX)
+      .attr("x"     , (d) -> x1(playerIndex))
       .attr("y"     , (d) -> y d[1] + d[2])
-      .attr("width" , barWidth)
-      .attr("height", (d) -> y(d[1]) - y(d[1] + d[2]) - 1)
-      .style("fill" , (d) -> "#495")
+      .attr("width" , x1.rangeBand())
+      .attr "height", (d) -> 
+        h = y(d[1]) - y(d[1] + d[2])
+        if h > 0 then h - 1 else h
 
     # Win percentage
-    year.selectAll(".percentage")
+    player.selectAll(".percentage")
       .data((d) -> [d])
       .enter()
       .append("circle")
@@ -106,29 +109,23 @@ loadWinLoss(players).then (results...) ->
       .attr("r"    , 3)
       .attr("cx"   , (d, i) -> 35)
       .attr("cy"   , (d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
-      .style("fill", (d) -> "#65d")
 
-    year.append("text")
-      .text((d) -> d3.format("%d") d[1] / (d[1] + d[2]))
-      .attr("x", (d, i) -> 20)
-      .attr("y", (d) -> y(50 + 100 * d[1] / (d[1] + d[2])) - 10)
+    if results.length is 1
+      player.append("text")
+        .text((d) -> d3.format("%d") d[1] / (d[1] + d[2]))
+        .attr("x", (d, i) -> 20)
+        .attr("y", (d) -> y(50 + 100 * d[1] / (d[1] + d[2])) - 10)
     
     # Win percentage line
-    x1 = d3.scale.linear()
-      .domain([0, data.length])
-      .range([8, width])
-
-    y1 = d3.scale.linear()
-      .domain([0, 150])
-      .range([height, 0])
-
     line = d3.svg.line()
-      .x((d, i) -> x1(i) + 35)
-      .y((d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
+      .x((d) -> x(d[0]) + 35)
+      .y((d) -> y(50 + 100 * d[1] / (d[1] + d[2])))
 
-    lines = svg.append("g")
-      .attr("class", "line")
+    lines = svg.selectAll(".line#{playerIndex}")
+      .data([data])
+      .enter()
+      .append("g")
+      .attr("class", "line line#{playerIndex}")
       .append("path")
-      .datum(data)
       .attr("d", line)
 

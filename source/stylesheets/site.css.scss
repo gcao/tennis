@@ -342,7 +342,34 @@ button.update {
 
   .line {
     fill: none;
-    stroke: #999;
+  }
+
+  .player {
+    .loss {
+      fill: #495
+    }
+
+    .percentage {
+      fill: #65d
+    }
+  }
+
+  .player0 {
+    .win, text {
+      fill: #f54;
+    }
+  }
+  .line0 {
+    stroke: #f54
+  }
+
+  .player1 {
+    .win, text {
+      fill: #c54;
+    }
+  }
+  .line1 {
+    stroke: #c54
   }
 }
 
