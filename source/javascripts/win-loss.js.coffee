@@ -1,11 +1,16 @@
 #= require vendor/d3.v2.min
 
-players = getQueryVar('players') or 'roger_federer'
-d3.json "data/#{players}_win_loss.json", (resp) ->
-  data   = resp.data
+loadWinLoss = (players...) ->
+  ids = $.map(players, (player) -> player + '_win_loss')
+  loadData2(ids)
+
+players = getPlayers(DEFAULT_PLAYERS)
+loadWinLoss(players).then (results...) ->
+  data   = normalizeResults(results)[0].data
+
   margin =
     top    : 20
-    right  : 100
+    right  : 20
     bottom : 30
     left   : 40
 
@@ -24,12 +29,6 @@ d3.json "data/#{players}_win_loss.json", (resp) ->
     .scale(x)
     .orient("bottom")
 
-  yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .tickValues([0, 20, 40, 60, 80, 100])
-    .tickFormat(d3.format("d%"))
-
   svg = d3.select("#win-loss-chart")
     .append("svg")
     .attr("width" , width + margin.left + margin.right)
@@ -42,9 +41,24 @@ d3.json "data/#{players}_win_loss.json", (resp) ->
     .attr("transform", "translate(0, " + height + ")")
     .call(xAxis)
 
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
+  # Add horizontal grids
+  hGrid = svg.selectAll('.h-grid')
+    .data([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1])
+    .enter()
+    .append('g')
+    .attr('class', 'h-grid');
+
+  hGrid.append('line')
+    .attr('x1', (d, i) -> 0)
+    .attr('y1', (d, i) -> y(i * 10))
+    .attr('x2', (d, i) -> width)
+    .attr('y2', (d, i) -> y(i * 10))
+
+  hGrid.append('text')
+    .text((d, i) -> if i <= 10 then d else d3.format('%d')(d))
+    .attr('x', (d, i) -> -5)
+    .attr('y', (d, i) -> y(i * 10))
+    .attr('text-anchor', 'end')
 
   year = svg.selectAll(".year")
     .data(data)

@@ -9,7 +9,7 @@ window.loadAndShowRankHistory = (players, fromYear, toYear) ->
     showRankHistory data, fromYear, toYear
 
 window.loadRankHistory = (players) ->
-  $.when.apply $, $.map(players, (player) -> loadData player + "_rank_history")
+  $.when ($.map(players, (player) -> loadData player + "_rank_history"))...
 
 window.showRankHistory = (data, fromYear, toYear) ->
   data = $.map(data, (e) ->

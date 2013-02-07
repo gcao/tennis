@@ -15,11 +15,33 @@ window.getQueryVar = (varName) ->
   # If the string is the same, we didn't find a match - return false
   (if val is queryStr then false else val)
 
+window.DEFAULT_PLAYERS = ['novak_djokovic', 'roger_federer', 'andy_murray', 'rafael_nadal']
+
+window.getPlayers = (defaultPlayers...) ->
+  players = null
+  playersParam = getQueryVar("players")
+  if playersParam and playersParam isnt ""
+    players = playersParam.split(",")
+  else
+    players = defaultPlayers
+
 window.loadData = (id, successHandler) ->
   if useLocalData or getQueryVar('local_data') is 'true'
     $.getJSON "data/" + id + ".json", successHandler
   else
     $.getJSON "http://gcao.cloudant.com/tennis/" + id + "?callback=?", successHandler
+
+window.loadData2 = (ids...) ->
+  toUrl = (id) ->
+    if useLocalData or getQueryVar('local_data') is 'true'
+      "data/" + id + ".json"
+    else
+      "http://gcao.cloudant.com/tennis/" + id + "?callback=?"
+
+  $.when ($.map(ids, (id) -> $.getJSON(toUrl(id))))...
+
+window.normalizeResults = (results...) ->
+  if results[0] instanceof Array then results[0] else $.map(results, (result) -> result[0])
 
 window.updateGenerationTime = (time) ->
   date  = new Date(time * 1000)
