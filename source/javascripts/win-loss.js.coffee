@@ -1,9 +1,7 @@
 #= require vendor/d3.v2.min
 
-#d3.json "data/roger_federer_win_loss.json" , (resp) ->
-d3.json "data/rafael_nadal_win_loss.json"  , (resp) ->
-#d3.json "data/novak_djokovic_win_loss.json", (resp) ->
-#d3.json "data/andy_murray_win_loss.json"   , (resp) ->
+players = getQueryVar('players') or 'roger_federer'
+d3.json "data/#{players}_win_loss.json", (resp) ->
   data   = resp.data
   margin =
     top    : 20
@@ -82,7 +80,7 @@ d3.json "data/rafael_nadal_win_loss.json"  , (resp) ->
     .append("circle")
     .attr("class", "percentage")
     .attr("r"    , 3)
-    .attr("cx"   , (d                                       , i) -> 35)
+    .attr("cx"   , (d, i) -> 35)
     .attr("cy"   , (d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
     .style("fill", (d) -> "#65d")
 
