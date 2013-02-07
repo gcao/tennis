@@ -27,7 +27,7 @@
     %script(src='javascripts/site.js')
   %body
     /[if lt IE 7] <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p>
-    -#%header
+    %header
       .wrap
         %h2
           %a(href='index.html')
@@ -46,11 +46,11 @@
                 %a(href='rank-history.html?players=andy_murray') Andy Murray
               %li
                 %a(href='rank-history.html?players=rafael_nadal') Rafael Nadal
-          %li.tournaments{toggle_tab('tournaments')}
-            %a(href='tournaments.html') Tournaments
-          %li.tournaments{toggle_tab('schedule')}
+          %li.tournaments{toggle_tab('schedule|tournament')}
             %a(href='javascript:void(0)') Schedules
             %ul
+              %li
+                %a(href='tournaments.html') Tournaments
               %li
                 %a(href='schedule.html?player=novak_djokovic') Novak Djokovic
               %li
