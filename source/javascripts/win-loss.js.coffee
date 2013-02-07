@@ -1,12 +1,13 @@
 #= require vendor/d3.v2.min
 
-loadWinLoss = (players...) ->
+loadWinLoss = (players) ->
   ids = $.map(players, (player) -> player + '_win_loss')
   loadData2(ids)
 
 players = getPlayers(DEFAULT_PLAYERS)
+players = ['roger_federer', 'novak_djokovic']
 loadWinLoss(players).then (results...) ->
-  data   = normalizeResults(results)[0].data
+  results = normalizeResults results
 
   margin =
     top    : 20
@@ -19,7 +20,7 @@ loadWinLoss(players).then (results...) ->
 
   x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1)
-    .domain(data.map((d) -> d[0]))
+    .domain(results[0].data.map((d) -> d[0]))
 
   y = d3.scale.linear()
     .rangeRound([height, 0])
@@ -60,65 +61,74 @@ loadWinLoss(players).then (results...) ->
     .attr('y', (d, i) -> y(i * 10))
     .attr('text-anchor', 'end')
 
-  year = svg.selectAll(".year")
-    .data(data)
-    .enter()
-    .append("g")
-    .attr("class"    , "year")
-    .attr("transform", (d) -> "translate(" + x(d[0]) + ", 0)")
+  # Win/loss bar
+  barWidth = Math.min(x.rangeBand(), 30)
+  barX     = 42 - (x.rangeBand() - barWidth)/2
 
-  year.selectAll(".win")
-    .data((d) -> [d])
-    .enter()
-    .append("rect")
-    .attr("class" , "win")
-    .attr("width" , x.rangeBand())
-    .attr("height", (d) -> y(0) - y(d[1]))
-    .attr("y"     , (d) -> y d[1])
-    .style("fill" , (d) -> "#f54")
+  $.each results, (i, result) ->
+    data = result.data
 
-  year.selectAll(".loss")
-    .data((d) -> [d])
-    .enter()
-    .append("rect")
-    .attr("class" , "loss")
-    .attr("width" , x.rangeBand())
-    .attr("y"     , (d) -> y d[1] + d[2])
-    .attr("height", (d) -> y(d[1]) - y(d[1] + d[2]) - 1)
-    .style("fill" , (d) -> "#495")
+    year = svg.selectAll(".year#{i}")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class"    , "year year#{i}")
+      .attr("transform", (d) -> "translate(" + x(d[0]) + ", 0)")
 
-  # Win percentage
-  year.selectAll(".percentage")
-    .data((d) -> [d])
-    .enter()
-    .append("circle")
-    .attr("class", "percentage")
-    .attr("r"    , 3)
-    .attr("cx"   , (d, i) -> 35)
-    .attr("cy"   , (d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
-    .style("fill", (d) -> "#65d")
+    year.selectAll(".win")
+      .data((d) -> [d])
+      .enter()
+      .append("rect")
+      .attr("class" , "win")
+      .attr("x"     , barX)
+      .attr("y"     , (d) -> y d[1])
+      .attr("width" , barWidth)
+      .attr("height", (d) -> y(0) - y(d[1]))
+      .style("fill" , (d) -> "#f54")
 
-  year.append("text")
-    .text((d) -> d3.format("%d") d[1] / (d[1] + d[2]))
-    .attr("x", (d, i) -> 20)
-    .attr("y", (d) -> y(50 + 100 * d[1] / (d[1] + d[2])) - 10)
-  
-  # Win percentage line
-  x1 = d3.scale.linear()
-    .domain([0, data.length])
-    .range([8, width])
+    year.selectAll(".loss")
+      .data((d) -> [d])
+      .enter()
+      .append("rect")
+      .attr("class" , "loss")
+      .attr("x"     , barX)
+      .attr("y"     , (d) -> y d[1] + d[2])
+      .attr("width" , barWidth)
+      .attr("height", (d) -> y(d[1]) - y(d[1] + d[2]) - 1)
+      .style("fill" , (d) -> "#495")
 
-  y1 = d3.scale.linear()
-    .domain([0, 150])
-    .range([height, 0])
+    # Win percentage
+    year.selectAll(".percentage")
+      .data((d) -> [d])
+      .enter()
+      .append("circle")
+      .attr("class", "percentage")
+      .attr("r"    , 3)
+      .attr("cx"   , (d, i) -> 35)
+      .attr("cy"   , (d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
+      .style("fill", (d) -> "#65d")
 
-  line = d3.svg.line()
-    .x((d, i) -> x1(i) + 35)
-    .y((d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
+    year.append("text")
+      .text((d) -> d3.format("%d") d[1] / (d[1] + d[2]))
+      .attr("x", (d, i) -> 20)
+      .attr("y", (d) -> y(50 + 100 * d[1] / (d[1] + d[2])) - 10)
+    
+    # Win percentage line
+    x1 = d3.scale.linear()
+      .domain([0, data.length])
+      .range([8, width])
 
-  lines = svg.append("g")
-    .attr("class", "line")
-    .append("path")
-    .datum(data)
-    .attr("d", line)
+    y1 = d3.scale.linear()
+      .domain([0, 150])
+      .range([height, 0])
+
+    line = d3.svg.line()
+      .x((d, i) -> x1(i) + 35)
+      .y((d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
+
+    lines = svg.append("g")
+      .attr("class", "line")
+      .append("path")
+      .datum(data)
+      .attr("d", line)
 

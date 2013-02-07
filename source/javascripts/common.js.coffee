@@ -31,7 +31,7 @@ window.loadData = (id, successHandler) ->
   else
     $.getJSON "http://gcao.cloudant.com/tennis/" + id + "?callback=?", successHandler
 
-window.loadData2 = (ids...) ->
+window.loadData2 = (ids) ->
   toUrl = (id) ->
     if useLocalData or getQueryVar('local_data') is 'true'
       "data/" + id + ".json"
@@ -40,8 +40,8 @@ window.loadData2 = (ids...) ->
 
   $.when ($.map(ids, (id) -> $.getJSON(toUrl(id))))...
 
-window.normalizeResults = (results...) ->
-  if results[0] instanceof Array then results[0] else $.map(results, (result) -> result[0])
+window.normalizeResults = (results) ->
+  if results[1] instanceof Array then $.map(results, (result) -> result[0]) else results[0]
 
 window.updateGenerationTime = (time) ->
   date  = new Date(time * 1000)
