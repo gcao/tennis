@@ -121,10 +121,12 @@ loadWinLoss(players).then (results...) ->
       .append("rect")
       .attr("class" , "win")
       .attr("x"     , barX)
-      .attr("y"     , (d) -> y d[1])
       .attr("width" , barWidth)
-      .attr "height", (d) ->
-        y(0) - y(d[1])
+      .attr("y"     , (d) -> y(0))
+      .attr("height", (d) -> 0)
+      .transition().delay((d,i) -> i * 300).duration(1000)
+      .attr("y"     , (d) -> y d[1])
+      .attr("height", (d) -> y(0) - y(d[1]))
 
     player.selectAll(".loss")
       .data((d) -> [d])
@@ -132,8 +134,11 @@ loadWinLoss(players).then (results...) ->
       .append("rect")
       .attr("class" , "loss")
       .attr("x"     , barX)
-      .attr("y"     , (d) -> y d[1] + d[2])
       .attr("width" , barWidth)
+      .attr("y"     , (d) -> $(this).parent().find('.win').attr('y'))
+      .attr("height", (d) -> 0)
+      .transition().delay((d,i) -> i * 300).duration(1000)
+      .attr("y"     , (d) -> y d[1] + d[2])
       .attr "height", (d) ->
         h = y(d[1]) - y(d[1] + d[2])
         if h > 0 then h - 1 else h
