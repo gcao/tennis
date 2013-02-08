@@ -41,7 +41,10 @@ window.loadData2 = (ids) ->
   $.when ($.map(ids, (id) -> $.getJSON(toUrl(id))))...
 
 window.normalizeResults = (results) ->
-  if results[1] instanceof Array then $.map(results, (result) -> result[0]) else results[0]
+  if results[1] instanceof Array
+    (result[0] for result in results)
+  else
+    [results[0]]
 
 window.updateGenerationTime = (time) ->
   date  = new Date(time * 1000)

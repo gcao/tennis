@@ -13,9 +13,9 @@ playerDataOfYearIsEmpty = (data, year) ->
   isEmpty
 
 players = getPlayers(DEFAULT_PLAYERS)
-players = ['roger_federer', 'novak_djokovic', 'andy_murray', 'rafael_nadal']
 loadWinLoss(players).then (results...) ->
   results = normalizeResults results
+  console.log results
 
   margin =
     top    : 20
@@ -70,9 +70,9 @@ loadWinLoss(players).then (results...) ->
     .attr('y', (d, i) -> y(i * 10))
     .attr('text-anchor', 'end')
 
-  $.each results, (playerIndex, result) ->
+  for result, playerIndex in results
     data  = result.data
-    years = $.map(data, (d) -> d[0])
+    years = (d[0] for d in data)
 
     player = svg.selectAll(".player#{playerIndex}")
       .data(data)
@@ -82,10 +82,12 @@ loadWinLoss(players).then (results...) ->
       .attr("transform", (d) -> "translate(" + x(d[0]) + ", 0)")
 
     x1 = d3.scale.ordinal()
-      .domain($.map(results, (result, i) -> i))
+      .domain(i for _, i in results)
       .rangeRoundBands([0, x.rangeBand()], .05)
 
-    xFunc = (d, i) ->
+    barX = (d, i) ->
+      return 21 if results.length is 1
+
       barIndex = playerIndex
 
       # Move player1's bar close to right if player2's win/loss is 0
@@ -97,15 +99,21 @@ loadWinLoss(players).then (results...) ->
 
       x1(barIndex)
 
+    barWidth =
+      if results.length is 1
+        Math.min(x.rangeBand(), 30)
+      else
+        x1.rangeBand()
+
     # Win/loss bar
     player.selectAll(".win")
       .data((d) -> [d])
       .enter()
       .append("rect")
       .attr("class" , "win")
-      .attr("x"     , xFunc)
+      .attr("x"     , barX)
       .attr("y"     , (d) -> y d[1])
-      .attr("width" , x1.rangeBand())
+      .attr("width" , barWidth)
       .attr "height", (d) ->
         y(0) - y(d[1])
 
@@ -114,10 +122,10 @@ loadWinLoss(players).then (results...) ->
       .enter()
       .append("rect")
       .attr("class" , "loss")
-      .attr("x"     , xFunc)
+      .attr("x"     , barX)
       .attr("y"     , (d) -> y d[1] + d[2])
-      .attr("width" , x1.rangeBand())
-      .attr "height", (d) -> 
+      .attr("width" , barWidth)
+      .attr "height", (d) ->
         h = y(d[1]) - y(d[1] + d[2])
         if h > 0 then h - 1 else h
 
@@ -127,23 +135,28 @@ loadWinLoss(players).then (results...) ->
       .enter()
       .append("circle")
       .attr("class", "percentage")
-      .attr("r"    , 3)
+      .attr("r"    , (d) -> if d[1] is 0 and d[2] is 0 then 0 else 3)
       .attr("cx"   , (d, i) -> 35)
-      .attr("cy"   , (d) -> y 50 + 100 * d[1] / (d[1] + d[2]))
+      .attr "cy"   , (d) ->
+        if d[1] is 0 and d[2] is 0
+          0
+        else
+          y(50 + 100 * d[1] / (d[1] + d[2]))
 
     if results.length is 1
       player.append("text")
         .text((d) -> d3.format("%d") d[1] / (d[1] + d[2]))
         .attr("x", (d, i) -> 20)
         .attr("y", (d) -> y(50 + 100 * d[1] / (d[1] + d[2])) - 10)
-    
+
     # Win percentage line
     line = d3.svg.line()
       .x((d) -> x(d[0]) + 35)
       .y((d) -> y(50 + 100 * d[1] / (d[1] + d[2])))
 
+    linesData = (d for d in data when d[1] isnt 0 or d[2] isnt 0)
     lines = svg.selectAll(".line#{playerIndex}")
-      .data([data])
+      .data([linesData])
       .enter()
       .append("g")
       .attr("class", "line line#{playerIndex}")
