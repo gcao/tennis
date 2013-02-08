@@ -337,7 +337,14 @@ button.update {
   }
 
   .h-grid {
-    stroke: #bbb;
+    $gridColor: #bbb;
+    line {
+      stroke: $gridColor;
+      shape-rendering: crispEdges;
+    }
+    text {
+      fill: #888;
+    }
   }
 
   .percentage-label {

@@ -26,7 +26,7 @@ loadWinLoss(players).then (results...) ->
       "<span class='player#{i}' onclick='javascript:togglePlayer(#{i})'>#{result.name}</span>&nbsp;&nbsp; "
 
   margin =
-    top    : 20
+    top    : 30
     right  : 20
     bottom : 30
     left   : 40
@@ -80,6 +80,7 @@ loadWinLoss(players).then (results...) ->
 
   for result, playerIndex in results
     data  = result.data
+    #data  = result.gs_data
     years = (d[0] for d in data)
 
     player = svg.selectAll(".player#{playerIndex}")
