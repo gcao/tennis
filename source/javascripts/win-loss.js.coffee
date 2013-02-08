@@ -1,4 +1,9 @@
 #= require vendor/d3.v2.min
+#= require vendor/jquery.svg.min.js
+#= require vendor/jquery.svgdom.min.js
+
+window.togglePlayer = (playerIndex) ->
+  $("#win-loss-chart .player#{playerIndex}").toggleClass('hide')
 
 loadWinLoss = (players) ->
   ids = $.map(players, (player) -> player + '_win_loss')
@@ -15,7 +20,10 @@ playerDataOfYearIsEmpty = (data, year) ->
 players = getPlayers(DEFAULT_PLAYERS)
 loadWinLoss(players).then (results...) ->
   results = normalizeResults results
-  console.log results
+
+  for result, i in results
+    $('.players').append \
+      "<span class='player#{i}' onclick='javascript:togglePlayer(#{i})'>#{result.name}</span>&nbsp;&nbsp; "
 
   margin =
     top    : 20
@@ -155,11 +163,11 @@ loadWinLoss(players).then (results...) ->
       .y((d) -> y(50 + 100 * d[1] / (d[1] + d[2])))
 
     linesData = (d for d in data when d[1] isnt 0 or d[2] isnt 0)
-    lines = svg.selectAll(".line#{playerIndex}")
+    lines = svg.selectAll(".line.player#{playerIndex}")
       .data([linesData])
       .enter()
       .append("g")
-      .attr("class", "line line#{playerIndex}")
+      .attr("class", "line player#{playerIndex}")
       .append("path")
       .attr("d", line)
 

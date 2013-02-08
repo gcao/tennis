@@ -13,6 +13,10 @@ body, ul, li, dl, dd, p, h1, h2, h3, h4, h5, h6, form, fieldset {
   padding: 0;
 }
 
+.hide {
+  display: none;
+}
+
 .main {
   max-width: none;
 }
@@ -214,7 +218,7 @@ header {
     margin-bottom: 10px;
   }
 
-  .generated-note {
+  .generated-note, .note {
     font-size: small;
   }
 }
@@ -327,7 +331,7 @@ button.update {
   }
 }
 
-#win-loss-chart {
+#win-loss-chart, h2 .players {
   .jqplot-point-label {
     color: #444
   }
@@ -361,40 +365,48 @@ button.update {
   $player3color: #9467bd;
 
   .player0 {
+    color: $player0color;
     .win, text {
       fill: $player0color;
     }
-  }
-  .line0 {
-    stroke: $player0color;
+    &.line {
+      stroke: $player0color;
+    }
   }
 
   .player1 {
+    color: $player1color;
     .win, text {
       fill: $player1color;
     }
-  }
-  .line1 {
-    stroke: $player1color;
+    &.line {
+      stroke: $player1color;
+    }
   }
 
   .player2 {
+    color: $player2color;
     .win, text {
       fill: $player2color;
     }
-  }
-  .line2 {
-    stroke: $player2color;
+    &.line {
+      stroke: $player2color;
+    }
   }
 
   .player3 {
+    color: $player3color;
     .win, text {
       fill: $player3color;
     }
+    &.line {
+      stroke: $player3color;
+    }
   }
-  .line3 {
-    stroke: $player3color;
-  }
+}
+
+h2 .players {
+  font-weight: bold;
 }
 
 .axis path, .axis line {
