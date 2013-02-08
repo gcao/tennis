@@ -36,7 +36,7 @@
           %li.rankings{toggle_tab('rankings')}
             %a(href='rankings.html') Rankings
           %li.rank-history{toggle_tab('rank-history')}
-            %a(href='rank-history.html') Rank History
+            %a(href='javascript:void(0)') Rank History
             %ul
               %li
                 %a(href='rank-history.html?players=novak_djokovic,roger_federer,rafael_nadal,andy_murray') BIG FOUR
@@ -49,7 +49,7 @@
               %li
                 %a(href='rank-history.html?players=rafael_nadal') Rafael Nadal
           %li.win-loss{toggle_tab('win-loss')}
-            %a(href='rank-history.html') Win/Loss
+            %a(href='javascript:void(0)') Win/Loss
             %ul
               %li
                 %a(href='win-loss.html?players=novak_djokovic,roger_federer,rafael_nadal,andy_murray') BIG FOUR
@@ -77,6 +77,7 @@
           %li.support{toggle_tab('support')}
             %a(href='support.html') Support
     %div.main(role="main")= yield
+
     %footer
     :javascript
       if (!location.hostname.match('localhost')) {
