@@ -154,9 +154,17 @@ loadWinLoss(players).then (results...) ->
 
     if results.length is 1
       player.append("text")
-        .text((d) -> d3.format("%d") d[1] / (d[1] + d[2]))
+        .text (d) -> 
+          if d[1] is 0 and d[2] is 0
+            ''
+          else
+            d3.format("%d") d[1] / (d[1] + d[2])
         .attr("x", (d, i) -> 20)
-        .attr("y", (d) -> y(50 + 100 * d[1] / (d[1] + d[2])) - 10)
+        .attr "y", (d) -> 
+          if d[1] is 0 and d[2] is 0
+            0
+          else
+            y(50 + 100 * d[1] / (d[1] + d[2])) - 10
 
     # Win percentage line
     line = d3.svg.line()
