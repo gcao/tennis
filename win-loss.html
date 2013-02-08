@@ -31,7 +31,7 @@
           </a>
         </h2>
         <ul id='nav'>
-          <li class='current rankings'>
+          <li class='rankings'>
             <a href='rankings.html'>Rankings</a>
           </li>
           <li class='rank-history'>
@@ -54,7 +54,7 @@
               </li>
             </ul>
           </li>
-          <li class='win-loss'>
+          <li class='current win-loss'>
             <a href='rank-history.html'>Win/Loss</a>
             <ul>
               <li>
@@ -102,88 +102,12 @@
     </header>
     <div class='main' role='main'>
       <h2>
-        ATP rankings chart for top 50 players
-        <span class='generated-note'>(generated at <span class='generated-at'></span>)</span>
+        Win/loss chart of
+        <span class='players'></span>
+        <span class='note'>(Click name to toggle)</span>
       </h2>
-      <div id='rankings-chart' style='height: 1000px'></div>
-      <div id='contextMenu'>
-        <li><a href="#" target="_new">Homepage</a></li>
-        <li><a href="#">Rank History</a></li>
-      </div>
-      <script src='javascripts/rankings.js'></script>
-      <script type='text/javascript'>
-        //<![CDATA[
-          (function() {
-      
-        loadData("rankings", function(rankings) {
-          var ContextMenu;
-          ContextMenu = function(menu, contextHandler) {
-            var hide;
-            hide = true;
-            menu = document.getElementById(menu);
-            this.trigger = function(x, y) {
-              hide = false;
-              menu.style.top = y + "px";
-              menu.style.left = x + "px";
-              return menu.style.display = "block";
-            };
-            return $("body").click(function() {
-              if (hide) {
-                menu.style.display = "none";
-              }
-              return hide = true;
-            });
-          };
-          window.contextMenu = new ContextMenu("contextMenu");
-          updateGenerationTime(rankings.generated_at);
-          window.d = $.map(rankings.data, function(v, i) {
-            return [[v.points, v.rank + " " + v.last]];
-          }).reverse();
-          $.jqplot("rankings-chart", [d], {
-            series: [
-              {
-                shadowAngle: 135,
-                pointLabels: {
-                  show: true,
-                  color: "#333",
-                  location: "e"
-                },
-                renderer: $.jqplot.BarRenderer,
-                rendererOptions: {
-                  barDirection: "horizontal",
-                  barWidth: 10,
-                  barMargin: 2,
-                  barPadding: 2
-                }
-              }
-            ],
-            axesDefaults: {
-              tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-              tickOptions: {
-                showGridLine: false,
-                fontSize: "10pt",
-                fontFamily: "Georgia"
-              }
-            },
-            axes: {
-              yaxis: {
-                renderer: $.jqplot.CategoryAxisRenderer
-              },
-              xaxis: {
-                min: 0,
-                max: 15000,
-                numberTicks: 7,
-                autoscale: true
-              }
-            }
-          });
-          return $("#rankings-chart").bind("jqplotDataClick", function(event, seriesIndex, pointIndex, data) {});
-        });
-      
-      }).call(this);
-      
-        //]]>
-      </script>
+      <div id='win-loss-chart'></div>
+      <script src='javascripts/win-loss.js'></script>
     </div>
     <footer></footer>
     <script type='text/javascript'>
