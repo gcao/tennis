@@ -342,6 +342,7 @@ button.update {
 
   .line {
     fill: none;
+    stroke-width: 2;
   }
 
   .player {
@@ -354,22 +355,45 @@ button.update {
     }
   }
 
+  $player0color: #f54;
+  $player1color: #8c564b;
+  $player2color: #1f77b4;
+  $player3color: #9467bd;
+
   .player0 {
     .win, text {
-      fill: #f54;
+      fill: $player0color;
     }
   }
   .line0 {
-    stroke: #f54
+    stroke: $player0color;
   }
 
   .player1 {
     .win, text {
-      fill: #c54;
+      fill: $player1color;
     }
   }
   .line1 {
-    stroke: #c54
+    stroke: $player1color;
+  }
+
+  .player2 {
+    .win, text {
+      fill: $player2color;
+    }
+  }
+  .line2 {
+    stroke: $player2color;
+  }
+
+  .player3 {
+    .win, text {
+      fill: $player3color;
+    }
+  }
+  .line3 {
+    stroke: $player3color;
   }
 }
 

@@ -4,8 +4,16 @@ loadWinLoss = (players) ->
   ids = $.map(players, (player) -> player + '_win_loss')
   loadData2(ids)
 
+playerDataOfYearIsEmpty = (data, year) ->
+  isEmpty = true
+  for d in data
+    if d[0] is year and (d[1] isnt 0 or d[2] isnt 0)
+      isEmpty = false
+      break
+  isEmpty
+
 players = getPlayers(DEFAULT_PLAYERS)
-players = ['roger_federer', 'novak_djokovic']
+players = ['roger_federer', 'novak_djokovic', 'andy_murray', 'rafael_nadal']
 loadWinLoss(players).then (results...) ->
   results = normalizeResults results
 
@@ -16,7 +24,7 @@ loadWinLoss(players).then (results...) ->
     left   : 40
 
   width  = 960 - margin.left - margin.right
-  height = 500 - margin.top - margin.bottom
+  height = 550 - margin.top - margin.bottom
   years  = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013]
 
   x = d3.scale.ordinal()
@@ -77,23 +85,36 @@ loadWinLoss(players).then (results...) ->
       .domain($.map(results, (result, i) -> i))
       .rangeRoundBands([0, x.rangeBand()], .05)
 
+    xFunc = (d, i) ->
+      barIndex = playerIndex
+
+      # Move player1's bar close to right if player2's win/loss is 0
+      if playerIndex is 0 and results.length > 1
+        barIndex = 1 if playerDataOfYearIsEmpty results[1].data, d[0]
+      # Move player4's bar close to right if player3's win/loss is 0
+      else if playerIndex is 3
+        barIndex = 2 if playerDataOfYearIsEmpty results[2].data, d[0]
+
+      x1(barIndex)
+
     # Win/loss bar
     player.selectAll(".win")
       .data((d) -> [d])
       .enter()
       .append("rect")
       .attr("class" , "win")
-      .attr("x"     , (d) -> x1(playerIndex))
+      .attr("x"     , xFunc)
       .attr("y"     , (d) -> y d[1])
       .attr("width" , x1.rangeBand())
-      .attr("height", (d) -> y(0) - y(d[1]))
+      .attr "height", (d) ->
+        y(0) - y(d[1])
 
     player.selectAll(".loss")
       .data((d) -> [d])
       .enter()
       .append("rect")
       .attr("class" , "loss")
-      .attr("x"     , (d) -> x1(playerIndex))
+      .attr("x"     , xFunc)
       .attr("y"     , (d) -> y d[1] + d[2])
       .attr("width" , x1.rangeBand())
       .attr "height", (d) -> 
