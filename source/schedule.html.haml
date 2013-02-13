@@ -16,7 +16,11 @@
 
       $('#player_name').text(schedule.name)
 
-      tournaments = filterTournaments(tournaments.data, schedule.data)
+      # tournament: 'ABC', result: 'W/F/SF/QF/1/16', defeated: 'A, B etc', lost_to: ''
+      #schedule = (if typeof x is 'string' then {tournament: x} else x for x in schedule.data)
+      schedule = $.map(schedule.data, (x) -> if typeof x is 'string' then {tournament: x} else x)
+
+      tournaments = filterTournaments(tournaments.data, schedule)
       $('#schedule').html(generateScheduleHtml(tournaments))
       drawMapWithSchedule(tournaments)
   else

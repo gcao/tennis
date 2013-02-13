@@ -48,14 +48,16 @@ addPath = (map, startMarker, endMarker, pathState) ->
   )
 
 window.filterTournaments = (tournaments, schedule) ->
-  $.map(schedule, (tournament_name) ->
+  $.map(schedule, (x) ->
     result = tournaments.filter((tournament) ->
-      tournament.name is tournament_name
+      tournament.name is x.tournament
     )
     if result.length > 0
-      result[0]
+      tournament = result[0]
+      tournament.extras = x
+      tournament
     else
-      console?.log "Tournament not found: " + tournament_name
+      console?.log "Tournament not found: " + x.tournament
   )
 
 window.drawMapWithSchedule = (tournaments) ->
@@ -90,16 +92,41 @@ window.drawMapWithSchedule = (tournaments) ->
     prevTournament = tournament
     prevMarker = marker
 
+translateResult = (result) ->
+  switch result
+    when 'W'     then 'won'
+    when 'F'     then 'final'
+    when 'SF'    then 'semi-final'
+    when 'QF'    then 'quarter-final'
+    when '1/16'  then 'round-of-16'
+    when '1/32'  then 'round-of-32'
+    when '1/64'  then 'round-of-64'
+    when '1/128' then 'round-of-128'
+    else ''
+
+generateDetail = (tournament) ->
+  extras = tournament.extras
+  return unless extras
+
+  detail = "<div class=\"detail\"><table>"
+  detail += "<tr><td>Result</td><td>#{extras.result}</td></tr>" if extras.result
+  detail += "<tr class=\"defeated\"><td>Defeated</td><td>#{extras.defeated}</td></tr>" if extras.defeated
+  detail += "<tr class=\"lost-to\"><td>Lost to</td><td>#{extras.lost_to}</td></tr>" if extras.lost_to
+  detail + "</table></div>"
+
 window.generateScheduleHtml = (tournaments) ->
   html = ""
   $.each tournaments, (i, tournament) ->
     tournamentUrl = getAtpUrl(tournament.url)
     tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
+    statusClass = if isFuture(tournament.start) then 'future' else ''
+    resultClass = translateResult(tournament.extras?.result)
     html += """
-      <div class="tournament #{if isFuture(tournament.start) then 'future'}">
+      <div class="tournament #{statusClass} #{resultClass}">
         <div class="start">#{tournament.start}</div>
         <div class="logo"><a href="#{tournamentUrl}" target="_new"><img src="#{tournamentLogo}"/></a></div>
         <div class="name"><a href="#{tournamentUrl}" target="_new">#{tournament.name}</a></div>
+        #{generateDetail(tournament)}
       </div>
     """
 

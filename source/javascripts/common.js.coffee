@@ -17,7 +17,7 @@ window.getQueryVar = (varName) ->
 
 window.DEFAULT_PLAYERS = ['novak_djokovic', 'roger_federer', 'andy_murray', 'rafael_nadal']
 
-window.getPlayers = (defaultPlayers...) ->
+window.getPlayers = (defaultPlayers) ->
   players = null
   playersParam = getQueryVar("players")
   if playersParam and playersParam isnt ""

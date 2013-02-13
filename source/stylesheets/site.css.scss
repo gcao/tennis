@@ -58,23 +58,23 @@ header {
 
 /* beginning of navigation menu */
 #nav {
-	display: inline-block;
+  display: inline-block;
   float: right;
-	margin: 0 10px;
-	padding: 9px 6px 0;
-	background: #7d7d7d url(../images/gradient.png) repeat-x 0 -110px;
-	line-height: 100%;
+  margin: 0 10px;
+  padding: 7px 8px 0;
+  background: #7d7d7d url(../images/gradient.png) repeat-x 0 -110px;
+  line-height: 100%;
 
-	border-radius: 2em;
-	-webkit-border-radius: 2em;
-	-moz-border-radius: 2em 2em 0 0;
+  border-radius: 2em;
+  -webkit-border-radius: 2em;
+  -moz-border-radius: 2em 2em 0 0;
 
-	-webkit-box-shadow: 0 1px 3px rgba(0,0,0, .4);
-	-moz-box-shadow: 0 1px 3px rgba(0,0,0, .4);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0, .4);
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0, .4);
 
   li {
-    margin: 0 5px;
-    padding: 0 0 8px;
+    margin: 0 1px;
+    padding: 0 0 7px;
     float: left;
     position: relative;
     list-style: none;
@@ -99,7 +99,7 @@ header {
     color: #e7e5e5;
     text-decoration: none;
     display: block;
-    padding:  8px 20px;
+    padding: 6px 20px;
     margin: 0;
     -webkit-border-radius: 1.6em;
     -moz-border-radius: 1.6em;
@@ -145,7 +145,7 @@ header {
     padding: 0;
     width: 150px;
     position: absolute;
-    top: 35px;
+    top: 30px;
     left: 0;
     background: #ddd url(../images/gradient.png) repeat-x 0 0;
     border: solid 1px #b4b4b4;
@@ -304,12 +304,9 @@ button.update {
 #schedule {
   margin-top: 20px;
 
-  img {
-    vertical-align: middle;
-  }
-
   .tournament {
     margin-bottom: 5px;
+    padding-left: 5px;
     padding-right: 20px;
     background: #bbb;
 
@@ -317,8 +314,34 @@ button.update {
       background: #eee;
     }
 
+    div, img {
+      vertical-align: middle;
+    }
+
     div {
       display: inline-block;
+      margin: 2px 0
+    }
+
+    &.won { background: gold; }
+    &.final { background: #eec; }
+    &.semi-final { background: #CD7F32; }
+    &.quarter-final { background: #c9c; }
+
+    table {
+      td {
+        padding: 3px;
+      }
+
+      tr.defeated td:last-child{
+        color: #c22;
+        font-weight: bold;
+      }
+
+      tr.lost-to td:last-child{
+        color: #272;
+        font-weight: bold;
+      }
     }
   }
 
@@ -328,6 +351,10 @@ button.update {
 
   .logo {
     width: 80px;
+  }
+
+  .name {
+    width: 200px;
   }
 }
 
