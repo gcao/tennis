@@ -1,1 +1,3 @@
-{"_id":"roger_federer_schedule","_rev":"1-946aade5d5f52c013b0d481474161f55","data":["Australian Open","ABN AMRO World Tennis Tournament","BNP Paribas Open","Mutua Madrid Open","Internazionali BNL d'Italia","Roland Garros","Gerry Weber Open","Wimbledon","Rogers Cup","Western & Southern Open","US Open","Shanghai Rolex Masters","BNP Paribas Masters"]}
+{"_id":"roger_federer_schedule","_rev":"1-946aade5d5f52c013b0d481474161f55","data":[
+  {"tournament": "Australian Open", "result": "SF", "defeated": "Jo-Wilfried Tsonga etc", "lost_to": "Andy Murray"},
+  "ABN AMRO World Tennis Tournament","BNP Paribas Open","Mutua Madrid Open","Internazionali BNL d'Italia","Roland Garros","Gerry Weber Open","Wimbledon","Rogers Cup","Western & Southern Open","US Open","Shanghai Rolex Masters","BNP Paribas Masters"]}

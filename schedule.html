@@ -122,7 +122,16 @@
             tournaments = req1[0];
             schedule = req2[0];
             $('#player_name').text(schedule.name);
-            tournaments = filterTournaments(tournaments.data, schedule.data);
+            schedule = $.map(schedule.data, function(x) {
+              if (typeof x === 'string') {
+                return {
+                  tournament: x
+                };
+              } else {
+                return x;
+              }
+            });
+            tournaments = filterTournaments(tournaments.data, schedule);
             $('#schedule').html(generateScheduleHtml(tournaments));
             return drawMapWithSchedule(tournaments);
           });
