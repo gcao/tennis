@@ -72,6 +72,18 @@
               <li>
                 <a href='win-loss.html?players=rafael_nadal'>Rafael Nadal</a>
               </li>
+              <li>
+                <a href='win-loss.html?players=david_ferrer'>David Ferrer</a>
+              </li>
+              <li>
+                <a href='win-loss.html?players=tomas_berdych'>Tomas Berdych</a>
+              </li>
+              <li>
+                <a href='win-loss.html?players=juan_martin_del_potro'>Juan Martin Del Potro</a>
+              </li>
+              <li>
+                <a href='win-loss.html?players=jo_wilfried_tsonga'>Jo-Wilfried Tsonga</a>
+              </li>
             </ul>
           </li>
           <li class='tournaments'>
@@ -106,6 +118,12 @@
         <span class='players'></span>
         <span class='note'>(Click name to toggle)</span>
       </h2>
+      <form action='win-loss.html' id='win-loss-form' method='get'>
+        <input name='players' type='hidden' />
+        <input id='grandSlam' name='grandSlam' type='checkbox' value='true' />
+        <label for='grandSlam'>Use Grand Slam data</label>
+        <input type='submit' value='Update Graph' />
+      </form>
       <div id='win-loss-chart'></div>
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
       <script src='javascripts/win-loss.js'></script>

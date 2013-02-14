@@ -72,6 +72,18 @@
               <li>
                 <a href='win-loss.html?players=rafael_nadal'>Rafael Nadal</a>
               </li>
+              <li>
+                <a href='win-loss.html?players=david_ferrer'>David Ferrer</a>
+              </li>
+              <li>
+                <a href='win-loss.html?players=tomas_berdych'>Tomas Berdych</a>
+              </li>
+              <li>
+                <a href='win-loss.html?players=juan_martin_del_potro'>Juan Martin Del Potro</a>
+              </li>
+              <li>
+                <a href='win-loss.html?players=jo_wilfried_tsonga'>Jo-Wilfried Tsonga</a>
+              </li>
             </ul>
           </li>
           <li class='tournaments'>
@@ -133,12 +145,12 @@
             if (i >= 50) {
               return;
             }
-            if (i % 5 === 0) {
-              $('#players').append('<br/>');
-            }
             name = r.first + " " + r.last;
             value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_");
-            return $("#players").append("<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>");
+            $("#players").append("<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>");
+            if (i % 5 === 4) {
+              return $('#players').append('<br/>');
+            }
           });
           $("button.update").click(function() {
             var i, players, s;
