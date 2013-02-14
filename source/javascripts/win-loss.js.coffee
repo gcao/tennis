@@ -17,7 +17,7 @@ playerDataOfYearIsEmpty = (data, year) ->
       break
   isEmpty
 
-isGrandSlam = -> false
+isGrandSlam = -> true
 
 getData = (result) ->
   if isGrandSlam() then result.gs_data else result.data
@@ -33,7 +33,7 @@ percentageOffset = ->
 
 hGridData = ->
   if isGrandSlam()
-    [0, 10, 20, 30, .4, .5, .6, .7, .8, .9, 1]
+    [0, 5, 10, 15, 20, 25, 30, .4, .5, .6, .7, .8, .9, 1]
   else
     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1]
 
@@ -86,16 +86,17 @@ loadWinLoss(players).then (results...) ->
     .append('g')
     .attr('class', 'h-grid');
 
+  hGridY = (d) -> y(if d > 1 then d else d * 100)
   hGrid.append('line')
     .attr('x1', (d, i) -> 0)
-    .attr('y1', (d, i) -> y(i * 10))
+    .attr('y1', hGridY)
     .attr('x2', (d, i) -> width)
-    .attr('y2', (d, i) -> y(i * 10))
+    .attr('y2', hGridY)
 
   hGrid.append('text')
     .text((d, i) -> if 0 < d <= 1 then d3.format('%d')(d) else d)
     .attr('x', (d, i) -> -5)
-    .attr('y', (d, i) -> y(i * 10))
+    .attr('y', hGridY)
     .attr('text-anchor', 'end')
 
   for result, playerIndex in results
