@@ -17,6 +17,26 @@ playerDataOfYearIsEmpty = (data, year) ->
       break
   isEmpty
 
+isGrandSlam = -> false
+
+getData = (result) ->
+  if isGrandSlam() then result.gs_data else result.data
+
+yDomain = ->
+  if isGrandSlam()
+    [0, 100]
+  else
+    [0, 150]
+
+percentageOffset = ->
+  if isGrandSlam() then 0 else 50
+
+hGridData = ->
+  if isGrandSlam()
+    [0, 10, 20, 30, .4, .5, .6, .7, .8, .9, 1]
+  else
+    [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1]
+
 players = getPlayers(DEFAULT_PLAYERS)
 loadWinLoss(players).then (results...) ->
   results = normalizeResults results
@@ -41,7 +61,7 @@ loadWinLoss(players).then (results...) ->
 
   y = d3.scale.linear()
     .rangeRound([height, 0])
-    .domain([0, 150])
+    .domain(yDomain())
 
   xAxis = d3.svg.axis()
     .scale(x)
@@ -61,7 +81,7 @@ loadWinLoss(players).then (results...) ->
 
   # Add horizontal grids
   hGrid = svg.selectAll('.h-grid')
-    .data([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1])
+    .data(hGridData())
     .enter()
     .append('g')
     .attr('class', 'h-grid');
@@ -73,13 +93,13 @@ loadWinLoss(players).then (results...) ->
     .attr('y2', (d, i) -> y(i * 10))
 
   hGrid.append('text')
-    .text((d, i) -> if i <= 10 then d else d3.format('%d')(d))
+    .text((d, i) -> if 0 < d <= 1 then d3.format('%d')(d) else d)
     .attr('x', (d, i) -> -5)
     .attr('y', (d, i) -> y(i * 10))
     .attr('text-anchor', 'end')
 
   for result, playerIndex in results
-    data  = result.data
+    data  = getData(result)
     #data  = result.gs_data
     years = (d[0] for d in data)
 
@@ -155,7 +175,7 @@ loadWinLoss(players).then (results...) ->
         if d[1] is 0 and d[2] is 0
           0
         else
-          y(50 + 100 * d[1] / (d[1] + d[2]))
+          y(percentageOffset() + 100 * d[1] / (d[1] + d[2]))
 
     if results.length is 1
       player.append("text")
@@ -169,12 +189,12 @@ loadWinLoss(players).then (results...) ->
           if d[1] is 0 and d[2] is 0
             0
           else
-            y(50 + 100 * d[1] / (d[1] + d[2])) - 10
+            y(percentageOffset() + 100 * d[1] / (d[1] + d[2])) - 10
 
     # Win percentage line
     line = d3.svg.line()
       .x((d) -> x(d[0]) + 35)
-      .y((d) -> y(50 + 100 * d[1] / (d[1] + d[2])))
+      .y((d) -> y(percentageOffset() + 100 * d[1] / (d[1] + d[2])))
 
     linesData = (d for d in data when d[1] isnt 0 or d[2] isnt 0)
     lines = svg.selectAll(".line.player#{playerIndex}")

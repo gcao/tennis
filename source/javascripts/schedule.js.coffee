@@ -61,7 +61,7 @@ window.filterTournaments = (tournaments, schedule) ->
   )
 
 window.drawMapWithSchedule = (tournaments) ->
-  map = getMap()
+  window.map = getMap()
   prevTournament = undefined
   prevMarker = undefined
   $.each tournaments, (i, tournament) ->
@@ -131,3 +131,6 @@ window.generateScheduleHtml = (tournaments) ->
     """
 
   html
+
+window.setMapCenterToTournament = (tournament) ->
+  map.setCenter(new google.maps.LatLng(tournament.latitude, tournament.longitude))

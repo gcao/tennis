@@ -356,6 +356,10 @@ button.update {
   .name {
     width: 200px;
   }
+
+  .detail {
+    max-width: 450px;
+  }
 }
 
 #win-loss-chart, h2 .players {
