@@ -95,7 +95,7 @@ loadWinLoss(players).then (results...) ->
       if isGrandSlam()
         if d > 1 then d else d * 100
       else
-        if d > 1 then d else 50 + d * 100
+        if d is 0 or d > 1 then d else 50 + d * 100
 
     y(value)
 
