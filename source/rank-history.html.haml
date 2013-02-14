@@ -26,10 +26,10 @@
 
     $.each rankings.data, (i, r) ->
       return  if i >= 50
-      $('#players').append('<br/>') if i % 5 is 0
       name = r.first + " " + r.last
       value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_")
       $("#players").append "<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>"
+      $('#players').append('<br/>') if i % 5 is 4
 
     $("button.update").click ->
       players = $("[name=player]:checked").map(-> @value)

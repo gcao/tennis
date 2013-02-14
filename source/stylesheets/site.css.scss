@@ -362,6 +362,11 @@ button.update {
   }
 }
 
+#win-loss-form {
+  label {
+    padding-right: 20px;
+  }
+}
 #win-loss-chart, h2 .players {
   .jqplot-point-label {
     color: #444

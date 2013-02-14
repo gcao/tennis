@@ -3,6 +3,12 @@
   %span.players
   %span.note (Click name to toggle)
 
+%form#win-loss-form(action="win-loss.html" method="get")
+  %input(type="hidden" name="players")
+  %input#grandSlam(type="checkbox" name="grandSlam" value="true")
+  %label(for="grandSlam") Use Grand Slam data
+  %input(type="submit" value="Update Graph")
+
 #win-loss-chart
 .backToHome <a href='index.html'>Back to home</a>
 

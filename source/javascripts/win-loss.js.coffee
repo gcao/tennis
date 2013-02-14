@@ -17,7 +17,8 @@ playerDataOfYearIsEmpty = (data, year) ->
       break
   isEmpty
 
-isGrandSlam = -> true
+isGrandSlam = -> 
+  getQueryVar('grandSlam') is 'true'
 
 getData = (result) ->
   if isGrandSlam() then result.gs_data else result.data
@@ -38,6 +39,9 @@ hGridData = ->
     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1]
 
 players = getPlayers(DEFAULT_PLAYERS)
+$('[name=players]').val(players.join(','))
+$('[name=grandSlam]').prop('checked', isGrandSlam())
+
 loadWinLoss(players).then (results...) ->
   results = normalizeResults results
 
@@ -86,7 +90,15 @@ loadWinLoss(players).then (results...) ->
     .append('g')
     .attr('class', 'h-grid');
 
-  hGridY = (d) -> y(if d > 1 then d else d * 100)
+  hGridY = (d) -> 
+    value = 
+      if isGrandSlam()
+        if d > 1 then d else d * 100
+      else
+        if d > 1 then d else 50 + d * 100
+
+    y(value)
+
   hGrid.append('line')
     .attr('x1', (d, i) -> 0)
     .attr('y1', hGridY)
