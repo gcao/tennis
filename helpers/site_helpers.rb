@@ -8,7 +8,7 @@ module SiteHelpers
   end
 
   def page_title
-    title = "Guoliang's Tennis Page"
+    title = "TennisForFans.com"
     if data.page.title
       title << " | " + current_page.data.page_title
     end

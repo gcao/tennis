@@ -104,6 +104,24 @@ translateResult = (result) ->
     when '1/128' then 'round-of-128'
     else ''
 
+window.tournamentRowTemplate = (data) ->
+  ["div.detail",
+    ["table"
+      if data.result then ["tr"
+        ["td", "Result"]
+        ["td", data.result]
+      ]
+      if data.defeated then ["tr"
+        ["td", "Result"]
+        ["td", data.defeated]
+      ]
+      ["tr"
+        ["td", "Result"]
+        ["td", data.lost_to]
+      ]
+    ]
+  ]
+
 generateDetail = (tournament) ->
   extras = tournament.extras
   return unless extras
