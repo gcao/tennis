@@ -2,6 +2,10 @@
   ATP rankings chart for top 50 players
   %span.generated-note (generated at <span class='generated-at'></span>)
 
+%form#rankings-form(action="#" method="get")
+  %input#ytd(type="checkbox" name="ytd" value="true" onclick="toggle($(this).attr('checked'))")
+  %label(for="ytd") Year To Date
+
 #rankings-chart(style='height: 1000px')
 .backToHome <a href='index.html'>Back to home</a>
 
@@ -11,7 +15,13 @@
 
 %script(src='javascripts/vendor/d3.v2.min.js')
 :javascript
-  loadData("rankings", function(rankings){
+   function toggle(ytd){
+    if (ytd) {
+    } else {
+    }
+  }
+
+  function showChart(rankings) {
     updateGenerationTime(rankings.generated_at);
     var data = rankings.data;
 
@@ -94,5 +104,9 @@
       .attr("y1", -gridChartOffset)
       .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
       .style("stroke", "#000");
+  }
+
+  loadData("rankings", function(rankings){
+    showChart(rankings);
   });
 

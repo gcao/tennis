@@ -469,3 +469,14 @@ h2 .players {
 .x.axis path {
   display: none;
 }
+
+#rankings-form {
+  padding-bottom: 10px;
+  padding-left: 40px;
+  width: 1000px;
+  text-align: center;
+
+  input {
+    margin-right: 5px;
+  }
+}
