@@ -15,7 +15,7 @@
 
 %script(src='javascripts/vendor/d3.v2.min.js')
 :javascript
-   function toggle(ytd){
+  function toggle(ytd){
     if (ytd) {
     } else {
     }
@@ -50,7 +50,8 @@
     var yScale = d3.scale.ordinal().domain(d3.range(0, data.length)).rangeBands([0, data.length * barHeight]);
     var y = function(d, i) { return yScale(i); };
     var yText = function(d, i) { return y(d, i) + yScale.rangeBand() / 2; };
-    var x = d3.scale.linear().domain([0, d3.max(data, barValue)]).range([0, maxBarWidth]);
+    //var x = d3.scale.linear().domain([0, d3.max(data, barValue)]).range([0, maxBarWidth]);
+    var x = d3.scale.linear().domain([0, Math.max(10000, d3.max(data, barValue))]).range([0, maxBarWidth]);
     // svg container element
     var chart = d3.select('#rankings-chart').append("svg")
       .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
