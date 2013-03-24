@@ -6,7 +6,7 @@
   %input#ytd(type="checkbox" name="ytd" value="true" onclick="toggle($(this).attr('checked'))")
   %label(for="ytd") Year To Date
 
-#rankings-chart(style='height: durationpx')
+#rankings-chart(style='height: 1000px')
 .backToHome <a href='index.html'>Back to home</a>
 
 #contextMenu
@@ -15,6 +15,8 @@
 
 %script(src='javascripts/vendor/d3.v2.min.js')
 :javascript
+  var firstTime       = true;
+
   // http://d3-generator.com/
   var valueLabelWidth = 50; // space reserved for value labels (right)
   var barHeight       = 20; // height of one bar
@@ -25,7 +27,7 @@
   var maxBarWidth     = 920; // width of the bar with the max value
   var dataLength      = 51;
   var xMax            = 13999; // Avoid draw 14000 vertical grid
-  var duration        = 2000;
+  var duration        = function() { return firstTime ? 0 : 2000; }
 
   function i2rank(i) {
     if (i < 10) {
@@ -49,7 +51,7 @@
   // svg container element
   var chart     = d3.select('#rankings-chart').append("svg")
     .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
-    .attr('height', gridLabelHeight + gridChartOffset + dataLength * barHeight);
+    .attr('height', gridLabelHeight + gridChartOffset + dataLength * barHeight - 20);
 
   // grid line labels
   var gridContainer = chart.append('g')
@@ -106,10 +108,10 @@
       .attr("dy", ".35em") // vertical-align: middle
       .attr('text-anchor', 'end')
       .text(label)
-      .transition().duration(duration)
+      .transition().duration(duration).ease('cubic-out')
       .attr('y', yText);
     labels.exit()
-      .transition().duration(duration)
+      .transition().duration(duration).ease('cubic-in')
       .attr('y', yScale(dataLength - 1))
       .remove();
 
@@ -125,10 +127,10 @@
       .attr('width', function(d) { return x(d.points); })
       .attr('stroke', 'white')
       .attr('fill', 'steelblue')
-      .transition().duration(duration)
+      .transition().duration(duration).ease('cubic-out')
       .attr('y', y);
     bars.exit()
-      .transition().duration(duration)
+      .transition().duration(duration).ease('cubic-in')
       .attr('y', yScale(dataLength - 1))
       .remove();
 
@@ -148,16 +150,15 @@
       .attr("fill", "black")
       .attr("stroke", "none")
       .text(barLabel)
-      .transition().duration(duration)
+      .transition().duration(duration).ease('cubic-out')
       .attr('y', yText);
     barLabels.exit()
-      .transition().duration(duration)
+      .transition().duration(duration).ease('cubic-in')
       .attr('y', yScale(dataLength - 1))
       .remove();
+
+    firstTime = false;
   }
 
-  //loadData2(["rankings", "rankings_ytd"]).then(function(rankings, rankings2){
-  //  showChart(rankings[0], rankings2[0]);
-  //});
   loadData("rankings", function(rankings){ showChart(rankings); });
 
