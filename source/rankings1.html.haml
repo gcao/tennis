@@ -28,6 +28,7 @@
   var dataLength      = 51;
   var xMax            = 13999; // Avoid draw 14000 vertical grid
   var duration        = function() { return firstTime ? 0 : 2000; }
+  var exitDuration    = function() { return firstTime ? 0 : 1200; }
 
   function i2rank(i) {
     if (i < 10) {
@@ -77,10 +78,10 @@
     .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
 
   // start line
-  //barsContainer.append("line")
-  //  .attr("y1", -gridChartOffset)
-  //  .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-  //  .style("stroke", "#000");
+  barsContainer.append("line")
+    .attr("y1", -gridChartOffset)
+    .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
+    .style("stroke", "#000");
 
   function toggle(ytd){
     if (ytd) {
@@ -111,7 +112,7 @@
       .transition().duration(duration).ease('cubic-out')
       .attr('y', yText);
     labels.exit()
-      .transition().duration(duration).ease('cubic-in')
+      .transition().duration(exitDuration).ease('cubic-in')
       .attr('y', yScale(dataLength - 1))
       .remove();
 
@@ -130,7 +131,7 @@
       .transition().duration(duration).ease('cubic-out')
       .attr('y', y);
     bars.exit()
-      .transition().duration(duration).ease('cubic-in')
+      .transition().duration(exitDuration).ease('cubic-in')
       .attr('y', yScale(dataLength - 1))
       .remove();
 
@@ -153,7 +154,7 @@
       .transition().duration(duration).ease('cubic-out')
       .attr('y', yText);
     barLabels.exit()
-      .transition().duration(duration).ease('cubic-in')
+      .transition().duration(exitDuration).ease('cubic-in')
       .attr('y', yScale(dataLength - 1))
       .remove();
 
