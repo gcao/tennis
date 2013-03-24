@@ -6,7 +6,7 @@
   %input#ytd(type="checkbox" name="ytd" value="true" onclick="toggle($(this).attr('checked'))")
   %label(for="ytd") Year To Date
 
-#rankings-chart(style='height: 1000px')
+#rankings-chart(style='height: durationpx')
 .backToHome <a href='index.html'>Back to home</a>
 
 #contextMenu
@@ -23,9 +23,10 @@
   var gridLabelHeight = 18; // space reserved for gridline labels
   var gridChartOffset = 3; // space between start of grid and first bar
   var maxBarWidth     = 920; // width of the bar with the max value
-  var dataLength      = 50;
-  var yMax            = 13999; // Avoid draw 14000 vertical grid
-   
+  var dataLength      = 51;
+  var xMax            = 13999; // Avoid draw 14000 vertical grid
+  var duration        = 2000;
+
   function i2rank(i) {
     i += 1;
     if (i < 10) {
@@ -34,23 +35,23 @@
       return " " + i;
     }
   }
-  // accessor functions 
+  // accessor functions
   var barLabel = function(d, i) { return d['last'] + i2rank(i); };
-  var barValue = function(d) { return parseFloat(d['points']); };
-   
+
   // scales
-  var yScale = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight]);
-  var y      = function(d, i) { return yScale(d.rank - 1); };
-  var yText  = function(d, i) { return y(d, d.rank - 1) + yScale.rangeBand() / 2; };
-  var x      = d3.scale.linear().domain([0, yMax]).range([0, maxBarWidth]);
+  var yScale    = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight]);
+  var y         = function(d, i) { return yScale(d.rank - 1); };
+  var yText     = function(d, i) { return y(d, d.rank - 1) + yScale.rangeBand() / 2; };
+  var x         = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth]);
+  var xBarLabel = function(d) { return x(d.points); }
   // svg container element
-  var chart  = d3.select('#rankings-chart').append("svg")
+  var chart     = d3.select('#rankings-chart').append("svg")
     .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
     .attr('height', gridLabelHeight + gridChartOffset + dataLength * barHeight);
 
   // grid line labels
   var gridContainer = chart.append('g')
-    .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')'); 
+    .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')');
   gridContainer.selectAll("text").data(x.ticks(5)).enter().append("text")
     .attr("x", x)
     .attr("dy", -3)
@@ -65,9 +66,9 @@
     .style("stroke", "#ccc");
   // bar labels
   var labelsContainer = chart.append('g')
-    .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')'); 
+    .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')');
   var barsContainer = chart.append('g')
-    .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')'); 
+    .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
   // start line
   //barsContainer.append("line")
   //  .attr("y1", -gridChartOffset)
@@ -87,41 +88,65 @@
 
     var data = rankings.data;
 
-    labelsContainer.selectAll('text').data(data).enter().append('text')
-      .attr('y', yText)
+    var labels = labelsContainer.selectAll('text')
+      .data(data, function(d){ return d.first + d.last; });
+    // Update transitions
+    labels.transition().duration(duration)
+      .attr('y', yText);
+    labels.enter().append('text')
+      .attr('y', yScale(dataLength - 1))
       .attr('stroke', 'none')
       .attr('fill', 'black')
       .attr("dy", ".35em") // vertical-align: middle
       .attr('text-anchor', 'end')
-      .text(barLabel);
-    // bars
+      .text(barLabel)
+      .transition().duration(duration)
+      .attr('y', yText);
+    labels.exit()
+      .transition().duration(duration)
+      .attr('y', yScale(dataLength - 1))
+      .remove();
+
     var bars = barsContainer.selectAll("rect")
       .data(data, function(d){ return d.first + d.last; });
+    // Update transitions
+    bars.transition().duration(duration)
+      .attr('width', function(d) { return x(d.points); })
+      .attr('y', y);
     bars.enter().append("rect")
-      //.attr('y', yScale(49))
-      //.transition().duration(1000)
-      .attr('y', y)
+      .attr('y', yScale(dataLength - 1))
       .attr('height', yScale.rangeBand())
-      .attr('width', function(d) { return x(barValue(d)); })
+      .attr('width', function(d) { return x(d.points); })
       .attr('stroke', 'white')
-      .attr('fill', 'steelblue');
-    bars.transition()
-      .duration(1000)
-      .attr('width', function(d) { return x(barValue(d)); });
+      .attr('fill', 'steelblue')
+      .transition().duration(duration)
+      .attr('y', y);
     bars.exit()
-      .transition().duration(1000)
-      .attr('y', yScale(49))
+      .transition().duration(duration)
+      .attr('y', yScale(dataLength - 1))
       .remove();
-    // bar value labels
-    barsContainer.selectAll("text").data(data).enter().append("text")
-      .attr("x", function(d) { return x(barValue(d)); })
-      .attr("y", yText)
+
+    barLabels = barsContainer.selectAll("text")
+      .data(data, function(d){ return d.first + d.last; });
+    // Update transitions
+    barLabels.transition().duration(duration)
+      .attr('x', xBarLabel)
+      .attr('y', yText);
+    barLabels.enter().append("text")
+      .attr("x", xBarLabel)
+      .attr("y", yScale(dataLength - 1))
       .attr("dx", 3) // padding-left
       .attr("dy", ".35em") // vertical-align: middle
       .attr("text-anchor", "start") // text-align: right
       .attr("fill", "black")
       .attr("stroke", "none")
-      .text(function(d) { return d3.round(barValue(d), 2); });
+      .text(function(d) { return d.points; })
+      .transition().duration(duration)
+      .attr('y', yText);
+    barLabels.exit()
+      .transition().duration(duration)
+      .attr('y', yScale(dataLength - 1))
+      .remove();
   }
 
   //loadData2(["rankings", "rankings_ytd"]).then(function(rankings, rankings2){
