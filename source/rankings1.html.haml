@@ -28,22 +28,24 @@
   var duration        = 2000;
 
   function i2rank(i) {
-    i += 1;
     if (i < 10) {
       return "  " + i;
     } else {
       return " " + i;
     }
   }
+
   // accessor functions
-  var barLabel = function(d, i) { return d['last'] + i2rank(i); };
+  var label    = function(d, i) { return d.last + i2rank(d.rank); };
+  var barLabel = function(d, i) { return d.points; };
 
   // scales
   var yScale    = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight]);
-  var y         = function(d, i) { return yScale(d.rank - 1); };
-  var yText     = function(d, i) { return y(d, d.rank - 1) + yScale.rangeBand() / 2; };
+  var y         = function(d, i) { return yScale(i); };
+  var yText     = function(d, i) { return yScale(i) + yScale.rangeBand() / 2; };
   var x         = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth]);
   var xBarLabel = function(d) { return x(d.points); }
+
   // svg container element
   var chart     = d3.select('#rankings-chart').append("svg")
     .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
@@ -57,6 +59,7 @@
     .attr("dy", -3)
     .attr("text-anchor", "middle")
     .text(String);
+
   // vertical grid lines
   gridContainer.selectAll("line").data(x.ticks(5)).enter().append("line")
     .attr("x1", x)
@@ -64,11 +67,13 @@
     .attr("y1", 0)
     .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
     .style("stroke", "#ccc");
+
   // bar labels
   var labelsContainer = chart.append('g')
     .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')');
   var barsContainer = chart.append('g')
     .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
+
   // start line
   //barsContainer.append("line")
   //  .attr("y1", -gridChartOffset)
@@ -92,14 +97,15 @@
       .data(data, function(d){ return d.first + d.last; });
     // Update transitions
     labels.transition().duration(duration)
-      .attr('y', yText);
+      .attr('y', yText)
+      .text(label);
     labels.enter().append('text')
       .attr('y', yScale(dataLength - 1))
       .attr('stroke', 'none')
       .attr('fill', 'black')
       .attr("dy", ".35em") // vertical-align: middle
       .attr('text-anchor', 'end')
-      .text(barLabel)
+      .text(label)
       .transition().duration(duration)
       .attr('y', yText);
     labels.exit()
@@ -131,7 +137,8 @@
     // Update transitions
     barLabels.transition().duration(duration)
       .attr('x', xBarLabel)
-      .attr('y', yText);
+      .attr('y', yText)
+      .text(barLabel);
     barLabels.enter().append("text")
       .attr("x", xBarLabel)
       .attr("y", yScale(dataLength - 1))
@@ -140,7 +147,7 @@
       .attr("text-anchor", "start") // text-align: right
       .attr("fill", "black")
       .attr("stroke", "none")
-      .text(function(d) { return d.points; })
+      .text(barLabel)
       .transition().duration(duration)
       .attr('y', yText);
     barLabels.exit()
