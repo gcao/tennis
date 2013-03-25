@@ -20,7 +20,7 @@
   // http://d3-generator.com/
   var valueLabelWidth = 50; // space reserved for value labels (right)
   var barHeight       = 20; // height of one bar
-  var barLabelWidth   = 100; // space reserved for bar labels
+  var barLabelWidth   = 107; // space reserved for bar labels
   var barLabelPadding = 5; // padding between bar and bar labels (left)
   var gridLabelHeight = 18; // space reserved for gridline labels
   var gridChartOffset = 3; // space between start of grid and first bar
@@ -32,7 +32,7 @@
 
   function i2rank(i) {
     if (i < 10) {
-      return "  " + i;
+      return " _" + i;
     } else {
       return " " + i;
     }
@@ -54,17 +54,29 @@
     .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
     .attr('height', gridLabelHeight + gridChartOffset + dataLength * barHeight - 20);
 
+  // horizontal grid lines
+  var hGridContainer = chart.append('g');
+  hGridContainer.selectAll("line").data([1, 11, 21, 31, 41])
+    .enter().append("line")
+    .attr("x1", 0)
+    .attr("x2", x(xMax))
+    .attr("y1", function(d) { return yScale(d); })
+    .attr("y2", function(d) { return yScale(d); })
+    .style("stroke", "#ccc");
+
   // grid line labels
   var gridContainer = chart.append('g')
     .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')');
-  gridContainer.selectAll("text").data(x.ticks(5)).enter().append("text")
+  gridContainer.selectAll("text").data(x.ticks(5))
+    .enter().append("text")
     .attr("x", x)
     .attr("dy", -3)
     .attr("text-anchor", "middle")
     .text(String);
 
   // vertical grid lines
-  gridContainer.selectAll("line").data(x.ticks(5)).enter().append("line")
+  gridContainer.selectAll("line").data(x.ticks(5))
+    .enter().append("line")
     .attr("x1", x)
     .attr("x2", x)
     .attr("y1", 0)
@@ -78,10 +90,10 @@
     .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
 
   // start line
-  barsContainer.append("line")
-    .attr("y1", -gridChartOffset)
-    .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-    .style("stroke", "#000");
+  //barsContainer.append("line")
+  //  .attr("y1", -gridChartOffset)
+  //  .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
+  //  .style("stroke", "#000");
 
   function toggle(ytd){
     if (ytd) {
@@ -99,7 +111,7 @@
     var labels = labelsContainer.selectAll('text')
       .data(data, function(d){ return d.first + d.last; });
     // Update transitions
-    labels.transition().duration(duration)
+    labels.transition().duration(duration).ease('exp-out')
       .attr('y', yText)
       .text(label);
     labels.enter().append('text')
@@ -109,17 +121,17 @@
       .attr("dy", ".35em") // vertical-align: middle
       .attr('text-anchor', 'end')
       .text(label)
-      .transition().duration(duration).ease('cubic-out')
+      .transition().duration(duration).ease('exp-out')
       .attr('y', yText);
     labels.exit()
-      .transition().duration(exitDuration).ease('cubic-in')
-      .attr('y', yScale(dataLength - 1))
+      //.transition().duration(exitDuration).ease('exp-in')
+      //.attr('y', yScale(dataLength - 1))
       .remove();
 
     var bars = barsContainer.selectAll("rect")
       .data(data, function(d){ return d.first + d.last; });
     // Update transitions
-    bars.transition().duration(duration)
+    bars.transition().duration(duration).ease('exp-out')
       .attr('width', function(d) { return x(d.points); })
       .attr('y', y);
     bars.enter().append("rect")
@@ -128,17 +140,17 @@
       .attr('width', function(d) { return x(d.points); })
       .attr('stroke', 'white')
       .attr('fill', 'steelblue')
-      .transition().duration(duration).ease('cubic-out')
+      .transition().duration(duration).ease('exp-out')
       .attr('y', y);
     bars.exit()
-      .transition().duration(exitDuration).ease('cubic-in')
-      .attr('y', yScale(dataLength - 1))
+      //.transition().duration(exitDuration).ease('exp-in')
+      //.attr('y', yScale(dataLength - 1))
       .remove();
 
     barLabels = barsContainer.selectAll("text")
       .data(data, function(d){ return d.first + d.last; });
     // Update transitions
-    barLabels.transition().duration(duration)
+    barLabels.transition().duration(duration).ease('exp-out')
       .attr('x', xBarLabel)
       .attr('y', yText)
       .text(barLabel);
@@ -151,11 +163,11 @@
       .attr("fill", "black")
       .attr("stroke", "none")
       .text(barLabel)
-      .transition().duration(duration).ease('cubic-out')
+      .transition().duration(duration).ease('exp-out')
       .attr('y', yText);
     barLabels.exit()
-      .transition().duration(exitDuration).ease('cubic-in')
-      .attr('y', yScale(dataLength - 1))
+      //.transition().duration(exitDuration).ease('exp-in')
+      //.attr('y', yScale(dataLength - 1))
       .remove();
 
     firstTime = false;
