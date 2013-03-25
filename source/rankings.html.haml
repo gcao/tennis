@@ -2,6 +2,10 @@
   ATP rankings chart for top 50 players
   %span.generated-note (generated at <span class='generated-at'></span>)
 
+%form#rankings-form(action="#" method="get")
+  %input#ytd(type="checkbox" name="ytd" value="true" onclick="toggle($(this).attr('checked'))")
+  %label(for="ytd") Year To Date
+
 #rankings-chart(style='height: 1000px')
 .backToHome <a href='index.html'>Back to home</a>
 
@@ -9,59 +13,165 @@
   <li><a href="#" target="_new">Homepage</a></li>
   <li><a href="#">Rank History</a></li>
 
-%script(src='javascripts/rankings.js')
-:coffeescript
-  loadData "rankings", (rankings) ->
-    # http://www.ifadey.com/2011/07/context-menu-using-raw-javascript/
-    ContextMenu = (menu, contextHandler) ->
-      hide = true
-      menu = document.getElementById(menu)
-      @trigger = (x, y) ->
-        hide = false
-        menu.style.top = y + "px"
-        menu.style.left = x + "px"
-        menu.style.display = "block"
+%script(src='javascripts/vendor/d3.v2.min.js')
+:javascript
+  var firstTime       = true;
 
-      $("body").click () ->
-        menu.style.display = "none"  if hide
-        hide = true
+  // http://d3-generator.com/
+  var valueLabelWidth = 50; // space reserved for value labels (right)
+  var barHeight       = 20; // height of one bar
+  var barLabelWidth   = 107; // space reserved for bar labels
+  var barLabelPadding = 5; // padding between bar and bar labels (left)
+  var gridLabelHeight = 18; // space reserved for gridline labels
+  var gridChartOffset = 3; // space between start of grid and first bar
+  var maxBarWidth     = 920; // width of the bar with the max value
+  var dataLength      = 51;
+  var xMax            = 13999; // Avoid draw 14000 vertical grid
+  var duration        = function() { return firstTime ? 0 : 2000; }
+  var exitDuration    = function() { return firstTime ? 0 : 1200; }
 
-    window.contextMenu = new ContextMenu("contextMenu")
+  function i2rank(i) {
+    if (i < 10) {
+      return " _" + i;
+    } else {
+      return " " + i;
+    }
+  }
 
-    updateGenerationTime rankings.generated_at
-    window.d = $.map(rankings.data, (v, i) ->
-      [[v.points, v.rank + " " + v.last]]
-    ).reverse()
-    $.jqplot "rankings-chart", [d],
-      series: [
-        shadowAngle: 135
-        pointLabels:
-          show: true
-          color: "#333"
-          location: "e"
-        renderer: $.jqplot.BarRenderer
-        rendererOptions:
-          barDirection: "horizontal"
-          barWidth: 10
-          barMargin: 2
-          barPadding: 2
-      ]
-      axesDefaults:
-        tickRenderer: $.jqplot.CanvasAxisTickRenderer
-        tickOptions:
-          showGridLine: false
-          fontSize: "10pt"
-          fontFamily: "Georgia"
+  // accessor functions
+  var label    = function(d, i) { return d.last + i2rank(d.rank); };
+  var barLabel = function(d, i) { return d.points; };
 
-      axes:
-        yaxis:
-          renderer: $.jqplot.CategoryAxisRenderer
-        xaxis:
-          min: 0
-          max: 15000
-          numberTicks: 7
-          autoscale: true
+  // scales
+  var yScale    = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight]);
+  var y         = function(d, i) { return yScale(i); };
+  var yText     = function(d, i) { return yScale(i) + yScale.rangeBand() / 2; };
+  var x         = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth]);
+  var xBarLabel = function(d) { return x(d.points); }
 
-    $("#rankings-chart").bind "jqplotDataClick", (event, seriesIndex, pointIndex, data) ->
-      #contextMenu.trigger(event.pageX || event.clientX, event.pageY || event.clientY)
+  // svg container element
+  var chart     = d3.select('#rankings-chart').append("svg")
+    .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
+    .attr('height', gridLabelHeight + gridChartOffset + dataLength * barHeight - 20);
+
+  // horizontal grid lines
+  var hGridContainer = chart.append('g');
+  hGridContainer.selectAll("line").data([1, 11, 21, 31, 41])
+    .enter().append("line")
+    .attr("x1", 0)
+    .attr("x2", x(xMax))
+    .attr("y1", function(d) { return yScale(d); })
+    .attr("y2", function(d) { return yScale(d); })
+    .style("stroke", "#ccc");
+
+  // grid line labels
+  var gridContainer = chart.append('g')
+    .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')');
+  gridContainer.selectAll("text").data(x.ticks(5))
+    .enter().append("text")
+    .attr("x", x)
+    .attr("dy", -3)
+    .attr("text-anchor", "middle")
+    .text(String);
+
+  // vertical grid lines
+  gridContainer.selectAll("line").data(x.ticks(5))
+    .enter().append("line")
+    .attr("x1", x)
+    .attr("x2", x)
+    .attr("y1", 0)
+    .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
+    .style("stroke", "#ccc");
+
+  // bar labels
+  var labelsContainer = chart.append('g')
+    .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')');
+  var barsContainer = chart.append('g')
+    .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
+
+  // start line
+  //barsContainer.append("line")
+  //  .attr("y1", -gridChartOffset)
+  //  .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
+  //  .style("stroke", "#000");
+
+  function toggle(ytd){
+    if (ytd) {
+      loadData("rankings_ytd", function(rankings){ showChart(rankings); });
+    } else {
+      loadData("rankings", function(rankings){ showChart(rankings); });
+    }
+  }
+
+  function showChart(rankings) {
+    updateGenerationTime(rankings.generated_at);
+
+    var data = rankings.data;
+
+    var labels = labelsContainer.selectAll('text')
+      .data(data, function(d){ return d.first + d.last; });
+    // Update transitions
+    labels.transition().duration(duration).ease('exp-out')
+      .attr('y', yText)
+      .text(label);
+    labels.enter().append('text')
+      .attr('y', yScale(dataLength - 1))
+      .attr('stroke', 'none')
+      .attr('fill', 'black')
+      .attr("dy", ".35em") // vertical-align: middle
+      .attr('text-anchor', 'end')
+      .text(label)
+      .transition().duration(duration).ease('exp-out')
+      .attr('y', yText);
+    labels.exit()
+      //.transition().duration(exitDuration).ease('exp-in')
+      //.attr('y', yScale(dataLength - 1))
+      .remove();
+
+    var bars = barsContainer.selectAll("rect")
+      .data(data, function(d){ return d.first + d.last; });
+    // Update transitions
+    bars.transition().duration(duration).ease('exp-out')
+      .attr('width', function(d) { return x(d.points); })
+      .attr('y', y);
+    bars.enter().append("rect")
+      .attr('y', yScale(dataLength - 1))
+      .attr('height', yScale.rangeBand())
+      .attr('width', function(d) { return x(d.points); })
+      .attr('stroke', 'white')
+      .attr('fill', 'steelblue')
+      .transition().duration(duration).ease('exp-out')
+      .attr('y', y);
+    bars.exit()
+      //.transition().duration(exitDuration).ease('exp-in')
+      //.attr('y', yScale(dataLength - 1))
+      .remove();
+
+    barLabels = barsContainer.selectAll("text")
+      .data(data, function(d){ return d.first + d.last; });
+    // Update transitions
+    barLabels.transition().duration(duration).ease('exp-out')
+      .attr('x', xBarLabel)
+      .attr('y', yText)
+      .text(barLabel);
+    barLabels.enter().append("text")
+      .attr("x", xBarLabel)
+      .attr("y", yScale(dataLength - 1))
+      .attr("dx", 3) // padding-left
+      .attr("dy", ".35em") // vertical-align: middle
+      .attr("text-anchor", "start") // text-align: right
+      .attr("fill", "black")
+      .attr("stroke", "none")
+      .text(barLabel)
+      .transition().duration(duration).ease('exp-out')
+      .attr('y', yText);
+    barLabels.exit()
+      //.transition().duration(exitDuration).ease('exp-in')
+      //.attr('y', yScale(dataLength - 1))
+      .remove();
+
+    firstTime = false;
+  }
+
+  loadData("rankings", function(rankings){ showChart(rankings); });
 
