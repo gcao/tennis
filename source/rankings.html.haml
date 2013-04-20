@@ -4,7 +4,8 @@
 
 %form#rankings-form(action="#" method="get")
   %input#ytd(type="checkbox" name="ytd" value="true" onclick="toggle($(this).attr('checked'))")
-  %label(for="ytd") Year To Date
+  %label(for="ytd") Year To Date &nbsp;
+  -#%a.perm-link(href='rankings.html') permlink
 
 #rankings-chart(style='height: 1000px')
 .backToHome <a href='index.html'>Back to home</a>
@@ -33,7 +34,7 @@
   maxBarWidth     = 920   #width of the bar with the max value
   dataLength      = 51
   xMax            = 13999 #Avoid draw 14000 vertical grid
-  duration        = -> (if firstTime then 0 else 2000)
+  duration        = -> (if firstTime then 0 else 3000)
   exitDuration    = -> (if firstTime then 0 else 1200)
 
   label           = (d, i) -> d.last + i2rank(d.rank)
