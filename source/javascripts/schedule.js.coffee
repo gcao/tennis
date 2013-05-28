@@ -1,3 +1,5 @@
+#= require vendor/t
+
 addPath = (map, startMarker, endMarker, pathState) ->
   bounds = new google.maps.LatLngBounds()
   p1 = startMarker.getPosition()
@@ -104,51 +106,59 @@ translateResult = (result) ->
     when '1/128' then 'round-of-128'
     else ''
 
-window.tournamentRowTemplate = (data) ->
-  ["div.detail",
-    ["table"
-      if data.result then ["tr"
+tournamentResultTemplate = (data) ->
+  return unless data.result
+
+  [ "div.detail"
+    [ "table"
+      [ "tr"
         ["td", "Result"]
         ["td", data.result]
       ]
-      if data.defeated then ["tr"
-        ["td", "Result"]
-        ["td", data.defeated]
-      ]
-      ["tr"
-        ["td", "Result"]
-        ["td", data.lost_to]
-      ]
+      if data.defeated
+        [ "tr"
+          ["td", "Defeated"]
+          ["td", data.defeated]
+        ]
+      if data.lost_to
+        [ "tr"
+          ["td", "Lost to"]
+          ["td", data.lost_to]
+        ]
     ]
   ]
 
 generateDetail = (tournament) ->
-  extras = tournament.extras
-  return unless extras
+  T(tournamentResultTemplate).render(tournament.extras)
 
-  detail = "<div class=\"detail\"><table>"
-  detail += "<tr><td>Result</td><td>#{extras.result}</td></tr>" if extras.result
-  detail += "<tr class=\"defeated\"><td>Defeated</td><td>#{extras.defeated}</td></tr>" if extras.defeated
-  detail += "<tr class=\"lost-to\"><td>Lost to</td><td>#{extras.lost_to}</td></tr>" if extras.lost_to
-  detail + "</table></div>"
+scheduleTemplate = (data) ->
+  for i, tournament of data
+    tournamentUrl  = getAtpUrl(tournament.url)
+    tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
+    statusClass    = if isFuture(tournament.start) then 'future' else ''
+    resultClass    = translateResult(tournament.extras?.result)
+    [ 'div.tournament'
+      {'class': "#{statusClass} #{resultClass}"}
+      ['div.start', tournament.start]
+      [ 'div.logo'
+        [ 'a'
+          href: tournamentUrl
+          target: '_new'
+          ['img', src:tournamentLogo]
+        ]
+      ]
+      [ 'div.name'
+        [ 'a'
+          href: tournamentUrl
+          target: '_new'
+          tournament.name
+        ]
+      ]
+      generateDetail(tournament)
+    ]
 
 window.generateScheduleHtml = (tournaments) ->
-  html = ""
-  $.each tournaments, (i, tournament) ->
-    tournamentUrl = getAtpUrl(tournament.url)
-    tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
-    statusClass = if isFuture(tournament.start) then 'future' else ''
-    resultClass = translateResult(tournament.extras?.result)
-    html += """
-      <div class="tournament #{statusClass} #{resultClass}">
-        <div class="start">#{tournament.start}</div>
-        <div class="logo"><a href="#{tournamentUrl}" target="_new"><img src="#{tournamentLogo}"/></a></div>
-        <div class="name"><a href="#{tournamentUrl}" target="_new">#{tournament.name}</a></div>
-        #{generateDetail(tournament)}
-      </div>
-    """
-
-  html
+  T(scheduleTemplate).render(tournaments)
 
 window.setMapCenterToTournament = (tournament) ->
   map.setCenter(new google.maps.LatLng(tournament.latitude, tournament.longitude))
