@@ -4,18 +4,46 @@
 <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 <html class='no-js'>
   <head>
-    <meta charset='utf-8' />
-    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords' />
-    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    <meta charset='utf-8'>
+    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <title>TennisForFans.com</title>
     <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1.0">
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
-    <link href='stylesheets/site.css' rel='stylesheet' />
-    <script type='text/javascript'>
-      //<![CDATA[
-        var useLocalData = false;
-        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
-      //]]>
+    <link href='stylesheets/site.css' rel='stylesheet'>
+    <script>
+      (function() {
+      
+        window.useLocalData = false;
+      
+        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>');
+      
+        window.ticketUrls = [
+          {
+            "name": "US Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/us-open-tennis-tickets.html"
+          }, {
+            "name": "Coupe Rogers",
+            "url": "http://www.ticketcity.com/tennis-tickets/rogers-cup-mens-tennis-canada-tickets.html"
+          }, {
+            "name": "Western & Southern Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/western-and-southern-open-tickets.html"
+          }, {
+            "name": "Australian Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "BNP Paribas Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "Sony Open Tennis",
+            "url": "http://www.ticketcity.com/tennis-tickets/sony-ericsson-open-tennis-tickets.html"
+          }, {
+            "name": "Wimbledon",
+            "url": "http://www.ticketcity.com/tennis-tickets/wimbledon-tennis-tickets.html"
+          }
+        ];
+      
+      }).call(this);
     </script>
     <script src='javascripts/site.js'></script>
   </head>
@@ -25,7 +53,7 @@
       <div class='wrap'>
         <h2>
           <a href='index.html'>
-            <img class='logo' src='images/site-logo.gif' />
+            <img class='logo' src='images/site-logo.gif'>
           </a>
         </h2>
         <ul id='nav'>
@@ -114,38 +142,34 @@
       <h2>Please leave your comments or suggestions below.</h2>
       <div id='disqus_thread'></div>
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
-      <script type='text/javascript'>
-        //<![CDATA[
-          /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-          var disqus_shortname = 'tennisinfo'; // required: replace example with your forum shortname
-          
-          /* * * DON'T EDIT BELOW THIS LINE * * */
-          (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-        //]]>
+      <script>
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'tennisinfo'; // required: replace example with your forum shortname
+        
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
       </script>
       <a class='dsq-brlink' href='http://disqus.com'>
         comments powered by <span class="logo-disqus">Disqus</span>
       </a>
     </div>
     <footer></footer>
-    <script type='text/javascript'>
-      //<![CDATA[
-        if (!location.hostname.match('localhost')) {
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-38153915-1']);
-          _gaq.push(['_trackPageview']);
-        
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        }
-      //]]>
+    <script>
+      if (!location.hostname.match('localhost')) {
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38153915-1']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      }
     </script>
   </body>
 </html>

@@ -4,18 +4,46 @@
 <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 <html class='no-js'>
   <head>
-    <meta charset='utf-8' />
-    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords' />
-    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    <meta charset='utf-8'>
+    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <title>TennisForFans.com</title>
     <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1.0">
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
-    <link href='stylesheets/site.css' rel='stylesheet' />
-    <script type='text/javascript'>
-      //<![CDATA[
-        var useLocalData = false;
-        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
-      //]]>
+    <link href='stylesheets/site.css' rel='stylesheet'>
+    <script>
+      (function() {
+      
+        window.useLocalData = false;
+      
+        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>');
+      
+        window.ticketUrls = [
+          {
+            "name": "US Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/us-open-tennis-tickets.html"
+          }, {
+            "name": "Coupe Rogers",
+            "url": "http://www.ticketcity.com/tennis-tickets/rogers-cup-mens-tennis-canada-tickets.html"
+          }, {
+            "name": "Western & Southern Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/western-and-southern-open-tickets.html"
+          }, {
+            "name": "Australian Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "BNP Paribas Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "Sony Open Tennis",
+            "url": "http://www.ticketcity.com/tennis-tickets/sony-ericsson-open-tennis-tickets.html"
+          }, {
+            "name": "Wimbledon",
+            "url": "http://www.ticketcity.com/tennis-tickets/wimbledon-tennis-tickets.html"
+          }
+        ];
+      
+      }).call(this);
     </script>
     <script src='javascripts/site.js'></script>
   </head>
@@ -25,7 +53,7 @@
       <div class='wrap'>
         <h2>
           <a href='index.html'>
-            <img class='logo' src='images/site-logo.gif' />
+            <img class='logo' src='images/site-logo.gif'>
           </a>
         </h2>
         <ul id='nav'>
@@ -127,95 +155,90 @@
       </div>
       <div id='players'></div>
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
-      <link href='stylesheets/nv.d3.css' rel='stylesheet' />
+      <link href='stylesheets/nv.d3.css' rel='stylesheet'>
       <script src='javascripts/vendor/d3.v2.min.js'></script>
       <script src='javascripts/vendor/nv.d3.min.js'></script>
-      <script type='text/javascript'>
-        //<![CDATA[
-          (function() {
-      
-        loadData("rankings", function(rankings) {
-          var fromYear, fromYearParam, players, playersParam, toYear, toYearParam;
-          updateGenerationTime(rankings.generated_at);
-          $("[name=fromYear]").change(changeFromYear);
-          $.each(rankings.data, function(i, r) {
-            var name, value;
-            if (i >= 50) {
-              return;
-            }
-            name = r.first + " " + r.last;
-            value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_");
-            $("#players").append("<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>");
-            if (i % 5 === 4) {
-              return $('#players').append('<br/>');
-            }
-          });
-          $("button.update").click(function() {
-            var i, players, s;
-            players = $("[name=player]:checked").map(function() {
-              return this.value;
-            });
-            if (players.length === 0) {
-              return alert("No player is selected.");
-            } else if (players.length === 1) {
-              return window.location = location.pathname + "?players=" + players[0];
-            } else {
-              s = players[0];
-              i = 1;
-              while (i < players.length) {
-                s += "," + players[i];
-                i++;
+      <script>
+        (function() {
+        
+          loadData("rankings", function(rankings) {
+            var fromYear, fromYearParam, players, playersParam, toYear, toYearParam;
+            updateGenerationTime(rankings.generated_at);
+            $("[name=fromYear]").change(changeFromYear);
+            $.each(rankings.data, function(i, r) {
+              var name, value;
+              if (i >= 50) {
+                return;
               }
-              return window.location = location.pathname + "?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val();
+              name = r.first + " " + r.last;
+              value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_");
+              $("#players").append("<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>");
+              if (i % 5 === 4) {
+                return $('#players').append('<br/>');
+              }
+            });
+            $("button.update").click(function() {
+              var i, players, s;
+              players = $("[name=player]:checked").map(function() {
+                return this.value;
+              });
+              if (players.length === 0) {
+                return alert("No player is selected.");
+              } else if (players.length === 1) {
+                return window.location = location.pathname + "?players=" + players[0];
+              } else {
+                s = players[0];
+                i = 1;
+                while (i < players.length) {
+                  s += "," + players[i];
+                  i++;
+                }
+                return window.location = location.pathname + "?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val();
+              }
+            });
+            fromYear = 2003;
+            fromYearParam = getQueryVar("fromYear");
+            if (fromYearParam) {
+              fromYear = parseInt(fromYearParam);
             }
+            initFromYear();
+            $("[name=fromYear]").val(fromYear);
+            toYear = getYear();
+            toYearParam = getQueryVar("toYear");
+            if (toYearParam) {
+              toYear = parseInt(toYearParam);
+            }
+            initToYear(fromYear);
+            $("[name=toYear]").val(toYear);
+            players = null;
+            playersParam = getQueryVar("players");
+            if (playersParam && playersParam !== "") {
+              players = playersParam.split(",");
+            } else {
+              players = ["novak_djokovic", "roger_federer", "rafael_nadal", "andy_murray"];
+            }
+            $.each(players, function(i, p) {
+              return $("[value=" + p + "]").click();
+            });
+            return loadAndShowRankHistory(players, fromYear, toYear);
           });
-          fromYear = 2003;
-          fromYearParam = getQueryVar("fromYear");
-          if (fromYearParam) {
-            fromYear = parseInt(fromYearParam);
-          }
-          initFromYear();
-          $("[name=fromYear]").val(fromYear);
-          toYear = getYear();
-          toYearParam = getQueryVar("toYear");
-          if (toYearParam) {
-            toYear = parseInt(toYearParam);
-          }
-          initToYear(fromYear);
-          $("[name=toYear]").val(toYear);
-          players = null;
-          playersParam = getQueryVar("players");
-          if (playersParam && playersParam !== "") {
-            players = playersParam.split(",");
-          } else {
-            players = ["novak_djokovic", "roger_federer", "rafael_nadal", "andy_murray"];
-          }
-          $.each(players, function(i, p) {
-            return $("[value=" + p + "]").click();
-          });
-          return loadAndShowRankHistory(players, fromYear, toYear);
-        });
-      
-      }).call(this);
-      
-        //]]>
+        
+        }).call(this);
       </script>
     </div>
     <footer></footer>
-    <script type='text/javascript'>
-      //<![CDATA[
-        if (!location.hostname.match('localhost')) {
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-38153915-1']);
-          _gaq.push(['_trackPageview']);
-        
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        }
-      //]]>
+    <script>
+      if (!location.hostname.match('localhost')) {
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38153915-1']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      }
     </script>
   </body>
 </html>

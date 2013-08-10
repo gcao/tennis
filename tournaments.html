@@ -4,18 +4,46 @@
 <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 <html class='no-js'>
   <head>
-    <meta charset='utf-8' />
-    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords' />
-    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    <meta charset='utf-8'>
+    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <title>TennisForFans.com</title>
     <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1.0">
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
-    <link href='stylesheets/site.css' rel='stylesheet' />
-    <script type='text/javascript'>
-      //<![CDATA[
-        var useLocalData = false;
-        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
-      //]]>
+    <link href='stylesheets/site.css' rel='stylesheet'>
+    <script>
+      (function() {
+      
+        window.useLocalData = false;
+      
+        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>');
+      
+        window.ticketUrls = [
+          {
+            "name": "US Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/us-open-tennis-tickets.html"
+          }, {
+            "name": "Coupe Rogers",
+            "url": "http://www.ticketcity.com/tennis-tickets/rogers-cup-mens-tennis-canada-tickets.html"
+          }, {
+            "name": "Western & Southern Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/western-and-southern-open-tickets.html"
+          }, {
+            "name": "Australian Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "BNP Paribas Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "Sony Open Tennis",
+            "url": "http://www.ticketcity.com/tennis-tickets/sony-ericsson-open-tennis-tickets.html"
+          }, {
+            "name": "Wimbledon",
+            "url": "http://www.ticketcity.com/tennis-tickets/wimbledon-tennis-tickets.html"
+          }
+        ];
+      
+      }).call(this);
     </script>
     <script src='javascripts/site.js'></script>
   </head>
@@ -25,7 +53,7 @@
       <div class='wrap'>
         <h2>
           <a href='index.html'>
-            <img class='logo' src='images/site-logo.gif' />
+            <img class='logo' src='images/site-logo.gif'>
           </a>
         </h2>
         <ul id='nav'>
@@ -111,92 +139,88 @@
       </div>
     </header>
     <div class='main' role='main'>
+      <p>Please zoom in to see ATP500 and ATP250 tournaments.</p>
       <div id='map'></div>
       <p>Please zoom in to see ATP500 and ATP250 tournaments.</p>
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
       <script src='http://maps.google.com/maps/api/js?sensor=true' type='text/javascript'></script>
-      <script type='text/javascript'>
-        //<![CDATA[
-          (function() {
-      
-        loadData("tournaments", function(tournaments) {
-          var atp250Markers, atp500Markers, map;
-          map = getMap();
-          atp500Markers = [];
-          atp250Markers = [];
-          $.each(tournaments.data, function(i, tournament) {
-            var icon, infoWindow, marker, position, show, zIndex, _ref;
-            if (tournament.type === "daviscup") {
-              return;
-            }
-            icon = getTournamentLogo(tournament.type, tournament.name);
-            zIndex = getTournamentPriority(tournament.type);
-            show = !((_ref = tournament.type) === "atp250" || _ref === "atp500");
-            position = new google.maps.LatLng(tournament.latitude, tournament.longitude);
-            marker = new google.maps.Marker({
-              position: position,
-              map: (show ? map : null),
-              icon: icon,
-              zIndex: zIndex
+      <script>
+        (function() {
+        
+          loadData("tournaments", function(tournaments) {
+            var atp250Markers, atp500Markers, map;
+            map = getMap();
+            atp500Markers = [];
+            atp250Markers = [];
+            $.each(tournaments.data, function(i, tournament) {
+              var icon, infoWindow, marker, position, show, zIndex, _ref;
+              if (tournament.type === "daviscup") {
+                return;
+              }
+              icon = getTournamentLogo(tournament.type, tournament.name);
+              zIndex = getTournamentPriority(tournament.type);
+              show = !((_ref = tournament.type) === "atp250" || _ref === "atp500");
+              position = new google.maps.LatLng(tournament.latitude, tournament.longitude);
+              marker = new google.maps.Marker({
+                position: position,
+                map: (show ? map : null),
+                icon: icon,
+                zIndex: zIndex
+              });
+              switch (tournament.type) {
+                case "atp250":
+                  atp250Markers.push(marker);
+                  break;
+                case "atp500":
+                  atp500Markers.push(marker);
+              }
+              infoWindow = new google.maps.InfoWindow({
+                content: T('tournament-info-window').render(tournament)
+              });
+              return google.maps.event.addListener(marker, "click", function() {
+                return infoWindow.open(map, marker);
+              });
             });
-            switch (tournament.type) {
-              case "atp250":
-                atp250Markers.push(marker);
-                break;
-              case "atp500":
-                atp500Markers.push(marker);
-            }
-            infoWindow = new google.maps.InfoWindow({
-              content: getInfoWindowContent(tournament)
-            });
-            return google.maps.event.addListener(marker, "click", function() {
-              return infoWindow.open(map, marker);
+            return google.maps.event.addListener(map, "zoom_changed", function() {
+              var zoom;
+              zoom = map.getZoom();
+              if (zoom <= 4) {
+                $.each(atp250Markers, function(i, marker) {
+                  return marker.setMap(null);
+                });
+              } else {
+                $.each(atp250Markers, function(i, marker) {
+                  return marker.setMap(map);
+                });
+              }
+              if (zoom <= 3) {
+                return $.each(atp500Markers, function(i, marker) {
+                  return marker.setMap(null);
+                });
+              } else {
+                return $.each(atp500Markers, function(i, marker) {
+                  return marker.setMap(map);
+                });
+              }
             });
           });
-          return google.maps.event.addListener(map, "zoom_changed", function() {
-            var zoom;
-            zoom = map.getZoom();
-            if (zoom <= 4) {
-              $.each(atp250Markers, function(i, marker) {
-                return marker.setMap(null);
-              });
-            } else {
-              $.each(atp250Markers, function(i, marker) {
-                return marker.setMap(map);
-              });
-            }
-            if (zoom <= 3) {
-              return $.each(atp500Markers, function(i, marker) {
-                return marker.setMap(null);
-              });
-            } else {
-              return $.each(atp500Markers, function(i, marker) {
-                return marker.setMap(map);
-              });
-            }
-          });
-        });
-      
-      }).call(this);
-      
-        //]]>
+        
+        }).call(this);
       </script>
     </div>
     <footer></footer>
-    <script type='text/javascript'>
-      //<![CDATA[
-        if (!location.hostname.match('localhost')) {
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-38153915-1']);
-          _gaq.push(['_trackPageview']);
-        
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        }
-      //]]>
+    <script>
+      if (!location.hostname.match('localhost')) {
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38153915-1']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      }
     </script>
   </body>
 </html>

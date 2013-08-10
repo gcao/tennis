@@ -4,18 +4,46 @@
 <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 <html class='no-js'>
   <head>
-    <meta charset='utf-8' />
-    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords' />
-    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    <meta charset='utf-8'>
+    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <title>TennisForFans.com</title>
     <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1.0">
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
-    <link href='stylesheets/site.css' rel='stylesheet' />
-    <script type='text/javascript'>
-      //<![CDATA[
-        var useLocalData = false;
-        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
-      //]]>
+    <link href='stylesheets/site.css' rel='stylesheet'>
+    <script>
+      (function() {
+      
+        window.useLocalData = false;
+      
+        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>');
+      
+        window.ticketUrls = [
+          {
+            "name": "US Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/us-open-tennis-tickets.html"
+          }, {
+            "name": "Coupe Rogers",
+            "url": "http://www.ticketcity.com/tennis-tickets/rogers-cup-mens-tennis-canada-tickets.html"
+          }, {
+            "name": "Western & Southern Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/western-and-southern-open-tickets.html"
+          }, {
+            "name": "Australian Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "BNP Paribas Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "Sony Open Tennis",
+            "url": "http://www.ticketcity.com/tennis-tickets/sony-ericsson-open-tennis-tickets.html"
+          }, {
+            "name": "Wimbledon",
+            "url": "http://www.ticketcity.com/tennis-tickets/wimbledon-tennis-tickets.html"
+          }
+        ];
+      
+      }).call(this);
     </script>
     <script src='javascripts/site.js'></script>
   </head>
@@ -25,7 +53,7 @@
       <div class='wrap'>
         <h2>
           <a href='index.html'>
-            <img class='logo' src='images/site-logo.gif' />
+            <img class='logo' src='images/site-logo.gif'>
           </a>
         </h2>
         <ul id='nav'>
@@ -116,8 +144,8 @@
         <span class='generated-note'>(generated at <span class='generated-at'></span>)</span>
       </h2>
       <form action='#' id='rankings-form' method='get'>
-        <input id='ytd' name='ytd' onclick="toggle($(this).attr('checked'))" type='checkbox' value='true' />
-        <label for='ytd'>Year To Date</label>
+        <input id='ytd' name='ytd' onclick="toggle($(this).attr('checked'))" type='checkbox' value='true'>
+        <label for='ytd'>Year To Date &nbsp;</label>
       </form>
       <div id='rankings-chart' style='height: 1000px'></div>
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
@@ -126,185 +154,159 @@
         <li><a href="#">Rank History</a></li>
       </div>
       <script src='javascripts/vendor/d3.v2.min.js'></script>
-      <script type='text/javascript'>
-        //<![CDATA[
-          var firstTime       = true;
-          
-          // http://d3-generator.com/
-          var valueLabelWidth = 50; // space reserved for value labels (right)
-          var barHeight       = 20; // height of one bar
-          var barLabelWidth   = 107; // space reserved for bar labels
-          var barLabelPadding = 5; // padding between bar and bar labels (left)
-          var gridLabelHeight = 18; // space reserved for gridline labels
-          var gridChartOffset = 3; // space between start of grid and first bar
-          var maxBarWidth     = 920; // width of the bar with the max value
-          var dataLength      = 51;
-          var xMax            = 13999; // Avoid draw 14000 vertical grid
-          var duration        = function() { return firstTime ? 0 : 2000; }
-          var exitDuration    = function() { return firstTime ? 0 : 1200; }
-          
-          function i2rank(i) {
+      <script>
+        (function() {
+          var barHeight, barLabel, barLabelPadding, barLabelWidth, barsContainer, chart, dataLength, duration, exitDuration, firstTime, gridChartOffset, gridContainer, gridLabelHeight, hGridContainer, i2rank, label, labelsContainer, maxBarWidth, showChart, valueLabelWidth, x, xBarLabel, xMax, y, yScale, yText;
+        
+          i2rank = function(i) {
             if (i < 10) {
               return " _" + i;
             } else {
               return " " + i;
             }
-          }
-          
-          // accessor functions
-          var label    = function(d, i) { return d.last + i2rank(d.rank); };
-          var barLabel = function(d, i) { return d.points; };
-          
-          // scales
-          var yScale    = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight]);
-          var y         = function(d, i) { return yScale(i); };
-          var yText     = function(d, i) { return yScale(i) + yScale.rangeBand() / 2; };
-          var x         = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth]);
-          var xBarLabel = function(d) { return x(d.points); }
-          
-          // svg container element
-          var chart     = d3.select('#rankings-chart').append("svg")
-            .attr('width', maxBarWidth + barLabelWidth + valueLabelWidth)
-            .attr('height', gridLabelHeight + gridChartOffset + dataLength * barHeight - 20);
-          
-          // horizontal grid lines
-          var hGridContainer = chart.append('g');
-          hGridContainer.selectAll("line").data([1, 11, 21, 31, 41])
-            .enter().append("line")
-            .attr("x1", 0)
-            .attr("x2", x(xMax))
-            .attr("y1", function(d) { return yScale(d); })
-            .attr("y2", function(d) { return yScale(d); })
-            .style("stroke", "#ccc");
-          
-          // grid line labels
-          var gridContainer = chart.append('g')
-            .attr('transform', 'translate(' + barLabelWidth + ',' + gridLabelHeight + ')');
-          gridContainer.selectAll("text").data(x.ticks(5))
-            .enter().append("text")
-            .attr("x", x)
-            .attr("dy", -3)
-            .attr("text-anchor", "middle")
-            .text(String);
-          
-          // vertical grid lines
-          gridContainer.selectAll("line").data(x.ticks(5))
-            .enter().append("line")
-            .attr("x1", x)
-            .attr("x2", x)
-            .attr("y1", 0)
-            .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-            .style("stroke", "#ccc");
-          
-          // bar labels
-          var labelsContainer = chart.append('g')
-            .attr('transform', 'translate(' + (barLabelWidth - barLabelPadding) + ',' + (gridLabelHeight + gridChartOffset) + ')');
-          var barsContainer = chart.append('g')
-            .attr('transform', 'translate(' + barLabelWidth + ',' + (gridLabelHeight + gridChartOffset) + ')');
-          
-          // start line
-          //barsContainer.append("line")
-          //  .attr("y1", -gridChartOffset)
-          //  .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-          //  .style("stroke", "#000");
-          
-          function toggle(ytd){
-            if (ytd) {
-              loadData("rankings_ytd", function(rankings){ showChart(rankings); });
+          };
+        
+          firstTime = true;
+        
+          valueLabelWidth = 50;
+        
+          barHeight = 20;
+        
+          barLabelWidth = 107;
+        
+          barLabelPadding = 5;
+        
+          gridLabelHeight = 18;
+        
+          gridChartOffset = 3;
+        
+          maxBarWidth = 920;
+        
+          dataLength = 51;
+        
+          xMax = 13999;
+        
+          duration = function() {
+            if (firstTime) {
+              return 0;
             } else {
-              loadData("rankings", function(rankings){ showChart(rankings); });
+              return 3000;
             }
-          }
-          
-          function showChart(rankings) {
+          };
+        
+          exitDuration = function() {
+            if (firstTime) {
+              return 0;
+            } else {
+              return 1200;
+            }
+          };
+        
+          label = function(d, i) {
+            return d.last + i2rank(d.rank);
+          };
+        
+          barLabel = function(d, i) {
+            return d.points;
+          };
+        
+          yScale = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight]);
+        
+          y = function(d, i) {
+            return yScale(i);
+          };
+        
+          yText = function(d, i) {
+            return yScale(i) + yScale.rangeBand() / 2;
+          };
+        
+          x = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth]);
+        
+          xBarLabel = function(d) {
+            return x(d.points);
+          };
+        
+          chart = d3.select("#rankings-chart").append("svg").attr("width", maxBarWidth + barLabelWidth + valueLabelWidth).attr("height", gridLabelHeight + gridChartOffset + dataLength * barHeight - 20);
+        
+          hGridContainer = chart.append("g");
+        
+          hGridContainer.selectAll("line").data([1, 11, 21, 31, 41]).enter().append("line").attr("x1", 0).attr("x2", x(xMax)).attr("y1", function(d) {
+            return yScale(d);
+          }).attr("y2", function(d) {
+            return yScale(d);
+          }).style("stroke", "#ccc");
+        
+          gridContainer = chart.append("g").attr("transform", "translate(" + barLabelWidth + "," + gridLabelHeight + ")");
+        
+          gridContainer.selectAll("text").data(x.ticks(5)).enter().append("text").attr("x", x).attr("dy", -3).attr("text-anchor", "middle").text(String);
+        
+          gridContainer.selectAll("line").data(x.ticks(5)).enter().append("line").attr("x1", x).attr("x2", x).attr("y1", 0).attr("y2", yScale.rangeExtent()[1] + gridChartOffset).style("stroke", "#ccc");
+        
+          labelsContainer = chart.append("g").attr("transform", "translate(" + (barLabelWidth - barLabelPadding) + "," + (gridLabelHeight + gridChartOffset) + ")");
+        
+          barsContainer = chart.append("g").attr("transform", "translate(" + barLabelWidth + "," + (gridLabelHeight + gridChartOffset) + ")");
+        
+          window.toggle = function(ytd) {
+            if (ytd) {
+              return loadData("rankings_ytd", function(rankings) {
+                return showChart(rankings);
+              });
+            } else {
+              return loadData("rankings", function(rankings) {
+                return showChart(rankings);
+              });
+            }
+          };
+        
+          showChart = function(rankings) {
+            var barLabels, bars, data, labels;
             updateGenerationTime(rankings.generated_at);
-          
-            var data = rankings.data;
-          
-            var labels = labelsContainer.selectAll('text')
-              .data(data, function(d){ return d.first + d.last; });
-            // Update transitions
-            labels.transition().duration(duration).ease('exp-out')
-              .attr('y', yText)
-              .text(label);
-            labels.enter().append('text')
-              .attr('y', yScale(dataLength - 1))
-              .attr('stroke', 'none')
-              .attr('fill', 'black')
-              .attr("dy", ".35em") // vertical-align: middle
-              .attr('text-anchor', 'end')
-              .text(label)
-              .transition().duration(duration).ease('exp-out')
-              .attr('y', yText);
-            labels.exit()
-              //.transition().duration(exitDuration).ease('exp-in')
-              //.attr('y', yScale(dataLength - 1))
-              .remove();
-          
-            var bars = barsContainer.selectAll("rect")
-              .data(data, function(d){ return d.first + d.last; });
-            // Update transitions
-            bars.transition().duration(duration).ease('exp-out')
-              .attr('width', function(d) { return x(d.points); })
-              .attr('y', y);
-            bars.enter().append("rect")
-              .attr('y', yScale(dataLength - 1))
-              .attr('height', yScale.rangeBand())
-              .attr('width', function(d) { return x(d.points); })
-              .attr('stroke', 'white')
-              .attr('fill', 'steelblue')
-              .transition().duration(duration).ease('exp-out')
-              .attr('y', y);
-            bars.exit()
-              //.transition().duration(exitDuration).ease('exp-in')
-              //.attr('y', yScale(dataLength - 1))
-              .remove();
-          
-            barLabels = barsContainer.selectAll("text")
-              .data(data, function(d){ return d.first + d.last; });
-            // Update transitions
-            barLabels.transition().duration(duration).ease('exp-out')
-              .attr('x', xBarLabel)
-              .attr('y', yText)
-              .text(barLabel);
-            barLabels.enter().append("text")
-              .attr("x", xBarLabel)
-              .attr("y", yScale(dataLength - 1))
-              .attr("dx", 3) // padding-left
-              .attr("dy", ".35em") // vertical-align: middle
-              .attr("text-anchor", "start") // text-align: right
-              .attr("fill", "black")
-              .attr("stroke", "none")
-              .text(barLabel)
-              .transition().duration(duration).ease('exp-out')
-              .attr('y', yText);
-            barLabels.exit()
-              //.transition().duration(exitDuration).ease('exp-in')
-              //.attr('y', yScale(dataLength - 1))
-              .remove();
-          
-            firstTime = false;
-          }
-          
-          loadData("rankings", function(rankings){ showChart(rankings); });
-        //]]>
+            data = rankings.data;
+            labels = labelsContainer.selectAll("text").data(data, function(d) {
+              return d.first + d.last;
+            });
+            labels.transition().duration(duration).ease("exp-out").attr("y", yText).text(label);
+            labels.enter().append("text").attr("y", yScale(dataLength - 1)).attr("stroke", "none").attr("fill", "black").attr("dy", ".35em").attr("text-anchor", "end").text(label).transition().duration(duration).ease("exp-out").attr("y", yText);
+            labels.exit().remove();
+            bars = barsContainer.selectAll("rect").data(data, function(d) {
+              return d.first + d.last;
+            });
+            bars.transition().duration(duration).ease("exp-out").attr("width", function(d) {
+              return x(d.points);
+            }).attr("y", y);
+            bars.enter().append("rect").attr("y", yScale(dataLength - 1)).attr("height", yScale.rangeBand()).attr("width", function(d) {
+              return x(d.points);
+            }).attr("stroke", "white").attr("fill", "steelblue").transition().duration(duration).ease("exp-out").attr("y", y);
+            bars.exit().remove();
+            barLabels = barsContainer.selectAll("text").data(data, function(d) {
+              return d.first + d.last;
+            });
+            barLabels.transition().duration(duration).ease("exp-out").attr("x", xBarLabel).attr("y", yText).text(barLabel);
+            barLabels.enter().append("text").attr("x", xBarLabel).attr("y", yScale(dataLength - 1)).attr("dx", 3).attr("dy", ".35em").attr("text-anchor", "start").attr("fill", "black").attr("stroke", "none").text(barLabel).transition().duration(duration).ease("exp-out").attr("y", yText);
+            barLabels.exit().remove();
+            return firstTime = false;
+          };
+        
+          loadData("rankings", function(rankings) {
+            return showChart(rankings);
+          });
+        
+        }).call(this);
       </script>
     </div>
     <footer></footer>
-    <script type='text/javascript'>
-      //<![CDATA[
-        if (!location.hostname.match('localhost')) {
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-38153915-1']);
-          _gaq.push(['_trackPageview']);
-        
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        }
-      //]]>
+    <script>
+      if (!location.hostname.match('localhost')) {
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38153915-1']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      }
     </script>
   </body>
 </html>

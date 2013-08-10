@@ -4,18 +4,46 @@
 <!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
 <html class='no-js'>
   <head>
-    <meta charset='utf-8' />
-    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords' />
-    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible' />
+    <meta charset='utf-8'>
+    <meta content='Tennis for fans,Tennis fans,Guoliang Cao,Tennis,ATP,ATP 1000,Grand Slam,Roger Federer,Novak Djokovic,Rafael Nadal,Andy Murray,David Ferrer,Del Potro,Berdych,Tsonga,Ranking,Tennis players,Schedule,Tournaments,Rank history,Win,Loss,Chart' name='keywords'>
+    <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
     <title>TennisForFans.com</title>
     <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1.0">
     <script src='javascripts/vendor/modernizr-2.6.1.min.js'></script>
-    <link href='stylesheets/site.css' rel='stylesheet' />
-    <script type='text/javascript'>
-      //<![CDATA[
-        var useLocalData = false;
-        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
-      //]]>
+    <link href='stylesheets/site.css' rel='stylesheet'>
+    <script>
+      (function() {
+      
+        window.useLocalData = false;
+      
+        window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>');
+      
+        window.ticketUrls = [
+          {
+            "name": "US Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/us-open-tennis-tickets.html"
+          }, {
+            "name": "Coupe Rogers",
+            "url": "http://www.ticketcity.com/tennis-tickets/rogers-cup-mens-tennis-canada-tickets.html"
+          }, {
+            "name": "Western & Southern Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/western-and-southern-open-tickets.html"
+          }, {
+            "name": "Australian Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "BNP Paribas Open",
+            "url": "http://www.ticketcity.com/tennis-tickets/australian-open-tennis-tickets.html"
+          }, {
+            "name": "Sony Open Tennis",
+            "url": "http://www.ticketcity.com/tennis-tickets/sony-ericsson-open-tennis-tickets.html"
+          }, {
+            "name": "Wimbledon",
+            "url": "http://www.ticketcity.com/tennis-tickets/wimbledon-tennis-tickets.html"
+          }
+        ];
+      
+      }).call(this);
     </script>
     <script src='javascripts/site.js'></script>
   </head>
@@ -25,7 +53,7 @@
       <div class='wrap'>
         <h2>
           <a href='index.html'>
-            <img class='logo' src='images/site-logo.gif' />
+            <img class='logo' src='images/site-logo.gif'>
           </a>
         </h2>
         <ul id='nav'>
@@ -119,57 +147,52 @@
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
       <script src='http://maps.google.com/maps/api/js?sensor=true' type='text/javascript'></script>
       <script src='javascripts/schedule.js'></script>
-      <script type='text/javascript'>
-        //<![CDATA[
-          (function() {
-        var player;
-      
-        player = getQueryVar('player');
-      
-        if (player) {
-          $.when(loadData('tournaments'), loadData(player + '_schedule')).then(function(req1, req2) {
-            var schedule, tournaments;
-            tournaments = req1[0];
-            schedule = req2[0];
-            $('#player_name').text(schedule.name);
-            schedule = $.map(schedule.data, function(x) {
-              if (typeof x === 'string') {
-                return {
-                  tournament: x
-                };
-              } else {
-                return x;
-              }
+      <script>
+        (function() {
+          var player;
+        
+          player = getQueryVar('player');
+        
+          if (player) {
+            $.when(loadData('tournaments'), loadData(player + '_schedule')).then(function(req1, req2) {
+              var schedule, tournaments;
+              tournaments = req1[0];
+              schedule = req2[0];
+              $('#player_name').text(schedule.name);
+              schedule = $.map(schedule.data, function(x) {
+                if (typeof x === 'string') {
+                  return {
+                    tournament: x
+                  };
+                } else {
+                  return x;
+                }
+              });
+              tournaments = filterTournaments(tournaments.data, schedule);
+              $('#schedule').html(T('schedule').render(tournaments));
+              return drawMapWithSchedule(tournaments);
             });
-            tournaments = filterTournaments(tournaments.data, schedule);
-            $('#schedule').html(generateScheduleHtml(tournaments));
-            return drawMapWithSchedule(tournaments);
-          });
-        } else {
-          $('#map, #schedule').hide();
-          $('.main h2').html('No player is selected. Please select players from "Schedules" menu');
-        }
-      
-      }).call(this);
-      
-        //]]>
+          } else {
+            $('#map, #schedule').hide();
+            $('.main h2').html('No player is selected. Please select players from "Schedules" menu');
+          }
+        
+        }).call(this);
       </script>
     </div>
     <footer></footer>
-    <script type='text/javascript'>
-      //<![CDATA[
-        if (!location.hostname.match('localhost')) {
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-38153915-1']);
-          _gaq.push(['_trackPageview']);
-        
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-        }
-      //]]>
+    <script>
+      if (!location.hostname.match('localhost')) {
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-38153915-1']);
+        _gaq.push(['_trackPageview']);
+      
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+      }
     </script>
   </body>
 </html>
