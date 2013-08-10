@@ -7,4 +7,4 @@ gem "susy", "1.0"
 gem "redcarpet"
 #gem "pygments.rb"
 
-gem 'coffee-filter' # Coffeescript filter for HAML
+#gem 'coffee-filter' # Coffeescript filter for HAML

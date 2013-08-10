@@ -1,3 +1,4 @@
+%p Please zoom in to see ATP500 and ATP250 tournaments.
 #map
 %p Please zoom in to see ATP500 and ATP250 tournaments.
 .backToHome <a href='index.html'>Back to home</a>
@@ -16,17 +17,17 @@
       show     = not(tournament.type in ["atp250", "atp500"])
       position = new google.maps.LatLng(tournament.latitude, tournament.longitude)
       marker   = new google.maps.Marker(
-        position: position
-        map: (if show then map else null)
-        icon: icon
-        zIndex: zIndex
+        position : position
+        map      : (if show then map else null)
+        icon     : icon
+        zIndex   : zIndex
       )
 
       switch tournament.type 
         when "atp250" then atp250Markers.push marker
         when "atp500" then atp500Markers.push marker
 
-      infoWindow = new google.maps.InfoWindow(content: getInfoWindowContent(tournament))
+      infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window').render(tournament))
       google.maps.event.addListener marker, "click", ->
         infoWindow.open map, marker
 

@@ -20,10 +20,8 @@
       schedule = $.map(schedule.data, (x) -> if typeof x is 'string' then {tournament: x} else x)
 
       tournaments = filterTournaments(tournaments.data, schedule)
-      $('#schedule').html(generateScheduleHtml(tournaments))
+      $('#schedule').html(T('schedule').render(tournaments))
       drawMapWithSchedule(tournaments)
-      #$('#schedule .tournament').each (i) ->
-      #  $(this).click -> setMapCenterToTournament(tournaments[i])
   else
     $('#map, #schedule').hide()
     $('.main h2').html('No player is selected. Please select players from "Schedules" menu')

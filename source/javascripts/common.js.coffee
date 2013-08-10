@@ -90,18 +90,20 @@ window.getTournamentPriority = (tournamentType) ->
     when "grandslam"    then 6
     else 1
 
-window.getInfoWindowContent = (tournament) ->
-  """
-    <div class="map-info">
-      <p class="tournament-name">
-        <a href="http://www.atpworldtour.com#{tournament.url}" target="_new">#{tournament.name}</a>
-      </p>
-      <p>
-        <span class="tournament-time">#{tournament.start}</span>
-        @ <span class="tournament-place">#{tournament.place}</span>
-      </p>
-    </div>
-  """
+T.def 'tournament-info-window', (tournament) ->
+  [ "div.map-info"
+    [ "p.tournament-name"
+      [ "a"
+        href: "http://www.atpworldtour.com#{tournament.url}"
+        target: "_new"
+        tournament.name
+      ]
+      '&nbsp;&nbsp;'
+      T('buy-ticket-link', tournament, getTicketUrl(tournament.name))
+    ]
+    ["p.tournament-time", tournament.start]
+    ["p.tournament-place", tournament.place]
+  ]
 
 window.formatDate = (date, format = 'YYYY-MM-DD') ->
   format = format.replace("DD",
@@ -113,3 +115,15 @@ window.formatDate = (date, format = 'YYYY-MM-DD') ->
 window.isFuture = (formattedDate) ->
   formattedDate > formatDate(new Date())
 
+window.getTicketUrl = (tournamentName) ->
+  for item in ticketUrls
+    if item.name is tournamentName
+      return item.url
+
+T.def 'buy-ticket-link', (tournament, url) ->
+  return unless tournament and url
+  [ 'a.ticket_url'
+    href: url
+    rel: 'nofollow'
+    'Buy&nbsp;Ticket'
+  ]

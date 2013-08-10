@@ -1,3 +1,7 @@
+$: << File.dirname(__FILE__) + '/lib'
+
+require 'ticket_urls'
+
 #Markdown
 set :markdown_engine, :redcarpet
 

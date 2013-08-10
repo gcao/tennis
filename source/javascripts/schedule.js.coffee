@@ -1,5 +1,3 @@
-#= require vendor/t
-
 addPath = (map, startMarker, endMarker, pathState) ->
   bounds = new google.maps.LatLngBounds()
   p1 = startMarker.getPosition()
@@ -79,7 +77,7 @@ window.drawMapWithSchedule = (tournaments) ->
       zIndex: zIndex
     )
 
-    infoWindow = new google.maps.InfoWindow(content: getInfoWindowContent(tournament))
+    infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window').render(tournament))
     google.maps.event.addListener marker, "click", ->
       infoWindow.open map, marker
 
@@ -106,7 +104,7 @@ translateResult = (result) ->
     when '1/128' then 'round-of-128'
     else ''
 
-tournamentResultTemplate = (data) ->
+T.def 'tournament-result', (data) ->
   return unless data.result
 
   [ "div.detail"
@@ -128,37 +126,36 @@ tournamentResultTemplate = (data) ->
     ]
   ]
 
-generateDetail = (tournament) ->
-  T(tournamentResultTemplate).render(tournament.extras)
-
-scheduleTemplate = (data) ->
-  for i, tournament of data
-    tournamentUrl  = getAtpUrl(tournament.url)
-    tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
-    statusClass    = if isFuture(tournament.start) then 'future' else ''
-    resultClass    = translateResult(tournament.extras?.result)
-    [ 'div.tournament'
-      {'class': "#{statusClass} #{resultClass}"}
-      ['div.start', tournament.start]
-      [ 'div.logo'
-        [ 'a'
-          href: tournamentUrl
-          target: '_new'
-          ['img', src:tournamentLogo]
-        ]
+T.def 'tournament', (tournament) ->
+  tournamentUrl  = getAtpUrl(tournament.url)
+  tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
+  statusClass    = if isFuture(tournament.start) then 'future' else ''
+  resultClass    = translateResult(tournament.extras?.result)
+  [ 'div.tournament'
+    {'class': "#{statusClass} #{resultClass}"}
+    ['div.start', tournament.start]
+    [ 'div.logo'
+      [ 'a'
+        href: tournamentUrl
+        target: '_new'
+        ['img', src:tournamentLogo]
       ]
-      [ 'div.name'
-        [ 'a'
-          href: tournamentUrl
-          target: '_new'
-          tournament.name
-        ]
-      ]
-      generateDetail(tournament)
     ]
+    [ 'div.name'
+      [ 'a'
+        href: tournamentUrl
+        target: '_new'
+        tournament.name
+      ]
+      '&nbsp;&nbsp;'
+      T('buy-ticket-link', tournament, getTicketUrl(tournament.name))
+    ]
+    T('tournament-result', tournament)
+  ]
 
-window.generateScheduleHtml = (tournaments) ->
-  T(scheduleTemplate).render(tournaments)
+T.def 'schedule', (tournaments) ->
+  for tournament in tournaments
+    T('tournament', tournament)
 
 window.setMapCenterToTournament = (tournament) ->
   map.setCenter(new google.maps.LatLng(tournament.latitude, tournament.longitude))
