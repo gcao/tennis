@@ -5,7 +5,7 @@
 window.togglePlayer = (playerIndex) ->
   $("#win-loss-chart .player#{playerIndex}").toggleClass('hide')
 
-loadWinLoss = (players) ->
+window.loadWinLoss = (players) ->
   ids = $.map(players, (player) -> player + '_win_loss')
   loadData2(ids)
 
@@ -38,13 +38,10 @@ hGridData = ->
   else
     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1]
 
-players = getPlayers(DEFAULT_PLAYERS)
-$('[name=players]').val(players.join(','))
-$('[name=grandSlam]').prop('checked', isGrandSlam())
-
-loadWinLoss(players).then (results...) ->
+window.showWinLosss = (results...) ->
   results = normalizeResults results
 
+  $('.players').html('')
   for result, i in results
     $('.players').append \
       "<span class='player#{i}' onclick='javascript:togglePlayer(#{i})'>#{result.name}</span>&nbsp;&nbsp; "
@@ -218,3 +215,8 @@ loadWinLoss(players).then (results...) ->
       .append("path")
       .attr("d", line)
 
+window.players = getPlayers(DEFAULT_PLAYERS)
+$('[name=players]').val(players.join(','))
+$('[name=grandSlam]').prop('checked', isGrandSlam())
+
+loadWinLoss(players).then(showWinLosss)
