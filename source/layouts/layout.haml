@@ -25,6 +25,7 @@
       window.jQuery || document.write('<' + 'script src="javascripts/vendor/jquery-1.8.0.min.js"><' + '/script>')
       window.ticketUrls = #{TICKET_URLS.to_json}
     %script(src='javascripts/site.js')
+    -#%script(src='javascripts/test.js')
   %body
     /[if lt IE 7] <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p>
     %header
@@ -34,7 +35,7 @@
             %img.logo(src='images/site-logo.gif')
         %ul#nav
           %li.rankings{toggle_tab('rankings')}
-            %a(href='rankings.html') Rankings
+            %a(href='#/rankings') Rankings
           %li.rank-history{toggle_tab('rank-history')}
             %a(href='javascript:void(0)') Rank History
             %ul

@@ -82,3 +82,55 @@ window.changeFromYear = ->
 
   $("[name=toYear]").val (if toYear then toYear else getYear())
 
+router.get '/rank-history', ->
+  loadData "rankings", (rankings) ->
+    updateGenerationTime rankings.generated_at
+
+    $("[name=fromYear]").change changeFromYear
+
+    $.each rankings.data, (i, r) ->
+      return  if i >= 50
+      name = r.first + " " + r.last
+      value = (r.first + "_" + r.last).toLowerCase().replace(/[ -]/g, "_")
+      $("#players").append "<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>"
+      $('#players').append('<br/>') if i % 5 is 4
+
+    $("button.update").click ->
+      players = $("[name=player]:checked").map(-> @value)
+      if players.length is 0
+        alert "No player is selected."
+      else if players.length is 1
+        window.location = location.pathname + "?players=" + players[0]
+      else
+        s = players[0]
+        i = 1
+
+        while i < players.length
+          s += "," + players[i]
+          i++
+
+        window.location = location.pathname + "?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val()
+
+    fromYear = 2003
+    fromYearParam = getQueryVar("fromYear")
+    fromYear = parseInt(fromYearParam)  if fromYearParam
+    initFromYear()
+    $("[name=fromYear]").val fromYear
+
+    toYear = getYear()
+    toYearParam = getQueryVar("toYear")
+    toYear = parseInt(toYearParam)  if toYearParam
+    initToYear fromYear
+    $("[name=toYear]").val toYear
+
+    players = null
+    playersParam = getQueryVar("players")
+    if playersParam and playersParam isnt ""
+      players = playersParam.split(",")
+    else
+      players = ["novak_djokovic", "roger_federer", "rafael_nadal", "andy_murray"]
+
+    $.each players, (i, p) ->
+      $("[value=" + p + "]").click()
+
+    loadAndShowRankHistory players, fromYear, toYear

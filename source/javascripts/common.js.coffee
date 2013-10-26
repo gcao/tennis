@@ -1,3 +1,5 @@
+window.router = new routes()
+
 window.getAtpUrl = (url) ->
   "http://www.atpworldtour.com#{url}"
 
