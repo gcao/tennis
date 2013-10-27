@@ -1,3 +1,41 @@
+T.def 'rank-history', ->
+  [
+    [ 'h2'
+      'ATP rank history'
+      [ 'span.generated-note'
+        '(generated at'
+        [ 'span.generated-at' ]
+        ')'
+      ]
+    ]
+    ['#rank-history', ['svg']]
+    [ '#timespan'
+      'Time span:'
+      ['select', name: 'fromYear']
+      '-'
+      ['select', name: 'toYear']
+      [ 'button.update', 
+        click: ->
+          players = $("[name=player]:checked").map(-> @value)
+          if players.length is 0
+            alert "No player is selected."
+          else if players.length is 1
+            window.location.hash = "#/ranking-history?players=" + players[0]
+          else
+            s = players[0]
+            i = 1
+
+            while i < players.length
+              s += "," + players[i]
+              i++
+
+            window.location.hash = "#/ranking-history?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val()
+        'Update graph'
+      ]
+    ]
+    ['#players']
+  ]
+
 window.loadAndShowRankHistory = (players, fromYear, toYear) ->
   if players.length is 0
     alert "No player is chosen!"
@@ -82,7 +120,11 @@ window.changeFromYear = ->
 
   $("[name=toYear]").val (if toYear then toYear else getYear())
 
-router.get '/rank-history', ->
+router.get '/rank-history.*', ->
+  console.log 'rank-history'
+
+  T('rank-history').render inside: '.main'
+
   loadData "rankings", (rankings) ->
     updateGenerationTime rankings.generated_at
 
@@ -95,21 +137,6 @@ router.get '/rank-history', ->
       $("#players").append "<div class=\"player\"><input type=\"checkbox\" name=\"player\" value=\"" + value + "\"><span>" + name + "</span></div>"
       $('#players').append('<br/>') if i % 5 is 4
 
-    $("button.update").click ->
-      players = $("[name=player]:checked").map(-> @value)
-      if players.length is 0
-        alert "No player is selected."
-      else if players.length is 1
-        window.location = location.pathname + "?players=" + players[0]
-      else
-        s = players[0]
-        i = 1
-
-        while i < players.length
-          s += "," + players[i]
-          i++
-
-        window.location = location.pathname + "?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val()
 
     fromYear = 2003
     fromYearParam = getQueryVar("fromYear")

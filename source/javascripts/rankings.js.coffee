@@ -1,12 +1,13 @@
 T.def 'rankings', ->
-  [ 'h2'
-    'ATP rankings chart for top 50 players'
-    [ 'span.generated-note'
-      '(generated at'
-      [ 'span.generated-at' ]
-      ')'
+  [
+    [ 'h2'
+      'ATP rankings chart for top 50 players'
+      [ 'span.generated-note'
+        '(generated at'
+        [ 'span.generated-at' ]
+        ')'
+      ]
     ]
-
     [ 'form#rankings-form'
       action: "#/rankings"
       method: "get"
