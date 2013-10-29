@@ -4,7 +4,6 @@
 #= require vendor/d3.v2.min
 #= require vendor/nv.d3.min
 #= require 'vendor/leviroutes'
-#= require 'vendor/watch'
 #= require 'vendor/t'
 #= require 'common'
 #= require 'rankings'

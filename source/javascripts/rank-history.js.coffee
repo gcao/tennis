@@ -3,16 +3,16 @@ T.def 'rank-history', ->
     [ 'h2'
       'ATP rank history'
       [ 'span.generated-note'
-        '(generated at'
+        ' (generated at '
         [ 'span.generated-at' ]
         ')'
       ]
     ]
     ['#rank-history', ['svg']]
     [ '#timespan'
-      'Time span:'
+      'Time span: '
       ['select', name: 'fromYear']
-      '-'
+      ' - '
       ['select', name: 'toYear']
       [ 'button.update', 
         click: ->
@@ -120,7 +120,7 @@ window.changeFromYear = ->
 
   $("[name=toYear]").val (if toYear then toYear else getYear())
 
-router.get '/rank-history.*', ->
+router.get '/rank-history/:players', (req) ->
   console.log 'rank-history'
 
   T('rank-history').render inside: '.main'
@@ -150,13 +150,7 @@ router.get '/rank-history.*', ->
     initToYear fromYear
     $("[name=toYear]").val toYear
 
-    players = null
-    playersParam = getQueryVar("players")
-    if playersParam and playersParam isnt ""
-      players = playersParam.split(",")
-    else
-      players = ["novak_djokovic", "roger_federer", "rafael_nadal", "andy_murray"]
-
+    players = req.params.players.split(',')
     $.each players, (i, p) ->
       $("[value=" + p + "]").click()
 

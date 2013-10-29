@@ -1,6 +1,27 @@
-#= require vendor/d3.v2.min
-#= require vendor/jquery.svg.min.js
-#= require vendor/jquery.svgdom.min.js
+T.def 'win-loss', ->
+  [
+    [ 'h2'
+      'Win/loss chart of '
+      ['span.players']
+      ['span.note', 'Click name to toggle']
+    ]
+    [ 'form#win-loss-form'
+      action: '/win-loss'
+      method: 'get'
+      ['input', type: 'hidden', name: 'players']
+      [ 'input#grandSlam'
+        type: 'checkbox'
+        name: 'grandSlam'
+        value: 'true'
+        click: -> loadWinLoss(players).then(showWinLoss)
+      ]
+      [ 'label'
+        for: 'grandSlam'
+        'Use Grand Slam data'
+      ]
+    ]
+    ['#win-loss-chart']
+  ]
 
 window.togglePlayer = (playerIndex) ->
   $("#win-loss-chart .player#{playerIndex}").toggleClass('hide')
@@ -38,7 +59,7 @@ hGridData = ->
   else
     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1]
 
-window.showWinLosss = (results...) ->
+window.showWinLoss = (results...) ->
   results = normalizeResults results
 
   $('.players').html('')
@@ -215,8 +236,13 @@ window.showWinLosss = (results...) ->
       .append("path")
       .attr("d", line)
 
-window.players = getPlayers(DEFAULT_PLAYERS)
-$('[name=players]').val(players.join(','))
-$('[name=grandSlam]').prop('checked', isGrandSlam())
+router.get '/win-loss/:players', (req) ->
+  console.log 'win-loss'
 
-loadWinLoss(players).then(showWinLosss)
+  T('win-loss').render inside: '.main'
+
+  window.players = getPlayers(req.params.players.split(','))
+  $('[name=players]').val(players.join(','))
+  $('[name=grandSlam]').prop('checked', isGrandSlam())
+
+  loadWinLoss(players).then(showWinLoss)
