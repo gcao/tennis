@@ -1,3 +1,13 @@
+T.def 'schedule', ->
+  [
+    [ 'h2'
+      ['span#player_name']
+      "'s tournament schedule"
+    ]
+    ['#map']
+    ['#schedule']
+  ]
+
 addPath = (map, startMarker, endMarker, pathState) ->
   bounds = new google.maps.LatLngBounds()
   p1 = startMarker.getPosition()
@@ -64,8 +74,8 @@ window.drawMapWithSchedule = (tournaments) ->
   window.map = getMap()
   prevTournament = undefined
   prevMarker = undefined
-  $.each tournaments, (i, tournament) ->
-    return  if tournament.type is "daviscup"
+  for tournament, i in tournaments
+    continue  if tournament.type is "daviscup"
 
     icon     = getTournamentLogo(tournament.type, tournament.name)
     zIndex   = getTournamentPriority(tournament.type)
@@ -77,7 +87,7 @@ window.drawMapWithSchedule = (tournaments) ->
       zIndex: zIndex
     )
 
-    infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window').render(tournament))
+    infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window', tournament).toString())
     google.maps.event.addListener marker, "click", ->
       infoWindow.open map, marker
 
@@ -153,9 +163,32 @@ T.def 'tournament', (tournament) ->
     T('tournament-result', tournament)
   ]
 
-T.def 'schedule', (tournaments) ->
+T.def 'schedule-table', (tournaments) ->
   for tournament in tournaments
     T('tournament', tournament)
 
 window.setMapCenterToTournament = (tournament) ->
   map.setCenter(new google.maps.LatLng(tournament.latitude, tournament.longitude))
+
+router.get '/schedule/:player', (req) ->
+  console.log 'schedule'
+
+  T('schedule').render inside: '.main'
+  player = req.params.player
+  if player
+    $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
+      tournaments = req1[0]
+      schedule = req2[0]
+
+      $('#player_name').text(schedule.name)
+
+      # tournament: 'ABC', result: 'W/F/SF/QF/1/16', defeated: 'A, B etc', lost_to: ''
+      schedule = $.map(schedule.data, (x) -> if typeof x is 'string' then {tournament: x} else x)
+
+      tournaments = filterTournaments(tournaments.data, schedule)
+      drawMapWithSchedule(tournaments)
+      T('schedule-table', tournaments).render inside: '#schedule'
+  else
+    $('#map, #schedule').hide()
+    $('.main h2').html('No player is selected. Please select players from "Schedules" menu')
+

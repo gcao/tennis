@@ -10,3 +10,4 @@
 #= require 'rank-history'
 #= require 'win-loss'
 #= require 'schedule'
+#= require 'tournaments'
