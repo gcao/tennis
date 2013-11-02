@@ -64,7 +64,9 @@ window.filterTournaments = (tournaments, schedule) ->
     )
     if result.length > 0
       tournament = result[0]
-      tournament.extras = x
+      tournament.result = x.result
+      tournament.defeated = x.defeated
+      tournament.lost_to = x.lost_to
       tournament
     else
       console?.log "Tournament not found: " + x.tournament
@@ -140,7 +142,7 @@ T.def 'tournament', (tournament) ->
   tournamentUrl  = getAtpUrl(tournament.url)
   tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
   statusClass    = if isFuture(tournament.start) then 'future' else ''
-  resultClass    = translateResult(tournament.extras?.result)
+  resultClass    = translateResult(tournament.result)
   [ 'div.tournament'
     {'class': "#{statusClass} #{resultClass}"}
     ['div.start', tournament.start]
@@ -174,6 +176,7 @@ router.get '/schedule/:player', (req) ->
   console.log 'schedule'
 
   T('schedule').render inside: '.main'
+
   player = req.params.player
   if player
     $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->

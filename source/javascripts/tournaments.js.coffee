@@ -32,7 +32,7 @@ router.get '/tournaments', ->
         when "atp250" then atp250Markers.push marker
         when "atp500" then atp500Markers.push marker
 
-      infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window').render(tournament))
+      infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window', tournament).toString())
       google.maps.event.addListener marker, "click", ->
         infoWindow.open map, marker
 
