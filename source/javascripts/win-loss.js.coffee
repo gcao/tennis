@@ -29,15 +29,10 @@ T.def 'win-loss', (grandSlam, players) ->
     ['#win-loss-chart']
   ]
 
-T.def 'players', (players) ->
-  for player, i in players
-    T('player', player.name, i)
-
-T.def 'player', (name, i) ->
+T.def 'player', (player, i) ->
   [ "span.player#{i}",
-    click: ->
-      $("#win-loss-chart .player#{i}").toggleClass('hide')
-    name
+    click: -> $("#win-loss-chart .player#{i}").toggleClass('hide')
+    player.name
     '&nbsp;&nbsp;'
   ]
 
@@ -74,7 +69,7 @@ hGridData = (grandSlam) ->
 showWinLoss = (grandSlam, results...) ->
   results = normalizeResults results
 
-  T('players', results).render inside: '.players'
+  T.each_with_index('player', results).render inside: '.players'
 
   margin =
     top    : 30

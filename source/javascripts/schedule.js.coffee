@@ -165,10 +165,6 @@ T.def 'tournament', (tournament) ->
     T('tournament-result', tournament)
   ]
 
-T.def 'schedule-table', (tournaments) ->
-  for tournament in tournaments
-    T('tournament', tournament)
-
 window.setMapCenterToTournament = (tournament) ->
   map.setCenter(new google.maps.LatLng(tournament.latitude, tournament.longitude))
 
@@ -190,7 +186,7 @@ router.get '/schedule/:player', (req) ->
 
       tournaments = filterTournaments(tournaments.data, schedule)
       drawMapWithSchedule(tournaments)
-      T('schedule-table', tournaments).render inside: '#schedule'
+      T.each('tournament', tournaments).render inside: '#schedule'
   else
     $('#map, #schedule').hide()
     $('.main h2').html('No player is selected. Please select players from "Schedules" menu')
