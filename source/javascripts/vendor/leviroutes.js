@@ -40,10 +40,36 @@ var routes = function() {
     return this.parseGroups(path);
   };
 
+  var splitInTwo = function(s, sep) {
+    var i = s.indexOf(sep);
+    if (i >= 0)
+      return [s.slice(0,i), s.slice(i+1)];
+    else
+      return [s, null];
+  }
+
+  var parseQuery = function(queryString) {
+    var query = {};
+    var parts = queryString.split('&');
+    for (var i in parts) {
+      var part = parts[i];
+      if (part.indexOf('=') < 0) {
+        query[decodeURIComponent(part)] = true;
+      } else {
+        var pair = splitInTwo(part, '=');
+        query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+      }
+    }
+
+    return query;
+  }
+
   var matchRoute = function(url, method, e) {
-    var route = null;
-    for(var i = 0; route = _routes[i]; i ++) {
-      var routeMatch = route.regex.regexp.exec(url);
+    var parts = splitInTwo(url, '?');
+    var path = parts[0], queryString = parts[1];
+    for(var i = 0;; i ++) {
+      var route = _routes[i];
+      var routeMatch = route.regex.regexp.exec(path);
       if(!!routeMatch == false) continue;
       if(method && method != route.method) continue;
 
@@ -63,7 +89,15 @@ var routes = function() {
         }
       }
 
-      route.callback({"url": url, "params": params, "values" : values, "e": e});
+      if (queryString) {
+        var query = parseQuery(queryString);
+        for (key in query) {
+          params[key] = query[key];
+        }
+      }
+
+      routes.matched = {"url": url, "params": params, "values" : values, "e": e};
+      route.callback(routes.matched);
       return true;
     }
 

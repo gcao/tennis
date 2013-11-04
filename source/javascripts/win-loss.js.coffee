@@ -1,9 +1,9 @@
-T.def 'win-loss', ->
+T.def 'win-loss', (grandSlam, players) ->
   [
     [ 'h2'
       'Win/loss chart of '
       ['span.players']
-      ['span.note', 'Click name to toggle']
+      ['span.note', ' Click name to toggle']
     ]
     [ 'form#win-loss-form'
       action: '/win-loss'
@@ -13,20 +13,35 @@ T.def 'win-loss', ->
         type: 'checkbox'
         name: 'grandSlam'
         value: 'true'
-        click: -> loadWinLoss(players).then(showWinLoss)
+        click: -> 
+          route = "#/win-loss/#{players.join(',')}"
+          if $(this).is(':checked') then route += '?grandSlam'
+          window.location.hash = route
+        renderComplete: (el) ->
+          if grandSlam
+            $(el).attr('checked', 'checked')
       ]
       [ 'label'
         for: 'grandSlam'
-        'Use Grand Slam data'
+        ' Use Grand Slam data'
       ]
     ]
     ['#win-loss-chart']
   ]
 
-window.togglePlayer = (playerIndex) ->
-  $("#win-loss-chart .player#{playerIndex}").toggleClass('hide')
+T.def 'players', (players) ->
+  for player, i in players
+    T('player', player.name, i)
 
-window.loadWinLoss = (players) ->
+T.def 'player', (name, i) ->
+  [ "span.player#{i}",
+    click: ->
+      $("#win-loss-chart .player#{i}").toggleClass('hide')
+    name
+    '&nbsp;&nbsp;'
+  ]
+
+loadWinLoss = (players) ->
   ids = $.map(players, (player) -> player + '_win_loss')
   loadData2(ids)
 
@@ -38,34 +53,28 @@ playerDataOfYearIsEmpty = (data, year) ->
       break
   isEmpty
 
-isGrandSlam = -> 
-  getQueryVar('grandSlam') is 'true'
+getData = (grandSlam, result) ->
+  if grandSlam then result.gs_data else result.data
 
-getData = (result) ->
-  if isGrandSlam() then result.gs_data else result.data
-
-yDomain = ->
-  if isGrandSlam()
+yDomain = (grandSlam) ->
+  if grandSlam
     [0, 100]
   else
     [0, 150]
 
-percentageOffset = ->
-  if isGrandSlam() then 0 else 50
+percentageOffset = (grandSlam) ->
+  if grandSlam then 0 else 50
 
-hGridData = ->
-  if isGrandSlam()
+hGridData = (grandSlam) ->
+  if grandSlam
     [0, 5, 10, 15, 20, 25, 30, .4, .5, .6, .7, .8, .9, 1]
   else
     [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, .6, .7, .8, .9, 1]
 
-window.showWinLoss = (results...) ->
+showWinLoss = (grandSlam, results...) ->
   results = normalizeResults results
 
-  $('.players').html('')
-  for result, i in results
-    $('.players').append \
-      "<span class='player#{i}' onclick='javascript:togglePlayer(#{i})'>#{result.name}</span>&nbsp;&nbsp; "
+  T('players', results).render inside: '.players'
 
   margin =
     top    : 30
@@ -83,13 +92,14 @@ window.showWinLoss = (results...) ->
 
   y = d3.scale.linear()
     .rangeRound([height, 0])
-    .domain(yDomain())
+    .domain(yDomain(grandSlam))
 
   xAxis = d3.svg.axis()
     .scale(x)
     .orient("bottom")
 
   svg = d3.select("#win-loss-chart")
+    .html('')
     .append("svg")
     .attr("width" , width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -103,14 +113,14 @@ window.showWinLoss = (results...) ->
 
   # Add horizontal grids
   hGrid = svg.selectAll('.h-grid')
-    .data(hGridData())
+    .data(hGridData(grandSlam))
     .enter()
     .append('g')
     .attr('class', 'h-grid');
 
   hGridY = (d) -> 
     value = 
-      if isGrandSlam()
+      if grandSlam
         if d > 1 then d else d * 100
       else
         if d is 0 or d > 1 then d else 50 + d * 100
@@ -130,7 +140,7 @@ window.showWinLoss = (results...) ->
     .attr('text-anchor', 'end')
 
   for result, playerIndex in results
-    data  = getData(result)
+    data  = getData(grandSlam, result)
     #data  = result.gs_data
     years = (d[0] for d in data)
 
@@ -206,7 +216,7 @@ window.showWinLoss = (results...) ->
         if d[1] is 0 and d[2] is 0
           0
         else
-          y(percentageOffset() + 100 * d[1] / (d[1] + d[2]))
+          y(percentageOffset(grandSlam) + 100 * d[1] / (d[1] + d[2]))
 
     if results.length is 1
       player.append("text")
@@ -220,12 +230,12 @@ window.showWinLoss = (results...) ->
           if d[1] is 0 and d[2] is 0
             0
           else
-            y(percentageOffset() + 100 * d[1] / (d[1] + d[2])) - 10
+            y(percentageOffset(grandSlam) + 100 * d[1] / (d[1] + d[2])) - 10
 
     # Win percentage line
     line = d3.svg.line()
       .x((d) -> x(d[0]) + 35)
-      .y((d) -> y(percentageOffset() + 100 * d[1] / (d[1] + d[2])))
+      .y((d) -> y(percentageOffset(grandSlam) + 100 * d[1] / (d[1] + d[2])))
 
     linesData = (d for d in data when d[1] isnt 0 or d[2] isnt 0)
     lines = svg.selectAll(".line.player#{playerIndex}")
@@ -237,12 +247,11 @@ window.showWinLoss = (results...) ->
       .attr("d", line)
 
 router.get '/win-loss/:players', (req) ->
-  console.log 'win-loss'
+  players = req.params.players.split(',')
+  grandSlam = req.params.grandSlam
 
-  T('win-loss').render inside: '.main'
+  T('win-loss', grandSlam, players).render inside: '.main'
 
-  window.players = getPlayers(req.params.players.split(','))
-  $('[name=players]').val(players.join(','))
-  $('[name=grandSlam]').prop('checked', isGrandSlam())
+  loadWinLoss(players).then (results...) ->
+    showWinLoss grandSlam, results...
 
-  loadWinLoss(players).then(showWinLoss)
