@@ -1,12 +1,12 @@
-T.def 'rankings', ->
+T.def 'rankings', (ytd) ->
   [
     [ 'h2'
       'ATP rankings chart for top 50 players'
-      #[ 'span.generated-note'
-      #  '(generated at'
-      #  [ 'span.generated-at' ]
-      #  ')'
-      #]
+      [ 'span.generated-note'
+        ' (generated at '
+        [ 'span.generated-at' ]
+        ' )'
+      ]
     ]
     [ 'form#rankings-form'
       action: "#/rankings"
@@ -15,7 +15,13 @@ T.def 'rankings', ->
         type: "checkbox"
         name: "ytd"
         value: "true"
-        click: -> toggle($(this).is(':checked'))
+        click: -> 
+          route = "#/rankings"
+          if $(this).is(':checked') then route += '?ytd'
+          window.location.hash = route
+        renderComplete: (el) ->
+          if ytd
+            $(el).attr('checked', 'checked')
       ]
       [ 'label'
         for: "ytd"
@@ -52,10 +58,6 @@ y               = (d, i) -> yScale i
 yText           = (d, i) -> yScale(i) + yScale.rangeBand() / 2
 x               = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth])
 xBarLabel       = (d) -> x d.points
-
-toggle = (ytd) ->
-  resource = if ytd then "rankings_ytd" else "rankings"
-  loadData resource, (rankings) -> showChart rankings
 
 initChart = ->
   # svg container element
@@ -106,10 +108,7 @@ initChart = ->
     .attr('id', 'barsContainer')
     .attr("transform", "translate(" + barLabelWidth + "," + (gridLabelHeight + gridChartOffset) + ")")
 
-showChart = (rankings) ->
-  #updateGenerationTime rankings.generated_at
-  data = rankings.data
-
+showChart = (data) ->
   labels = d3.select("#labelsContainer").selectAll("text").data(data, (d) -> d.first + d.last)
 
   # Update transitions
@@ -185,10 +184,18 @@ showChart = (rankings) ->
 
   firstTime = false
 
-router.get '/rankings', ->
-  T('rankings').render inside: '.main'
+loadDataAndShowChart = (ytd) ->
+  resource = if ytd then "rankings_ytd" else "rankings"
+  loadData resource, (rankings) -> 
+    updateGenerationTime(rankings.generated_at)
+    showChart rankings.data
 
-  initChart()
+router.get '/rankings', (req) ->
+  ytd = req.params.ytd
 
-  loadData "rankings", (rankings) -> showChart rankings
+  if firstTime
+    T('rankings', ytd).render inside: '.main'
+    initChart()
+
+  loadDataAndShowChart ytd
 
