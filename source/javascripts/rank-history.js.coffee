@@ -19,17 +19,9 @@ T.def 'rank-history', ->
           players = $("[name=player]:checked").map(-> @value)
           if players.length is 0
             alert "No player is selected."
-          else if players.length is 1
-            window.location.hash = "#/ranking-history?players=" + players[0]
           else
-            s = players[0]
-            i = 1
+            window.location.hash = "#/ranking-history/#{players.join(',')}?fromYear=#{$("[name=fromYear]").val()}&toYear=#{$("[name=toYear]").val()}"
 
-            while i < players.length
-              s += "," + players[i]
-              i++
-
-            window.location.hash = "#/ranking-history?players=" + s + "&fromYear=" + $("[name=fromYear]").val() + "&toYear=" + $("[name=toYear]").val()
         'Update graph'
       ]
     ]
@@ -121,8 +113,6 @@ window.changeFromYear = ->
   $("[name=toYear]").val (if toYear then toYear else getYear())
 
 router.get '/rank-history/:players', (req) ->
-  console.log 'rank-history'
-
   T('rank-history').render inside: '.main'
 
   loadData "rankings", (rankings) ->
