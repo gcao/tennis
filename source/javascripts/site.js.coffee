@@ -11,3 +11,4 @@
 #= require 'win-loss'
 #= require 'schedule'
 #= require 'tournaments'
+#= require 'games'

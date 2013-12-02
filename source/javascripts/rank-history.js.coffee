@@ -44,13 +44,14 @@ T.def 'rank-history', (fromYear, toYear) ->
       ]
       [ 'button.update', 
         click: ->
-          players = []
-          $("[name=player]:checked").each -> players.push(@value)
+          players  = (el.value for el in $("[name=player]:checked"))
+          fromYear = $("[name=fromYear]").val()
+          toYear   = $("[name=toYear]").val()
 
           if players.length is 0
             alert "No player is selected."
           else
-            window.location.hash = "#/rank-history/#{players.join(',')}?fromYear=#{$("[name=fromYear]").val()}&toYear=#{$("[name=toYear]").val()}"
+            window.location.hash = "#/rank-history/#{players.join(',')}?fromYear=#{fromYear}&toYear=#{toYear}"
 
         'Update graph'
       ]
@@ -70,7 +71,7 @@ T.def 'player-field', (player, index) ->
         name: 'player'
         value: value
       ]
-      ['span', name]
+      ['div', name]
     ]
     ['br'] if index % 5 is 4
   ]
@@ -89,11 +90,11 @@ loadRankHistory = (players) ->
   $.when ($.map(players, (player) -> loadData player + "_rank_history"))...
 
 showRankHistory = (data, fromYear, toYear) ->
-  data = $.map(data, (e) ->
+  data = $.map data, (e) ->
     hist = filterHistoryData(e.history, fromYear, toYear)
     key: e.first + " " + e.last
     values: hist
-  )
+
   nv.addGraph ->
     chart = nv.models.lineChart()
       .x((d) -> Date.parse d[0])
@@ -132,6 +133,6 @@ router.get '/rank-history/:players', (req) ->
     T.each_with_index('player-field', rankings.data).render inside: '#players'
 
     for player in players
-      $("[value=" + player + "]").attr('checked', 'checked')
+      $("[value=#{player}]").attr('checked', 'checked')
 
     loadAndShowRankHistory players, fromYear, toYear

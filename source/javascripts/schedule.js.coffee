@@ -49,19 +49,19 @@ addPath = (map, startMarker, endMarker, pathState) ->
     when 'past'    then '#888'
     when 'present' then '#f44'
     else                '#FF9601'
-  pLine = new google.maps.Polyline(
+
+  pLine = new google.maps.Polyline
     map: map
     path: fPoints
     strokeColor: strokeColor
     strokeWeight: 3
     strokeOpacity: 1
-  )
 
 window.filterTournaments = (tournaments, schedule) ->
-  $.map(schedule, (x) ->
-    result = tournaments.filter((tournament) ->
+  $.map schedule, (x) ->
+    result = tournaments.filter (tournament) ->
       tournament.name is x.tournament
-    )
+
     if result.length > 0
       tournament = result[0]
       tournament.result = x.result
@@ -70,7 +70,7 @@ window.filterTournaments = (tournaments, schedule) ->
       tournament
     else
       console?.log "Tournament not found: " + x.tournament
-  )
+
 
 window.drawMapWithSchedule = (tournaments) ->
   window.map = getMap()
@@ -82,14 +82,13 @@ window.drawMapWithSchedule = (tournaments) ->
     icon     = getTournamentLogo(tournament.type, tournament.name)
     zIndex   = getTournamentPriority(tournament.type)
     position = new google.maps.LatLng(tournament.latitude, tournament.longitude)
-    marker   = new google.maps.Marker(
+    marker   = new google.maps.Marker
       position: position
       map: map
       icon: icon
       zIndex: zIndex
-    )
 
-    infoWindow = new google.maps.InfoWindow(content: T('tournament-info-window', tournament).toString())
+    infoWindow = new google.maps.InfoWindow content: T('tournament-info-window', tournament).toString()
     google.maps.event.addListener marker, "click", ->
       infoWindow.open map, marker
 
@@ -114,7 +113,7 @@ translateResult = (result) ->
     when '1/32'  then 'round-of-32'
     when '1/64'  then 'round-of-64'
     when '1/128' then 'round-of-128'
-    else ''
+    else              ''
 
 T.def 'tournament-result', (data) ->
   return unless data.result
@@ -144,7 +143,7 @@ T.def 'tournament', (tournament) ->
   statusClass    = if isFuture(tournament.start) then 'future' else ''
   resultClass    = translateResult(tournament.result)
   [ 'div.tournament'
-    {'class': "#{statusClass} #{resultClass}"}
+    {class: "#{statusClass} #{resultClass}"}
     ['div.start', tournament.start]
     [ 'div.logo'
       [ 'a'
