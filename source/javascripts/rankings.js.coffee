@@ -15,7 +15,7 @@ T.def 'rankings', (ytd) ->
         type: "checkbox"
         name: "ytd"
         value: "true"
-        click: -> 
+        click: ->
           route = "#/rankings"
           if $(this).is(':checked') then route += '?ytd'
           window.location.hash = route
@@ -186,7 +186,7 @@ showChart = (data) ->
 
 loadDataAndShowChart = (ytd) ->
   resource = if ytd then "rankings_ytd" else "rankings"
-  loadData resource, (rankings) -> 
+  loadData resource, (rankings) ->
     updateGenerationTime(rankings.generated_at)
     showChart rankings.data
 

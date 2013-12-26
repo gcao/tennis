@@ -5,7 +5,10 @@
 #= require vendor/nv.d3.min
 #= require 'vendor/leviroutes'
 #= require 'vendor/t'
+#= require 'vendor/free_mart'
+#= require 'config'
 #= require 'common'
+#= require 'menu'
 #= require 'rankings'
 #= require 'rank-history'
 #= require 'win-loss'
