@@ -191,6 +191,7 @@ loadDataAndShowChart = (ytd) ->
     showChart rankings.data
 
 router.get '/rankings', (req) ->
+  firstTime = true
   ytd = req.params.ytd
 
   if firstTime

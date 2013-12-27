@@ -8,7 +8,6 @@
 #= require 'vendor/free_mart'
 #= require 'config'
 #= require 'common'
-#= require 'menu'
 #= require 'rankings'
 #= require 'rank-history'
 #= require 'win-loss'
