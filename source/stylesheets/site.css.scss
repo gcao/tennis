@@ -485,3 +485,87 @@ h2 .players {
     margin-right: 5px;
   }
 }
+
+.tournament-types {
+  display: inline-block;
+
+  div {
+    display: inline-block;
+    padding: 0 6px;
+    border: 1px solid #999;
+    border-radius: 15px;
+    background: lightblue;
+    font-size: small;
+
+    &.inactive {
+      background: none;
+    }
+  }
+}
+#games-chart {
+  .year {
+    margin: 20px 0;
+    font-size: larger;
+    font-weight: bolder;
+    text-align: center;
+  }
+
+  .tournament {
+    margin: 5px 0px;
+    border-bottom: 1px solid #088;
+
+    &.grandslam {
+      border-bottom: 3px solid #f88;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    &.atpfinal, &.atp1000 {
+      border-bottom: 2px solid #088;
+    }
+
+    .type {
+      width: 150px;
+      vertical-align: top;
+    }
+
+    .name {
+      width: 150px;
+      vertical-align: top;
+    }
+
+    div {
+      display: inline-block;
+    }
+
+    .game {
+      width: 140px;
+      height: 100%;
+      padding: 2px 3px;
+      vertical-align: top;
+      border: 1px #acc;
+      font-size: small;
+
+      &.semifinal {
+        font-size: normal;
+        /*font-weight: bolder;*/
+        border-radius: 4px;
+        background: #ca6;
+      }
+      &.final {
+        font-size: normal;
+        font-weight: bolder;
+        border-radius: 4px;
+        background: #fe5;
+        &.lose {
+          background: #ddd;
+        }
+      }
+
+      &.lose {
+        font-weight: bolder;
+        /*text-decoration: underline;*/
+        text-shadow: 0.1em 0.1em 0.1em #999;
+      }
+    }
+  }
+}

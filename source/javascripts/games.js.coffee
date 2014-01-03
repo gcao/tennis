@@ -1,136 +1,97 @@
-T.def 'games', (grandSlam, players) ->
+toggleTournaments = (type) ->
+  $(".tournament-types .#{type}").toggleClass('inactive')
+  $("#games-chart .#{type}").toggle()
+
+T.def 'tournament-type', (type) ->
+  [ 'div'
+    class: type
+    click: -> toggleTournaments(type)
+    translateType type
+  ]
+T.def 'games', () ->
   [
     [ 'h2'
       'Games of '
       ['span.players']
+      ': '
+      ['.tournament-types'
+        T.each 'tournament-type', [
+          'grandslam'
+          'olympics'
+          'atpfinal'
+          'atp1000'
+          'atp500'
+          'daviscup'
+          'other'
+        ]
+      ]
     ]
     ['#games-chart']
   ]
 
-valueLabelWidth = 50    #space reserved for value labels (right)
-barHeight       = 20    #height of one bar
-barLabelWidth   = 107   #space reserved for bar labels
-barLabelPadding = 5     #padding between bar and bar labels (left)
-gridLabelHeight = 18    #space reserved for gridline labels
-gridChartOffset = 3     #space between start of grid and first bar
-maxBarWidth     = 920   #width of the bar with the max value
-dataLength      = 51
-xMax            = 13999 #Avoid draw 14000 vertical grid
-duration        = -> (if firstTime then 0 else 3000)
-exitDuration    = -> (if firstTime then 0 else 1200)
+translateType = (type) ->
+  switch type
+    when 'grandslam' then 'Grand Slam'
+    when 'atpfinal' then 'ATP Tour Final'
+    when 'atp1000' then 'ATP 1000'
+    when 'atp500' then 'ATP 500'
+    when 'daviscup' then 'Davis Cup'
+    when 'othe' then 'Other'
+    else type
 
-i2rank          = (i) -> if i < 10 then " _" + i else " " + i
+T.def 'tournament', (tournament) ->
+  name = tournament.name
+  if tournament.type is 'atpfinal'
+    name = 'ATP Tour Finals'
+  else if tournament.type is 'atp1000'
+    name = name.replace /ATP World Tour Masters 1000|ATP Masters Series /, '' 
 
-label           = (d, i) -> d.last + i2rank(d.rank)
-barLabel        = (d, i) -> d.points
+  [ 'div.tournament'
+    class: tournament.type
+    #[ 'div.type', translateType(tournament.type) ]
+    [ 'div.name', name ]
+    [ 'div.games'
+      T.each_with_index('game', tournament.games)
+    ]
+  ]
 
-# scales
-yScale          = d3.scale.ordinal().domain(d3.range(0, dataLength)).rangeBands([0, dataLength * barHeight])
-y               = (d, i) -> yScale i
-yText           = (d, i) -> yScale(i) + yScale.rangeBand() / 2
-x               = d3.scale.linear().domain([0, xMax]).range([0, maxBarWidth])
-xBarLabel       = (d) -> x d.points
+T.def 'game', (game, index, tournament) ->
+  if game.rank is 0
+    return ['div.game', 'BYE']
 
-initChart = ->
-  # svg container element
-  chart = d3.select("#rankings-chart")
-    .append("svg")
-    .attr("width", maxBarWidth + barLabelWidth + valueLabelWidth)
-    .attr("height", gridLabelHeight + gridChartOffset + dataLength * barHeight - 20)
+  [ 'div.game'
 
-  # horizontal grid lines
-  hGridContainer = chart.append("g")
-  hGridContainer.selectAll("line")
-    .data([1, 11, 21, 31, 41])
-    .enter()
-    .append("line")
-    .attr("x1", 0)
-    .attr("x2", x(xMax))
-    .attr("y1", (d) -> yScale d)
-    .attr("y2", (d) -> yScale d)
-    .style("stroke", "#ccc")
+    if game.round is 'S'
+      class: 'semifinal'
+    else if game.round is 'F' or game.round is 'W'
+      class: 'final'
 
-  # grid line labels
-  gridContainer = chart.append("g")
-    .attr("transform", "translate(" + barLabelWidth + "," + gridLabelHeight + ")")
-  gridContainer.selectAll("text").data(x.ticks(5))
-    .enter()
-    .append("text")
-    .attr("x", x)
-    .attr("dy", -3)
-    .attr("text-anchor", "middle")
-    .text(String)
+    if game.result is 'W'
+      class: 'win'
+    else if game.result is 'L'
+      class: 'lose'
 
-  # vertical grid lines
-  gridContainer.selectAll("line").data(x.ticks(5))
-    .enter()
-    .append("line")
-    .attr("x1", x)
-    .attr("x2", x)
-    .attr("y1", 0)
-    .attr("y2", yScale.rangeExtent()[1] + gridChartOffset)
-    .style("stroke", "#ccc")
+    game.opponent
+    " (#{game.rank})"
+  ]
 
-  # bar labels
-  labelsContainer = chart.append("g")
-    .attr('id', 'labelsContainer')
-    .attr("transform", "translate(" + (barLabelWidth - barLabelPadding) + "," + (gridLabelHeight + gridChartOffset) + ")")
-
-  barsContainer = chart.append("g")
-    .attr('id', 'barsContainer')
-    .attr("transform", "translate(" + barLabelWidth + "," + (gridLabelHeight + gridChartOffset) + ")")
-
-drawGames = (d) ->
-  tournamentContainer = barsContainer.append('div')
-    .attr('class', 'tournament')
-
-  for game in d.games
-    tournamentContainer.append("rect")
-      .attr("height", yScale.rangeBand())
-      .attr("width", 120)
-      .attr("stroke", "white")
-      .attr("fill", "steelblue")
-      .attr("x", 0)
-      .attr("y", y)
+T.def 'tournaments', (year, tournaments) ->
+  [
+    ['div.year', year]
+    T.each('tournament', tournaments)
+  ]
 
 showChart = (data) ->
-  labels = d3.select("#labelsContainer").selectAll("text").data(data, (d) -> d.first + d.last)
-
-  labels.enter()
-    .append("text")
-    .attr("stroke", "none")
-    .attr("fill", "black")
-    .attr("dy", ".35em") # vertical-align: middle
-    .attr("text-anchor", "end")
-    .text(label)
-    .attr("y", yText)
-
-  barsContainer = d3.select("#barsContainer")
-
-  bars = barsContainer.selectAll(".tournament").data(data)
-
-  bars.enter()
-    .call(drawGames)
-
-  #barLabels = barsContainer.selectAll("text").data(data, (d) -> d.first + d.last)
-
-  #barLabels.enter()
-  #  .append("text")
-  #  .attr("x", xBarLabel)
-  #  .attr("dx", 3)# padding-left
-  #  .attr("dy", ".35em")# vertical-align: middle
-  #  .attr("text-anchor", "start")# text-align: right
-  #  .attr("fill", "black")
-  #  .attr("stroke", "none")
-  #  .text(barLabel)
-  #  .attr("y", yText)
-
-  firstTime = false
+  for year, tournaments of data
+    T('tournaments', year, tournaments).render inside: '#games-chart'
 
 loadDataAndShowChart = (player) ->
   loadData "#{player}_games", (result) ->
-    showChart result.data
+    $('.players').text(result.name)
+    showChart result.tournaments
 
 router.get '/games/:player', (req) ->
+  T('games').render inside: '.main'
+
   loadDataAndShowChart(req.params.player)
 
