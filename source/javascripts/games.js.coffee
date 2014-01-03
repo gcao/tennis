@@ -2,13 +2,43 @@ toggleTournaments = (type) ->
   $(".tournament-types .#{type}").toggleClass('inactive')
   $("#games-chart .#{type}").toggle()
 
+createTogglePlayerHandler = (player) ->
+  cls = playerToClass(player)
+  ->
+    $("#games-chart .#{cls}").toggleClass('inactive')
+    $("#games-chart .#{cls}").toggle()
+
+playerToClass = (player) ->
+  player.replace(/\s/g, '_')
+
 T.def 'tournament-type', (type) ->
-  [ 'div'
+  [ 'div.toggleable'
     class: type
     click: -> toggleTournaments(type)
     translateType type
   ]
-T.def 'games', () ->
+
+T.def 'opponents', (opponents) ->
+  [ 'div.opponents'
+    'Opponents: '
+    [ 'div.all.toggleable'
+      click: ->
+        $('#games-chart .game').hide()
+      'All'
+    ]
+    [ 'div.individuals'
+      style: display: 'inline-block'
+      for opponent in opponents
+        opponentClass = playerToClass opponent
+        [ 'div.toggleable.opponent'
+          class: opponentClass
+          click: createTogglePlayerHandler(opponent)
+          opponent
+        ]
+    ]
+  ]
+
+T.def 'games', ->
   [
     [ 'h2'
       'Games of '
@@ -26,17 +56,19 @@ T.def 'games', () ->
         ]
       ]
     ]
+    T('opponents', ['Rafael Nadal', 'Novak Djokovic', 'Andy Murray'])
     ['#games-chart']
   ]
 
 translateType = (type) ->
   switch type
     when 'grandslam' then 'Grand Slam'
-    when 'atpfinal' then 'ATP Tour Final'
-    when 'atp1000' then 'ATP 1000'
-    when 'atp500' then 'ATP 500'
-    when 'daviscup' then 'Davis Cup'
-    when 'othe' then 'Other'
+    when 'olympics'  then 'Olympics'
+    when 'atpfinal'  then 'ATP Tour Finals'
+    when 'atp1000'   then 'ATP 1000'
+    when 'atp500'    then 'ATP 500'
+    when 'daviscup'  then 'Davis Cup'
+    when 'other'     then 'Other'
     else type
 
 T.def 'tournament', (tournament) ->
@@ -48,8 +80,14 @@ T.def 'tournament', (tournament) ->
 
   [ 'div.tournament'
     class: tournament.type
-    #[ 'div.type', translateType(tournament.type) ]
-    [ 'div.name', name ]
+    #for game in tournament.games
+    #  class: playerToClass game.opponent
+
+    [ 'div.tournament-info', 
+      ['span.type', translateType(tournament.type)] 
+      ['br']
+      ['span.name', name]
+    ]
     [ 'div.games'
       T.each_with_index('game', tournament.games)
     ]
@@ -60,6 +98,7 @@ T.def 'game', (game, index, tournament) ->
     return ['div.game', 'BYE']
 
   [ 'div.game'
+    class: playerToClass game.opponent
 
     if game.round is 'S'
       class: 'semifinal'
