@@ -5,11 +5,27 @@ toggleTournaments = (type) ->
 createTogglePlayerHandler = (player) ->
   cls = playerToClass(player)
   ->
-    $("#games-chart .#{cls}").toggleClass('inactive')
+    $(".opponent.toggleable.#{cls}").toggleClass('inactive')
     $("#games-chart .#{cls}").toggle()
+    hideTournaments()
 
 playerToClass = (player) ->
   player.replace(/\s/g, '_')
+
+hideTournaments = ->
+  $('.tournament, .tournaments-by-year').show()
+
+  $('.tournament').each ->
+    if $('.game', this).filter(':visible').get(0)
+      $(this).show()
+    else
+      $(this).hide()
+
+  $('.tournaments-by-year').each ->
+    if $('.tournament', this).filter(':visible').get(0)
+      $(this).show()
+    else
+      $(this).hide()
 
 T.def 'tournament-type', (type) ->
   [ 'div.toggleable'
@@ -23,7 +39,16 @@ T.def 'opponents', (opponents) ->
     'Opponents: '
     [ 'div.all.toggleable'
       click: ->
-        $('#games-chart .game').hide()
+        $('.all.toggleable').toggleClass('inactive')
+        if $('.all.toggleable').hasClass('inactive')
+          $('.opponent.toggleable').addClass('inactive')
+          $('#games-chart .game').hide()
+        else
+          $('.opponent.toggleable').removeClass('inactive')
+          $('#games-chart .game').show()
+
+        hideTournaments()
+
       'All'
     ]
     [ 'div.individuals'
@@ -114,15 +139,19 @@ T.def 'game', (game, index, tournament) ->
     " (#{game.rank})"
   ]
 
-T.def 'tournaments', (year, tournaments) ->
-  [
+T.def 'tournaments-by-year', (year, tournaments) ->
+  if not tournaments then return
+  [ 'div.tournaments-by-year'
     ['div.year', year]
     T.each('tournament', tournaments)
   ]
 
+T.def 'tournaments', (tournaments) ->
+  for year in ['2013'..'1998']
+    T('tournaments-by-year', year, tournaments[year])
+
 showChart = (data) ->
-  for year, tournaments of data
-    T('tournaments', year, tournaments).render inside: '#games-chart'
+  T('tournaments', data).render inside: '#games-chart'
 
 loadDataAndShowChart = (player) ->
   loadData "#{player}_games", (result) ->
