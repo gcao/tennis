@@ -30,6 +30,10 @@ updateVisibility = ->
     $(".tournament-types .#{this}").removeClass('inactive')
   if config.allTypes()
     $('.tournament-types .all.toggleable').removeClass('inactive')
+  else
+    $('#games-chart .tournament').hide()
+    $.each config.activeTypes, ->
+      $("#games-chart .#{this}").show()
 
   $('.opponents .toggleable').addClass('inactive')
   if config.activeOpponents is 'all'
