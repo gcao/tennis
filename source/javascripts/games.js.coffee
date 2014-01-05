@@ -9,11 +9,12 @@ tournamentTypes = [
   'daviscup'
   'other'
 ]
-hotOpponents = [
-  'Rafael Nadal'
-  'Novak Djokovic'
-  'Andy Murray'
-]
+hotOpponents = []
+#hotOpponents = [
+#  'Rafael Nadal'
+#  'Novak Djokovic'
+#  'Andy Murray'
+#]
 window.config = {
   activeTypes    : tournamentTypes.slice(0)
   activeOpponents: 'all'
@@ -208,16 +209,36 @@ T.def 'tournaments', (tournaments) ->
   for year in ['2013'..'1998']
     T('tournaments-by-year', year, tournaments[year])
 
+getHotOpponents = (data, max = 20) ->
+  opponents = {}
+  for year, tournaments of data
+    for tournament in tournaments
+      for game in tournament.games
+        continue if game.opponent is ''
+        opponents[game.opponent] ||= {name: game.opponent, matches:0, won:0}
+        opponents[game.opponent].matches += 1
+        opponents[game.opponent].won += 1 if game.result is 'W'
+
+  values = (value for _, value of opponents)
+  values = values.sort (v1, v2) -> v2.matches - v1.matches
+  i = 0
+  result = 
+    for v in values
+      break if v.matches < 10 and i >= max
+      i += 1
+      v.name
+  result
+
 showChart = (data) ->
   T('tournaments', data).render inside: '#games-chart'
 
 loadDataAndShowChart = (player) ->
   loadData "#{player}_games", (result) ->
     $('.players').text(result.name)
+    hotOpponents = getHotOpponents(result.tournaments)
+    T('games').render inside: '.main'
     showChart result.tournaments
 
 router.get '/games/:player', (req) ->
-  T('games').render inside: '.main'
-
   loadDataAndShowChart(req.params.player)
 
