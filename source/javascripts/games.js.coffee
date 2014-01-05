@@ -1,66 +1,121 @@
-toggleTournaments = (type) ->
-  $(".tournament-types .#{type}").toggleClass('inactive')
-  $("#games-chart .#{type}").toggle()
+playerToClass = (player) -> player.replace(/\s/g, '_')
 
-createTogglePlayerHandler = (player) ->
-  cls = playerToClass(player)
-  ->
-    $(".opponent.toggleable.#{cls}").toggleClass('inactive')
-    $("#games-chart .#{cls}").toggle()
-    hideTournaments()
+tournamentTypes = [
+  'grandslam'
+  'olympics'
+  'atpfinal'
+  'atp1000'
+  'atp500'
+  'daviscup'
+  'other'
+]
+hotOpponents = [
+  'Rafael Nadal'
+  'Novak Djokovic'
+  'Andy Murray'
+]
+window.config = {
+  activeTypes    : tournamentTypes.slice(0)
+  activeOpponents: 'all'
+  allTypes: -> config.activeTypes.length is tournamentTypes.length
+}
 
-playerToClass = (player) ->
-  player.replace(/\s/g, '_')
+updateVisibility = ->
+  $('.tournaments-by-year').show()
+  $('#games-chart .tournament').show()
+  $('#games-chart .game').hide()
 
-hideTournaments = ->
-  $('.tournament, .tournaments-by-year').show()
+  $('.tournament-types .toggleable').addClass('inactive')
+  $.each config.activeTypes, ->
+    $(".tournament-types .#{this}").removeClass('inactive')
+  if config.allTypes()
+    $('.tournament-types .all.toggleable').removeClass('inactive')
 
-  $('.tournament').each ->
-    if $('.game', this).filter(':visible').get(0)
+  $('.opponents .toggleable').addClass('inactive')
+  if config.activeOpponents is 'all'
+    $('.opponents .toggleable').removeClass('inactive')
+    $('#games-chart .game').show()
+  else
+    $.each config.activeOpponents, ->
+      cls = playerToClass this
+      $(".opponents .#{cls}").removeClass('inactive')
+      $("#games-chart .#{cls}").show()
+
+  $('#games-chart .tournament').each ->
+    if $('.game', this).filter(':visible').length > 0
       $(this).show()
     else
       $(this).hide()
 
   $('.tournaments-by-year').each ->
-    if $('.tournament', this).filter(':visible').get(0)
+    if $('.tournament', this).filter(':visible').length > 0
       $(this).show()
     else
       $(this).hide()
 
+T.def 'tournament-types', (tournamentTypes) ->
+  [ '.tournament-types'
+    [ 'div.toggleable.all'
+      click: ->
+        if config.allTypes()
+          config.activeTypes = []
+        else
+          config.activeTypes = tournamentTypes.slice(0)
+
+        updateVisibility()
+
+      'All'
+    ]
+    T.each 'tournament-type', tournamentTypes
+  ]
+
 T.def 'tournament-type', (type) ->
-  [ 'div.toggleable'
-    class: type
-    click: -> toggleTournaments(type)
+  [
+    "div.toggleable.tournament-type.#{type}"
+    click: ->
+      if config.activeTypes.indexOf(type) >= 0
+        config.activeTypes.splice(config.activeTypes.indexOf(type), 1)
+      else
+        config.activeTypes.push type
+
+      updateVisibility()
+
     translateType type
   ]
 
 T.def 'opponents', (opponents) ->
   [ 'div.opponents'
     'Opponents: '
-    [ 'div.all.toggleable'
+    [ 'div.toggleable.all'
       click: ->
-        $('.all.toggleable').toggleClass('inactive')
-        if $('.all.toggleable').hasClass('inactive')
-          $('.opponent.toggleable').addClass('inactive')
-          $('#games-chart .game').hide()
+        if config.activeOpponents.indexOf('all') >= 0
+          config.activeOpponents = []
         else
-          $('.opponent.toggleable').removeClass('inactive')
-          $('#games-chart .game').show()
+          config.activeOpponents = "all"
 
-        hideTournaments()
+        updateVisibility()
 
       'All'
     ]
-    [ 'div.individuals'
-      style: display: 'inline-block'
-      for opponent in opponents
-        opponentClass = playerToClass opponent
-        [ 'div.toggleable.opponent'
-          class: opponentClass
-          click: createTogglePlayerHandler(opponent)
-          opponent
-        ]
-    ]
+    T.each 'opponent', opponents
+  ]
+
+T.def 'opponent', (opponent) ->
+  cls = playerToClass opponent
+  [
+    "div.toggleable.opponent.#{cls}"
+    click: ->
+      if config.activeOpponents is 'all'
+        config.activeOpponents = hotOpponents.slice(0)
+        config.activeOpponents.splice(config.activeOpponents.indexOf(opponent), 1)
+      else if config.activeOpponents.indexOf(opponent) >= 0
+        config.activeOpponents.splice(config.activeOpponents.indexOf(opponent), 1)
+      else
+        config.activeOpponents.push opponent
+
+      updateVisibility()
+
+    opponent
   ]
 
 T.def 'games', ->
@@ -69,19 +124,9 @@ T.def 'games', ->
       'Games of '
       ['span.players']
       ': '
-      ['.tournament-types'
-        T.each 'tournament-type', [
-          'grandslam'
-          'olympics'
-          'atpfinal'
-          'atp1000'
-          'atp500'
-          'daviscup'
-          'other'
-        ]
-      ]
+      T 'tournament-types', tournamentTypes
     ]
-    T('opponents', ['Rafael Nadal', 'Novak Djokovic', 'Andy Murray'])
+    T 'opponents', hotOpponents
     ['#games-chart']
   ]
 
@@ -101,15 +146,15 @@ T.def 'tournament', (tournament) ->
   if tournament.type is 'atpfinal'
     name = 'ATP Tour Finals'
   else if tournament.type is 'atp1000'
-    name = name.replace /ATP World Tour Masters 1000|ATP Masters Series /, '' 
+    name = name.replace /ATP World Tour Masters 1000|ATP Masters Series /, ''
 
   [ 'div.tournament'
     class: tournament.type
-    #for game in tournament.games
-    #  class: playerToClass game.opponent
+    for game in tournament.games
+      class: playerToClass game.opponent
 
-    [ 'div.tournament-info', 
-      ['span.type', translateType(tournament.type)] 
+    [ 'div.tournament-info',
+      ['span.type', translateType(tournament.type)]
       ['br']
       ['span.name', name]
     ]
