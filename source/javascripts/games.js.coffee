@@ -1,5 +1,3 @@
-playerToClass = (player) -> player.replace(/\s/g, '_')
-
 tournamentTypes = [
   'grandslam'
   'olympics'
@@ -9,17 +7,16 @@ tournamentTypes = [
   'daviscup'
   'other'
 ]
+
 hotOpponents = []
-#hotOpponents = [
-#  'Rafael Nadal'
-#  'Novak Djokovic'
-#  'Andy Murray'
-#]
+
 window.config = {
   activeTypes    : tournamentTypes.slice(0)
   activeOpponents: 'all'
   allTypes: -> config.activeTypes.length is tournamentTypes.length
 }
+
+playerToClass = (player) -> player.replace(/\s/g, '_')
 
 updateVisibility = ->
   $('.tournaments-by-year').show()
@@ -234,9 +231,9 @@ showChart = (data) ->
 
 loadDataAndShowChart = (player) ->
   loadData "#{player}_games", (result) ->
-    $('.players').text(result.name)
     hotOpponents = getHotOpponents(result.tournaments)
     T('games').render inside: '.main'
+    $('.players').text(result.name)
     showChart result.tournaments
 
 router.get '/games/:player', (req) ->
