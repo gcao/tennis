@@ -23,7 +23,7 @@ window.config = {
 updateVisibility = ->
   $('.tournaments-by-year').show()
   $('#games-chart .tournament').show()
-  $('#games-chart .game').hide()
+  $('#games-chart .game').hide().css('opacity', '')
 
   $('.tournament-types .toggleable').addClass('inactive')
   $.each config.activeTypes, ->
@@ -43,7 +43,8 @@ updateVisibility = ->
     $.each config.activeOpponents, ->
       cls = playerToClass this
       $(".opponents .#{cls}").removeClass('inactive')
-      $("#games-chart .#{cls}").show()
+      $("#games-chart .tournament.#{cls} .game").show().css('opacity', '0.15')
+      $("#games-chart .tournament.#{cls} .game.#{cls}").css('opacity', '')
 
   $('#games-chart .tournament').each ->
     if $('.game', this).filter(':visible').length > 0
@@ -59,7 +60,7 @@ updateVisibility = ->
 
 T.def 'tournament-types', (tournamentTypes) ->
   [ '.tournament-types'
-    [ 'div.toggleable.all'
+    [ '.toggleable.all'
       click: ->
         if config.allTypes()
           config.activeTypes = []
@@ -75,7 +76,7 @@ T.def 'tournament-types', (tournamentTypes) ->
 
 T.def 'tournament-type', (type) ->
   [
-    "div.toggleable.tournament-type.#{type}"
+    ".toggleable.tournament-type.#{type}"
     click: ->
       if config.activeTypes.indexOf(type) >= 0
         config.activeTypes.splice(config.activeTypes.indexOf(type), 1)
@@ -88,9 +89,9 @@ T.def 'tournament-type', (type) ->
   ]
 
 T.def 'opponents', (opponents) ->
-  [ 'div.opponents'
+  [ '.opponents'
     'Opponents: '
-    [ 'div.toggleable.all'
+    [ '.toggleable.all'
       click: ->
         if config.activeOpponents.indexOf('all') >= 0
           config.activeOpponents = []
@@ -107,7 +108,7 @@ T.def 'opponents', (opponents) ->
 T.def 'opponent', (opponent) ->
   cls = playerToClass opponent
   [
-    "div.toggleable.opponent.#{cls}"
+    ".toggleable.opponent.#{cls}"
     click: ->
       if config.activeOpponents is 'all'
         config.activeOpponents = hotOpponents.slice(0)
@@ -152,26 +153,26 @@ T.def 'tournament', (tournament) ->
   else if tournament.type is 'atp1000'
     name = name.replace /ATP World Tour Masters 1000|ATP Masters Series /, ''
 
-  [ 'div.tournament'
+  [ '.tournament'
     class: tournament.type
     for game in tournament.games
       class: playerToClass game.opponent
 
-    [ 'div.tournament-info',
+    [ '.tournament-info',
       ['span.type', translateType(tournament.type)]
       ['br']
       ['span.name', name]
     ]
-    [ 'div.games'
+    [ '.games'
       T.each_with_index('game', tournament.games)
     ]
   ]
 
 T.def 'game', (game, index, tournament) ->
   if game.rank is 0
-    return ['div.game', 'BYE']
+    return ['.game', 'BYE']
 
-  [ 'div.game'
+  [ '.game'
     class: playerToClass game.opponent
 
     if game.round is 'S'
@@ -184,14 +185,22 @@ T.def 'game', (game, index, tournament) ->
     else if game.result is 'L'
       class: 'lose'
 
+    click: ->
+      if config.activeOpponents.length is 1 and config.activeOpponents[0] is game.opponent
+        config.activeOpponents = 'all'
+      else
+        config.activeOpponents = [game.opponent]
+
+      updateVisibility()
+
     game.opponent
     " (#{game.rank})"
   ]
 
 T.def 'tournaments-by-year', (year, tournaments) ->
   if not tournaments then return
-  [ 'div.tournaments-by-year'
-    ['div.year', year]
+  [ '.tournaments-by-year'
+    ['.year', year]
     T.each('tournament', tournaments)
   ]
 
