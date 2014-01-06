@@ -45,7 +45,6 @@
       
       }).call(this);
     </script>
-    <script src='javascripts/site.js'></script>
   </head>
   <body>
     <!--[if lt IE 7]> <p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p> <![endif]-->
@@ -58,25 +57,45 @@
         </h2>
         <ul id='nav'>
           <li class='rankings'>
-            <a href='rankings.html'>Rankings</a>
+            <a href='#/rankings'>Rankings</a>
           </li>
           <li class='rank-history'>
             <a href='javascript:void(0)'>Rank History</a>
             <ul>
               <li>
-                <a href='rank-history.html?players=novak_djokovic,roger_federer,rafael_nadal,andy_murray'>BIG FOUR</a>
+                <a href='#/rank-history/novak_djokovic,roger_federer,rafael_nadal,andy_murray'>BIG FOUR</a>
               </li>
               <li>
-                <a href='rank-history.html?players=novak_djokovic'>Novak Djokovic</a>
+                <a href='#/rank-history/roger_federer'>Roger Federer</a>
               </li>
               <li>
-                <a href='rank-history.html?players=roger_federer'>Roger Federer</a>
+                <a href='#/rank-history/rafael_nadal'>Rafael Nadal</a>
               </li>
               <li>
-                <a href='rank-history.html?players=andy_murray'>Andy Murray</a>
+                <a href='#/rank-history/novak_djokovic'>Novak Djokovic</a>
               </li>
               <li>
-                <a href='rank-history.html?players=rafael_nadal'>Rafael Nadal</a>
+                <a href='#/rank-history/andy_murray'>Andy Murray</a>
+              </li>
+            </ul>
+          </li>
+          <li class='games'>
+            <a href='javascript:void(0)'>Games</a>
+            <ul>
+              <li>
+                <a href='#/games/roger_federer'>Roger Federer</a>
+              </li>
+              <li>
+                <a href='#/games/rafael_nadal'>Rafael Nadal</a>
+              </li>
+              <li>
+                <a href='#/games/novak_djokovic'>Novak Djokovic</a>
+              </li>
+              <li>
+                <a href='#/games/andy_murray'>Andy Murray</a>
+              </li>
+              <li>
+                <a href='#/games/david_ferrer'>David Ferrer</a>
               </li>
             </ul>
           </li>
@@ -84,31 +103,31 @@
             <a href='javascript:void(0)'>Win/Loss</a>
             <ul>
               <li>
-                <a href='win-loss.html?players=novak_djokovic,roger_federer,rafael_nadal,andy_murray'>BIG FOUR</a>
+                <a href='#/win-loss/novak_djokovic,roger_federer,rafael_nadal,andy_murray'>BIG FOUR</a>
               </li>
               <li>
-                <a href='win-loss.html?players=novak_djokovic'>Novak Djokovic</a>
+                <a href='#/win-loss/roger_federer'>Roger Federer</a>
               </li>
               <li>
-                <a href='win-loss.html?players=roger_federer'>Roger Federer</a>
+                <a href='#/win-loss/rafael_nadal'>Rafael Nadal</a>
               </li>
               <li>
-                <a href='win-loss.html?players=andy_murray'>Andy Murray</a>
+                <a href='#/win-loss/novak_djokovic'>Novak Djokovic</a>
               </li>
               <li>
-                <a href='win-loss.html?players=rafael_nadal'>Rafael Nadal</a>
+                <a href='#/win-loss/andy_murray'>Andy Murray</a>
               </li>
               <li>
-                <a href='win-loss.html?players=david_ferrer'>David Ferrer</a>
+                <a href='#/win-loss/david_ferrer'>David Ferrer</a>
               </li>
               <li>
-                <a href='win-loss.html?players=tomas_berdych'>Tomas Berdych</a>
+                <a href='#/win-loss/tomas_berdych'>Tomas Berdych</a>
               </li>
               <li>
-                <a href='win-loss.html?players=juan_martin_del_potro'>Juan Martin Del Potro</a>
+                <a href='#/win-loss/juan_martin_del_potro'>Juan Martin Del Potro</a>
               </li>
               <li>
-                <a href='win-loss.html?players=jo_wilfried_tsonga'>Jo-Wilfried Tsonga</a>
+                <a href='#/win-loss/jo_wilfried_tsonga'>Jo-Wilfried Tsonga</a>
               </li>
             </ul>
           </li>
@@ -116,19 +135,19 @@
             <a href='javascript:void(0)'>Schedules</a>
             <ul>
               <li>
-                <a href='tournaments.html'>Tournaments</a>
+                <a href='#/tournaments'>Tournaments</a>
               </li>
               <li>
-                <a href='schedule.html?player=novak_djokovic'>Novak Djokovic</a>
+                <a href='#/schedule/roger_federer'>Roger Federer</a>
               </li>
               <li>
-                <a href='schedule.html?player=roger_federer'>Roger Federer</a>
+                <a href='#/schedule/rafael_nadal'>Rafael Nadal</a>
               </li>
               <li>
-                <a href='schedule.html?player=andy_murray'>Andy Murray</a>
+                <a href='#/schedule/novak_djokovic'>Novak Djokovic</a>
               </li>
               <li>
-                <a href='schedule.html?player=rafael_nadal'>Rafael Nadal</a>
+                <a href='#/schedule/andy_murray'>Andy Murray</a>
               </li>
             </ul>
           </li>
@@ -146,15 +165,15 @@
       </h2>
       <form action='win-loss.html' id='win-loss-form' method='get'>
         <input name='players' type='hidden'>
-        <input id='grandSlam' name='grandSlam' type='checkbox' value='true'>
+        <input id='grandSlam' name='grandSlam' onclick='loadWinLoss(players).then(showWinLosss)' type='checkbox' value='true'>
         <label for='grandSlam'>Use Grand Slam data</label>
-        <input type='submit' value='Update Graph'>
       </form>
       <div id='win-loss-chart'></div>
       <div class='backToHome'><a href='index.html'>Back to home</a></div>
       <script src='javascripts/win-loss.js'></script>
     </div>
     <footer></footer>
+    <script src='javascripts/site.js'></script>
     <script>
       if (!location.hostname.match('localhost')) {
         var _gaq = _gaq || [];
