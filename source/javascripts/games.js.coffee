@@ -124,6 +124,11 @@ T.def 'opponent', (opponent) ->
 T.def 'games', ->
   [
     [ 'h2'
+      [ 'div'
+        style: 
+          'font-family': 'percentage'
+        'ABC'
+      ]
       'Games of '
       ['span.players']
       ': '
