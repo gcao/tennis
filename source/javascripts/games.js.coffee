@@ -124,17 +124,23 @@ T.def 'opponent', (opponent) ->
 T.def 'games', ->
   [
     [ 'h2'
-      [ 'div'
-        style: 
-          'font-family': 'percentage'
-        'ABC'
-      ]
+      #[ 'div'
+      #  style: 
+      #    'font-family': 'percentage'
+      #  'ABC'
+      #]
       'Games of '
       ['span.players']
       ': '
       T 'tournament-types', tournamentTypes
     ]
     T 'opponents', hotOpponents
+    [ '.note'
+      style: 
+        'margin-top': 10 
+        color: '#777'
+      'Click any player below to toggle display mode between one player and all.'
+    ]
     ['#games-chart']
   ]
 
