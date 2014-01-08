@@ -1,5 +1,7 @@
 window.router = new routes()
 
+window.tmpl = {}
+
 window.getAtpUrl = (url) ->
   "http://www.atpworldtour.com#{url}"
 
@@ -92,7 +94,7 @@ window.getTournamentPriority = (tournamentType) ->
     when "grandslam"    then 6
     else 1
 
-T.def 'tournament-info-window', (tournament) ->
+tmpl.tournamentInfoWindow = (tournament) ->
   [ "div.map-info"
     [ "p.tournament-name"
       [ "a"
@@ -122,7 +124,7 @@ window.getTicketUrl = (tournamentName) ->
     if item.name is tournamentName
       return item.url
 
-T.def 'buy-ticket-link', (tournament, url) ->
+tmpl.buyTicketLink = (tournament, url) ->
   return unless tournament and url
   [ 'a.ticket_url'
     href: url

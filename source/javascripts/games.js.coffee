@@ -1,3 +1,5 @@
+templates = {}
+
 tournamentTypes = [
   'grandslam'
   'olympics'
@@ -56,7 +58,7 @@ updateVisibility = ->
     else
       $(this).hide()
 
-T.def 'tournament-types', (tournamentTypes) ->
+templates.tournamentTypes = (tournamentTypes) ->
   [ '.tournament-types'
     [ '.toggleable.all'
       click: ->
@@ -69,10 +71,10 @@ T.def 'tournament-types', (tournamentTypes) ->
 
       'All'
     ]
-    T.each 'tournament-type', tournamentTypes
+    T.each templates.tournamentType, tournamentTypes
   ]
 
-T.def 'tournament-type', (type) ->
+templates.tournamentType = (type) ->
   [
     ".toggleable.tournament-type.#{type}"
     click: ->
@@ -86,7 +88,7 @@ T.def 'tournament-type', (type) ->
     translateType type
   ]
 
-T.def 'opponents', (opponents) ->
+templates.opponents = (opponents) ->
   [ '.opponents'
     'Opponents: '
     [ '.toggleable.all'
@@ -100,10 +102,10 @@ T.def 'opponents', (opponents) ->
 
       'All'
     ]
-    T.each 'opponent', opponents
+    T.each templates.opponent, opponents
   ]
 
-T.def 'opponent', (opponent) ->
+templates.opponent = (opponent) ->
   cls = playerToClass opponent
   [
     ".toggleable.opponent.#{cls}"
@@ -121,23 +123,23 @@ T.def 'opponent', (opponent) ->
     opponent
   ]
 
-T.def 'games', ->
+templates.games = ->
   [
     [ 'h2'
       #[ 'div'
       #  style: 
-      #    'font-family': 'percentage'
+      #    font_family: 'percentage'
       #  'ABC'
       #]
       'Games of '
       ['span.players']
       ': '
-      T 'tournament-types', tournamentTypes
+      T templates.tournamentTypes, tournamentTypes
     ]
     T 'opponents', hotOpponents
     [ '.note'
       style: 
-        'margin-top': 10 
+        margin_top: 10 
         color: '#777'
       'Click any player below to toggle display mode between one player and all.'
     ]
@@ -155,7 +157,7 @@ translateType = (type) ->
     when 'other'     then 'Other'
     else type
 
-T.def 'tournament', (tournament) ->
+templates.tournament = (tournament) ->
   name = tournament.name
   if tournament.type is 'atpfinal'
     name = 'ATP Tour Finals'
@@ -173,11 +175,11 @@ T.def 'tournament', (tournament) ->
       ['span.name', name]
     ]
     [ '.games'
-      T.each_with_index('game', tournament.games)
+      T.eachWithIndex(templates.game, tournament.games)
     ]
   ]
 
-T.def 'game', (game, index, tournament) ->
+templates.game = (game, index, tournament) ->
   if game.rank is 0
     return ['.game', 'BYE']
 
@@ -206,16 +208,16 @@ T.def 'game', (game, index, tournament) ->
     " (#{game.rank})"
   ]
 
-T.def 'tournaments-by-year', (year, tournaments) ->
+templates.tournamentsByYear = (year, tournaments) ->
   if not tournaments then return
   [ '.tournaments-by-year'
     ['.year', year]
-    T.each('tournament', tournaments)
+    T.each(templates.tournament, tournaments)
   ]
 
-T.def 'tournaments', (tournaments) ->
+templates.tournaments = (tournaments) ->
   for year in ['2013'..'1998']
-    T('tournaments-by-year', year, tournaments[year])
+    T(templates.tournamentsByYear, year, tournaments[year])
 
 getHotOpponents = (data, max = 20) ->
   opponents = {}
@@ -238,12 +240,12 @@ getHotOpponents = (data, max = 20) ->
   result
 
 showChart = (data) ->
-  T('tournaments', data).render inside: '#games-chart'
+  T(templates.tournaments, data).render inside: '#games-chart'
 
 loadDataAndShowChart = (player) ->
   loadData "#{player}_games", (result) ->
     hotOpponents = getHotOpponents(result.tournaments)
-    T('games').render inside: '.main'
+    T(templates.games).render inside: '.main'
     $('.players').text(result.name)
     showChart result.tournaments
 

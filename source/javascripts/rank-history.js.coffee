@@ -2,7 +2,7 @@ FIRST_YEAR = 2003
 THIS_YEAR  = new Date().getYear() + 1900
 YEARS      = [FIRST_YEAR..THIS_YEAR]
 
-T.def 'rank-history', (fromYear, toYear) ->
+tmpl.rankHistory = (fromYear, toYear) ->
   [
     [ 'h2'
       'ATP rank history'
@@ -59,7 +59,7 @@ T.def 'rank-history', (fromYear, toYear) ->
     ['#players']
   ]
 
-T.def 'player-field', (player, index) ->
+tmpl.playerField = (player, index) ->
   return  if index >= 50
 
   name = player.first + " " + player.last
@@ -125,12 +125,12 @@ router.get '/rank-history/:players', (req) ->
   fromYear = req.params.fromYear || FIRST_YEAR
   toYear   = req.params.toYear   || THIS_YEAR
 
-  T('rank-history', fromYear, toYear).render inside: '.main'
+  T(tmpl.rankHistory, fromYear, toYear).render inside: '.main'
 
   loadData "rankings", (rankings) ->
     updateGenerationTime rankings.generated_at
 
-    T.each_with_index('player-field', rankings.data).render inside: '#players'
+    T.eachWithIndex(tmpl.playerField, rankings.data).render inside: '#players'
 
     for player in players
       $("[value=#{player}]").attr('checked', 'checked')

@@ -1,4 +1,4 @@
-T.def 'rankings', (ytd) ->
+tmpl.rankings = (ytd) ->
   [
     [ 'h2'
       'ATP rankings chart for top 50 players'
@@ -195,7 +195,7 @@ router.get '/rankings', (req) ->
   ytd = req.params.ytd
 
   if firstTime
-    T('rankings', ytd).render inside: '.main'
+    T(tmpl.rankings, ytd).render inside: '.main'
     initChart()
 
   loadDataAndShowChart ytd

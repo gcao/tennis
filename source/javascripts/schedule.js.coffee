@@ -1,4 +1,4 @@
-T.def 'schedule', ->
+tmpl.schedule = ->
   [
     [ 'h2'
       ['span#player_name']
@@ -115,7 +115,7 @@ translateResult = (result) ->
     when '1/128' then 'round-of-128'
     else              ''
 
-T.def 'tournament-result', (data) ->
+tmpl.tournamentResult = (data) ->
   return unless data.result
 
   [ "div.detail"
@@ -137,7 +137,7 @@ T.def 'tournament-result', (data) ->
     ]
   ]
 
-T.def 'tournament', (tournament) ->
+tmpl.tournament = (tournament) ->
   tournamentUrl  = getAtpUrl(tournament.url)
   tournamentLogo = getTournamentLogo(tournament.type, tournament.name)
   statusClass    = if isFuture(tournament.start) then 'future' else ''
@@ -159,9 +159,9 @@ T.def 'tournament', (tournament) ->
         tournament.name
       ]
       '&nbsp;&nbsp;'
-      T('buy-ticket-link', tournament, getTicketUrl(tournament.name))
+      T(tmpl.buyTicketLink, tournament, getTicketUrl(tournament.name))
     ]
-    T('tournament-result', tournament)
+    T(tmpl.tournamentResult, tournament)
   ]
 
 window.setMapCenterToTournament = (tournament) ->
@@ -170,7 +170,7 @@ window.setMapCenterToTournament = (tournament) ->
 router.get '/schedule/:player', (req) ->
   console.log 'schedule'
 
-  T('schedule').render inside: '.main'
+  T(tmpl.schedule).render inside: '.main'
 
   player = req.params.player
   if player
@@ -185,7 +185,7 @@ router.get '/schedule/:player', (req) ->
 
       tournaments = filterTournaments(tournaments.data, schedule)
       drawMapWithSchedule(tournaments)
-      T.each('tournament', tournaments).render inside: '#schedule'
+      T.each(tmpl.tournament, tournaments).render inside: '#schedule'
   else
     $('#map, #schedule').hide()
     $('.main h2').html('No player is selected. Please select players from "Schedules" menu')

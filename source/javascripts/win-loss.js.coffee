@@ -1,4 +1,4 @@
-T.def 'win-loss', (grandSlam, players) ->
+tmpl.winLoss = (grandSlam, players) ->
   [
     [ 'h2'
       'Win/loss chart of '
@@ -29,7 +29,7 @@ T.def 'win-loss', (grandSlam, players) ->
     ['#win-loss-chart']
   ]
 
-T.def 'player', (player, i) ->
+tmpl.player = (player, i) ->
   [ "span.player#{i}",
     click: -> $("#win-loss-chart .player#{i}").toggleClass('hide')
     player.name
@@ -69,7 +69,7 @@ hGridData = (grandSlam) ->
 showWinLoss = (grandSlam, results...) ->
   results = normalizeResults results
 
-  T.each_with_index('player', results).render inside: '.players'
+  T.eachWithIndex(tmpl.player, results).render inside: '.players'
 
   margin =
     top    : 30
@@ -245,7 +245,7 @@ router.get '/win-loss/:players', (req) ->
   players = req.params.players.split(',')
   grandSlam = req.params.grandSlam
 
-  T('win-loss', grandSlam, players).render inside: '.main'
+  T(tmpl.winLoss, grandSlam, players).render inside: '.main'
 
   loadWinLoss(players).then (results...) ->
     showWinLoss grandSlam, results...

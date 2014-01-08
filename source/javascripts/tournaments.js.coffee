@@ -1,4 +1,4 @@
-T.def 'tournaments', ->
+tmpl.tournaments = ->
   [
     ['p', 'Please zoom in to see ATP500 and ATP250 tournaments.']
     ['#map']
@@ -6,9 +6,7 @@ T.def 'tournaments', ->
   ]
 
 router.get '/tournaments', ->
-  console.log 'tournaments'
-
-  T('tournaments').render inside: '.main'
+  T(tmpl.tournaments).render inside: '.main'
 
   loadData "tournaments", (tournaments) ->
     map = getMap()
