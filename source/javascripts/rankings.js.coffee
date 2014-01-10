@@ -19,7 +19,7 @@ tmpl.rankings = (ytd) ->
           route = "#/rankings"
           if $(this).is(':checked') then route += '?ytd'
           window.location.hash = route
-        renderComplete: (el) ->
+        postRender: (el) ->
           if ytd
             $(el).attr('checked', 'checked')
       ]

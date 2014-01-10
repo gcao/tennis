@@ -29,7 +29,7 @@ tmpl.rankHistory = (fromYear, toYear) ->
 
         #  $("[name=toYear]").val (if toYear then toYear else THIS_YEAR)
 
-        renderComplete: (el) -> $(el).val(fromYear)
+        postRender: (el) -> $(el).val(fromYear)
 
         for year in YEARS
           ['option', year]
@@ -37,7 +37,7 @@ tmpl.rankHistory = (fromYear, toYear) ->
       ' - '
       [ 'select'
         name: 'toYear'
-        renderComplete: (el) -> $(el).val(toYear)
+        postRender: (el) -> $(el).val(toYear)
 
         for year in YEARS
           ['option', year]

@@ -17,7 +17,7 @@ tmpl.winLoss = (grandSlam, players) ->
           route = "#/win-loss/#{players.join(',')}"
           if $(this).is(':checked') then route += '?grandSlam'
           window.location.hash = route
-        renderComplete: (el) ->
+        postRender: (el) ->
           if grandSlam
             $(el).attr('checked', 'checked')
       ]
