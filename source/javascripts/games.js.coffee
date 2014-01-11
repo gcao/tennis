@@ -106,37 +106,40 @@ templates.opponents = (opponents) ->
   ]
 
 templates.opponent = (opponent) ->
-  cls = playerToClass opponent
+  name = opponent.name
+  cls = playerToClass name
   [
     ".toggleable.opponent.#{cls}"
     click: ->
       if config.activeOpponents is 'all'
-        config.activeOpponents = hotOpponents.slice(0)
-        config.activeOpponents.splice(config.activeOpponents.indexOf(opponent), 1)
-      else if config.activeOpponents.indexOf(opponent) >= 0
-        config.activeOpponents.splice(config.activeOpponents.indexOf(opponent), 1)
+        config.activeOpponents = (player.name for player in hotOpponents)
+        config.activeOpponents.splice(config.activeOpponents.indexOf(name), 1)
+      else if config.activeOpponents.indexOf(name) >= 0
+        config.activeOpponents.splice(config.activeOpponents.indexOf(name), 1)
       else
-        config.activeOpponents.push opponent
+        config.activeOpponents.push name
 
       updateVisibility()
 
-    opponent
+    name
+    " ("
+    [ "span"
+      style: 
+        font_weight: 'bold'
+      "#{opponent.won}/#{opponent.matches}"
+    ]
+    ")"
   ]
 
 templates.games = ->
   [
     [ 'h2'
-      #[ 'div'
-      #  style: 
-      #    font_family: 'percentage'
-      #  'ABC'
-      #]
       'Games of '
       ['span.players']
       ': '
       T templates.tournamentTypes, tournamentTypes
     ]
-    T 'opponents', hotOpponents
+    T templates.opponents, hotOpponents
     [ '.note'
       style: 
         margin_top: 10 
@@ -236,7 +239,7 @@ getHotOpponents = (data, max = 20) ->
     for v in values
       break if v.matches < 10 and i >= max
       i += 1
-      v.name
+      v
   result
 
 showChart = (data) ->
