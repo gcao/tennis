@@ -219,7 +219,8 @@ templates.tournamentsByYear = (year, tournaments) ->
   ]
 
 templates.tournaments = (tournaments) ->
-  for year in ['2013'..'1998']
+  curYear = '' + (new Date().getYear() + 1900)
+  for year in [curYear..'1998']
     T(templates.tournamentsByYear, year, tournaments[year])
 
 getHotOpponents = (data, max = 20) ->
