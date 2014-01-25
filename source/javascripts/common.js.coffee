@@ -103,7 +103,7 @@ tmpl.tournamentInfoWindow = (tournament) ->
         tournament.name
       ]
       '&nbsp;&nbsp;'
-      T('buy-ticket-link', tournament, getTicketUrl(tournament.name))
+      T(tmpl.buyTicketLink, tournament, getTicketUrl(tournament.name))
     ]
     ["p.tournament-time", tournament.start]
     ["p.tournament-place", tournament.place]
