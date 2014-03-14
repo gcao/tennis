@@ -131,3 +131,6 @@ tmpl.buyTicketLink = (tournament, url) ->
     rel: 'nofollow'
     'Buy&nbsp;Ticket'
   ]
+
+window.getCurrentYear = -> new Date().getYear() + 1900
+

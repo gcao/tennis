@@ -69,6 +69,7 @@ var routes = function() {
     var path = parts[0], queryString = parts[1];
     for(var i = 0;; i ++) {
       var route = _routes[i];
+      if (!route) break;
       var routeMatch = route.regex.regexp.exec(path);
       if(!!routeMatch == false) continue;
       if(method && method != route.method) continue;

@@ -174,17 +174,18 @@ router.get '/schedule/:player', (req) ->
 
   player = req.params.player
   if player
-    $.when(loadData('tournaments'), loadData(player + '_schedule')).then (req1, req2) ->
-      tournaments = req1[0]
-      schedule = req2[0]
+    $.when(loadData('tournaments'), loadData("#{player}_schedule"), loadData("#{player}_games_#{getCurrentYear()}")).then (resp1, resp2, resp3) ->
+      tournaments = resp1[0].data
+      schedule = resp2[0]
+      games = resp3[0].data
 
       $('#player_name').text(schedule.name)
 
-      # tournament: 'ABC', result: 'W/F/SF/QF/1/16', defeated: 'A, B etc', lost_to: ''
-      schedule = $.map(schedule.data, (x) -> if typeof x is 'string' then {tournament: x} else x)
+      tournaments = filterTournaments(tournaments, schedule.data)
+      mergeGames(tournaments, games)
 
-      tournaments = filterTournaments(tournaments.data, schedule)
       drawMapWithSchedule(tournaments)
+
       T.each(tmpl.tournament, tournaments).render inside: '#schedule'
   else
     $('#map, #schedule').hide()
