@@ -204,7 +204,7 @@ showWinLoss = (grandSlam, results...) ->
       .data((d) -> [d])
       .enter()
       .append("circle")
-      .attr("class", "percentage")
+      .attr("class", "percentage player#{playerIndex}")
       .attr("r"    , (d) -> if d[1] is 0 and d[2] is 0 then 0 else 3)
       .attr("cx"   , (d, i) -> 35)
       .attr "cy"   , (d) ->

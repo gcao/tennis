@@ -533,6 +533,7 @@ h2 .players {
     .tournament-info {
       width: 150px;
       height: 45px;
+      vertical-align: top;
 
       .type {
         font-size: small;
@@ -554,7 +555,7 @@ h2 .players {
     .game {
       width: 140px;
       padding: 2px 3px;
-      vertical-align: bottom;
+      vertical-align: top;
       border: 1px #acc;
       font-size: small;
 
@@ -566,7 +567,7 @@ h2 .players {
       }
       &.final {
         font-size: normal;
-        font-weight: bolder;
+        /*font-weight: bolder;*/
         border-radius: 4px;
         background: #fe5;
         &.lose {
