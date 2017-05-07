@@ -79,7 +79,7 @@ showWinLoss = (grandSlam, results...) ->
 
   width  = 960 - margin.left - margin.right
   height = 550 - margin.top - margin.bottom
-  years  = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013]
+  years  = [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014]
 
   x = d3.scale.ordinal()
     .rangeRoundBands([0, width], .1)
@@ -175,7 +175,7 @@ showWinLoss = (grandSlam, results...) ->
       .data((d) -> [d])
       .enter()
       .append("rect")
-      .attr("class" , "win")
+      .attr("class" , "win player#{playerIndex}")
       .attr("x"     , barX)
       .attr("width" , barWidth)
       .attr("y"     , (d) -> y(0))
@@ -188,7 +188,7 @@ showWinLoss = (grandSlam, results...) ->
       .data((d) -> [d])
       .enter()
       .append("rect")
-      .attr("class" , "loss")
+      .attr("class" , "loss player#{playerIndex}")
       .attr("x"     , barX)
       .attr("width" , barWidth)
       .attr("y"     , (d) -> $(this).parent().find('.win').attr('y'))

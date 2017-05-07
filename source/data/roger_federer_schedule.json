@@ -1,1 +1,21 @@
-{"generated_at":1419564327,"data":[{"tournament":"Brisbane International presented by Suncorp"},{"tournament":"Australian Open"},{"tournament":"BNP Paribas Open"},{"tournament":"Miami Open, presented by Itau"},{"tournament":"Monte-Carlo Rolex Masters"},{"tournament":"Mutua Madrid Open"},{"tournament":"Internazionali BNL d'Italia"},{"tournament":"Roland Garros"},{"tournament":"Wimbledon"},{"tournament":"Rogers Cup"},{"tournament":"Western & Southern Open - Cincinnati"},{"tournament":"US Open"},{"tournament":"Shanghai Rolex Masters"},{"tournament":"Swiss Indoors Basel"},{"tournament":"BNP Paribas Masters"},{"tournament":"Barclays ATP World Tour Finals"}],"_id":"roger_federer_schedule","_rev":"11-4932fc7be7fcd5112f597784a7ba63ef"}
+{
+  "_id": "roger_federer_schedule"
+  "data": [{
+      "tournament": "Australian Open",
+      "result": "QF",
+      "defeated": "Jo-Wilfried Tsonga etc"
+    },
+    "ABN AMRO World Tennis Tournament",
+    "BNP Paribas Open",
+    "Mutua Madrid Open",
+    "Internazionali BNL d'Italia",
+    "Roland Garros",
+    "Gerry Weber Open",
+    "Wimbledon",
+    "Rogers Cup",
+    "Western & Southern Open",
+    "US Open",
+    "Shanghai Rolex Masters",
+    "BNP Paribas Masters"
+  ]
+}
