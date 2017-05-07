@@ -67,13 +67,17 @@ window.getMap = ->
 window.getTournamentLogo = (tournamentType, tournamentName) ->
   switch tournamentType
     when "atp250"
-      "http://www.atpworldtour.com/~/media/810218DC73784BEEA6EF0978B2842A69.ashx?w=31&h=36"
+      #"http://www.atpworldtour.com/~/media/810218DC73784BEEA6EF0978B2842A69.ashx?w=31&h=36"
+      "images/atp-250.png"
     when "atp500"
-      "http://www.atpworldtour.com/~/media/1DB04CA8505648B7B511FA1E37F1E3BA.ashx?w=31&h=36"
+      #"http://www.atpworldtour.com/~/media/1DB04CA8505648B7B511FA1E37F1E3BA.ashx?w=31&h=36"
+      "images/atp-500.png"
     when "atp1000"
-      "http://www.atpworldtour.com/~/media/F5219431817E4ED3B773BF9B006A9ACF.ashx?w=31&h=42"
+      #"http://www.atpworldtour.com/~/media/F5219431817E4ED3B773BF9B006A9ACF.ashx?w=31&h=42"
+      "images/atp-1000.png"
     when "atptourfinal"
-      "http://www.atpworldtour.com/~/media/47F12472FD254B08B57755E5B7565E5D.ashx?w=31&h=48"
+      #"http://www.atpworldtour.com/~/media/47F12472FD254B08B57755E5B7565E5D.ashx?w=31&h=48"
+      "images/atp-final.png"
     when "grandslam"
       if tournamentName.match(/australian open/i)
         #new google.maps.MarkerImage("images/ao_logo.png")
