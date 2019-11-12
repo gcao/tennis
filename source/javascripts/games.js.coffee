@@ -103,6 +103,9 @@ templates.opponents = (opponents) ->
       'All'
     ]
     T.each templates.opponent, opponents
+    [ '#opponents-graph'
+      ['.content']
+    ]
   ]
 
 templates.opponent = (opponent) ->
@@ -243,6 +246,97 @@ getHotOpponents = (data, max = 20) ->
       v
   result
 
+# Opponents diagram
+# http://jsfiddle.net/LjsnD/
+# https://bl.ocks.org/kgeorgiou/68f864364f277720252d0329408433ae
+drawOpponentsGraph = (opponents) ->
+  width = 720
+  height = 480
+  padding = 2
+  minRadius = 20
+  maxRadius = 50
+
+  minMatches = Math.min(opponents.map((o) -> o.matches)...)
+  maxMatches = Math.max(opponents.map((o) -> o.matches)...)
+
+  nodes = opponents.map((opponent) -> 
+    {
+      radius: minRadius + (maxRadius - minRadius) * (opponent.matches - minMatches) / (maxMatches - minMatches)
+      color: d3.rgb(255 * opponent.won / opponent.matches, 255 * (1 - opponent.won / opponent.matches), 0)
+    }
+  )
+
+  tick = (e) ->
+    node.each(collide(.5)).attr('cx', (d) -> d.x).attr('cy', (d) -> d.y)
+    return
+
+  # Resolves collisions between d and all other circles.
+
+  collide = (alpha) ->
+    quadtree = d3.geom.quadtree(nodes)
+    (d) ->
+      r = d.radius + maxRadius + padding
+      nx1 = d.x - r
+      nx2 = d.x + r
+      ny1 = d.y - r
+      ny2 = d.y + r
+      quadtree.visit (quad, x1, y1, x2, y2) ->
+        `var r`
+        if quad.point and quad.point != d
+          x = d.x - (quad.point.x)
+          y = d.y - (quad.point.y)
+          l = Math.sqrt(x * x + y * y)
+          r = d.radius + quad.point.radius + (if d.cluster == quad.point.cluster then padding else clusterPadding)
+          if l < r
+            l = (l - r) / l * alpha
+            d.x -= x *= l
+            d.y -= y *= l
+            quad.point.x += x
+            quad.point.y += y
+        x1 > nx2 or x2 < nx1 or y1 > ny2 or y2 < ny1
+      return
+
+  force = d3.layout.force()
+    .nodes(nodes)
+    .size([width, height])
+    .gravity(.02)
+    .charge(0)
+    .on('tick', tick)
+    .start()
+  svg = d3.select('#opponents-graph .content')
+    .append('svg')
+    .attr('width', width)
+    .attr('height', height)
+  grads = svg.append('defs')
+    .selectAll('radialGradient')
+    .data(nodes)
+    .enter()
+    .append('radialGradient')
+    .attr('gradientUnits', 'objectBoundingBox')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', '100%')
+    .attr('id', (d, i) -> 'grad' + i)
+  grads.append('stop')
+    .attr('offset', '0%')
+    .style('stop-color', 'white')
+  grads.append('stop')
+    .attr('offset', '100%')
+    .style('stop-color', (d) -> d.color)
+  node = svg.selectAll('circle')
+    .data(nodes)
+    .enter()
+    .append('circle')
+    .style('fill', (d, i) -> 'url(#grad' + i + ')')
+    .call(force.drag)
+  node.transition()
+    .duration(750)
+    .delay((d, i) -> i * 5)
+    .attrTween('r', (d) ->
+      i = d3.interpolate(0, d.radius)
+      (t) -> d.radius = i(t)
+    )
+
 showChart = (data) ->
   T(templates.tournaments, data).render inside: '#games-chart'
 
@@ -252,7 +346,7 @@ loadDataAndShowChart = (player) ->
     T(templates.games).render inside: '.main'
     $('.players').text(result.name)
     showChart result.tournaments
+    drawOpponentsGraph(hotOpponents)
 
 router.get '/games/:player', (req) ->
   loadDataAndShowChart(req.params.player)
-
