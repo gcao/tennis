@@ -1,5 +1,6 @@
 {
   "_id": "roger_federer_schedule",
+  "name": "Roger Federer",
   "data": [{
       "tournament": "Australian Open",
       "result": "QF",
